@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PopupView
 
 @main
 struct TracesApp: App {
@@ -14,6 +15,7 @@ struct TracesApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .implementPopupView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
