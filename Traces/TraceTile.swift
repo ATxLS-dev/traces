@@ -31,18 +31,18 @@ struct TraceTile: View {
                 Divider()
                 Spacer(minLength: 12)
                 VStack(alignment: .trailing) {
-                    Text(trace.username ?? "---")
+                    Text(trace.username)
                         .font(.body)
-                    Text((trace.datePosted ?? Date.now)
-                        .formatted(
-                            .dateTime
-                                .day(.twoDigits)
-                                .month(.defaultDigits)
-                                .year(.twoDigits)
-                        )
+                    Text((trace.creationDate)
+//                        .formatted(
+//                            .dateTime
+//                                .day(.twoDigits)
+//                                .month(.defaultDigits)
+//                                .year(.twoDigits)
+//                        )
                     )
                     Spacer()
-                    Text(trace.locationName ?? "---")
+                    Text(trace.locationName)
                         .multilineTextAlignment(.trailing)
                 }
                 .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 20))

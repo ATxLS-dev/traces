@@ -10,19 +10,46 @@ import CoreData
 import MapKit
 import PopupView
 
-protocol InteractiveTrace: Identifiable {
-    var latitude: Double { get }
-    var longitude: Double { get }
+protocol InteractiveTrace: Codable, Identifiable {
+    var id: UUID { get }
+    var creationDate: Date { get }
     var username: String { get }
     var locationName: String { get }
+    var latitude: Double { get }
+    var longitude: Double { get }
     var content: String { get }
-    var creationDate: Date { get }
-    var id: UUID { get }
     func buildPopup()
 }
 
 extension InteractiveTrace {
     static func buildPopup() -> some View {
         TraceDetailView()
+    }
+}
+
+struct Trace: Codable, Identifiable {
+    var id: UUID
+    var creationDate: String
+    var username: String
+    var locationName: String
+    var latitude: Double
+    var longitude: Double
+    var content: String
+    var category: String
+    func buildPopup() {}
+    
+    enum CodingKeys: String, CodingKey {
+        case id = "id"
+        case creationDate = "creation_date"
+        case username = "username"
+        case locationName = "location_name"
+        case latitude = "latitude"
+        case longitude = "longitude"
+        case content = "content"
+        case category = "category"
+        
+        var stringValue: String {
+            return rawValue
+        }
     }
 }

@@ -7,16 +7,39 @@
 
 import SwiftUI
 import PopupView
+import Supabase
 
 @main
 struct TracesApp: App {
-    let persistenceController = PersistenceController.shared
+    
+    @State var supabaseInitialized = false
+    @StateObject var auth = AuthController()
 
     var body: some Scene {
         WindowGroup {
+            main
+        }
+    }
+    
+    @ViewBuilder
+    var main: some View {
+        if supabaseInitialized {
             ContentView()
                 .implementPopupView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environmentObject(auth)
+        } else {
+            ProgressView()
+                .task {
+                    await supabase.auth.initialize()
+                    supabaseInitialized = true
+                }
         }
     }
 }
+
+let supabase = SupabaseClient(
+    supabaseURL: Secrets.supabaseURL,
+    supabaseKey: Secrets.supabaseAnonKey
+    )
+
+let auth = supabase.auth

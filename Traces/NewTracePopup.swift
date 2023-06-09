@@ -35,20 +35,20 @@ struct NewTracePopup: CentrePopup {
         .frame(height: 480)
         .background(snow)
     }
-    private func addEntry(username: String = "New", content: String = "Nothing") {
-        withAnimation {
-            let newTrace = Trace(context: viewContext)
-            newTrace.datePosted = Date()
-            newTrace.id = UUID()
-            newTrace.username = username
-            newTrace.content = content
-            do {
-                try viewContext.save()
-            } catch {
-                print("Save Failed")
-            }
-        }
-    }
+//    private func addEntry(username: String = "New", content: String = "Nothing") {
+//        withAnimation {
+//            let newTrace: Trace
+//            newTrace.creationDate = Date()
+//            newTrace.id = UUID()
+//            newTrace.username = username
+//            newTrace.content = content
+//            do {
+//                try viewContext.save()
+//            } catch {
+//                print("Save Failed")
+//            }
+//        }
+//    }
     
 }
 
@@ -95,7 +95,7 @@ private extension NewTracePopup {
             }
             Spacer()
             Button(action: {
-                addEntry(username: username, content: content);
+//                addEntry(username: username, content: content);
                 PopupManager.dismiss();
             }) {
                 let width: CGFloat = 48

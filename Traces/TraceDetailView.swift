@@ -36,21 +36,6 @@ struct TraceDetailView: CentrePopup {
         .frame(height: 600)
         .background(snow)
     }
-    
-    private func addEntry(username: String = "New", content: String = "Nothing") {
-        withAnimation {
-            let newTrace = Trace(context: viewContext)
-            newTrace.datePosted = Date()
-            newTrace.id = UUID()
-            newTrace.username = username
-            newTrace.content = content
-            do {
-                try viewContext.save()
-            } catch {
-                print("Save Failed")
-            }
-        }
-    }
 }
 
 extension TraceDetailView {
@@ -67,7 +52,7 @@ extension TraceDetailView {
             .textFieldStyle(.roundedBorder)
     }
     func createEditButton() -> some View {
-        Text(trace?.description ?? "Description")
+        Text(trace?.content ?? "Description")
     }
     
     func createSubmitButton() -> some View {
@@ -88,7 +73,6 @@ extension TraceDetailView {
             }
             Spacer()
             Button(action: {
-                addEntry(username: username, content: content);
                 PopupManager.dismiss();
             }) {
                 let width: CGFloat = 48
