@@ -20,8 +20,8 @@ struct ContentView: View {
     var body: some View {
         Group {
             if authEvent == .signedOut {
-                buildNavigation()
-//                buildAuthView()
+//                buildNavigation()
+                buildAuthPopup()
             } else {
                 buildNavigation()
             }
@@ -37,11 +37,11 @@ struct ContentView: View {
     }
 }
 
-//extension ContentView {
-//    func buildAuthView() -> some View {
-//
-//    }
-//}
+extension ContentView {
+    func buildAuthPopup() -> some View {
+        AuthPopup()
+    }
+}
 
 extension ContentView {
     func buildNavigation() -> some View {

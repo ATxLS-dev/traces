@@ -19,7 +19,7 @@ struct AuthPopup: CentrePopup {
         case signIn, signUp
     }
     
-    @EnvironmentObject var auth: AuthController
+//    @EnvironmentObject var auth: AuthController
     
     @State var email = ""
     @State var password = ""
@@ -45,7 +45,6 @@ struct AuthPopup: CentrePopup {
                         
                         //WAIT FOR LOGIN COMPLETE MESSAGE
                         
-//                        PopupManager.dismiss()
                     }
                 }
                 
