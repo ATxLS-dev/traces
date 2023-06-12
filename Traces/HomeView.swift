@@ -7,36 +7,65 @@
 
 import SwiftUI
 import Supabase
+import FontAwesomeSwiftUI
 
 struct HomeView: View {
     
     @State var traces: [Trace] = []
     @State var error: Error?
+    let index: Int = 0
 
     var body: some View {
-        ScrollView() {
-            VStack {
-                HStack {
-                    Text("Traces Near Me")
-                        .font(.title)
+        ZStack {
+
+            buildVerticalScrollView()
+                .task {
+                    await loadTraces()
+                }
+            HStack {
+                Spacer()
+                VStack {
+                    buildSortButton()
                     Spacer()
                 }
-                .padding()
-                buildHorizontalScrollView()
-                Spacer()
-                HStack {
-                    Text("Recent Traces")
-                        .font(.title)
-                    Spacer()
-                }
-                .padding()
-                buildHorizontalScrollView()
-                Spacer()
             }
+            .padding()
         }
-        .background(snow)
-        .task {
-            await loadTraces()
+    }
+}
+
+extension HomeView {
+    func buildSortButton() -> some View {
+        Button(action: {}) {
+            Image(systemName: "ellipsis.circle")
+                .scaleEffect(1.2)
+                .foregroundColor(.black)
+                .padding()
+                .background(
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(.black, lineWidth: 4)
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(skyBlue)
+                    }
+                )
+        }
+    }
+}
+
+extension HomeView {
+    func buildVerticalScrollView() -> some View {
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(spacing: 10) {
+                ForEach(traces) { trace in
+                    HStack {
+                        Button(action: TraceDetailView(trace: trace).showAndStack) {
+                            TraceTileWide(trace: trace)
+                        }
+                    }
+                    .padding(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12))
+                }
+            }
         }
     }
 }
@@ -47,16 +76,17 @@ extension HomeView {
             HStack {
                 ForEach(traces) { trace in
                     Button(action: TraceDetailView(trace: trace).showAndStack) {
-                        TraceTileTall(trace: trace)
+                        TraceTileWide(trace: trace)
                     }
                 }
             }
+            .background(snow)
+            .padding()
         }
     }
 }
 
 extension HomeView {
-    
     func loadTraces() async {
         let query = supabase.database.from("traces").select()
         Task {

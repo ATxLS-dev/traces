@@ -5,6 +5,7 @@
 //  Created by Bryce on 6/8/23.
 //
 
+import Foundation
 import GoTrue
 import SwiftUI
 import PopupView
@@ -23,65 +24,142 @@ struct AuthPopup: CentrePopup {
     
     @State var email = ""
     @State var password = ""
-    @State var mode: Mode = .signIn
+    @State var mode: Mode = .signUp
     @State var error: Error?
-    
+    @State var loginInProgress: Bool = false
+
     func createContent() -> some View {
-        Form {
-            Section {
-                TextField("Email", text: $email)
-                    .keyboardType(.emailAddress)
-                    .textContentType(.emailAddress)
-                    .autocorrectionDisabled()
-                    .textInputAutocapitalization(.never)
-                SecureField("Password", text: $password)
-                    .textContentType(.password)
-                    .autocorrectionDisabled()
-                    .textInputAutocapitalization(.never)
-                Button(mode == .signIn ? "Sign in" : "Sign up") {
-                    Task {
-                        await primaryActionButtonTapped()
-                        
-                        
-                        //WAIT FOR LOGIN COMPLETE MESSAGE
-                        
-                    }
-                }
-                
-                if let error {
-                    ErrorText(error)
-                }
-            }
-            
-            Section {
-                Button(
-                    mode == .signIn ? "Don't have an account? Sign up." :
-                        "Already have an account? Sign in."
-                ) {
-                    withAnimation {
-                        mode = mode == .signIn ? .signUp : .signIn
-                    }
-                }
+        ZStack {
+            createBody()
+            if loginInProgress {
+                CircularProgressView()
             }
         }
-        .frame(height: 480)
+
+        
     }
     
     func primaryActionButtonTapped() async {
         do {
             error = nil
             switch mode {
-            case .signIn:
-                try await supabase.auth.signIn(email: email, password: password)
-                PopupManager.dismiss()
-            case .signUp:
-                try await supabase.auth.signUp(email: email, password: password)
-                PopupManager.dismiss()
-            }
+                case .signIn:
+                    try await supabase.auth.signIn(email: email, password: password)
+                    PopupManager.dismiss()
+                case .signUp:
+                    try await supabase.auth.signUp(email: email, password: password)
+                    PopupManager.dismiss()
+                }
         } catch {
             withAnimation {
                 self.error = error
             }
+        }
+    }
+}
+
+extension AuthPopup {
+    func createBody() -> some View {
+        VStack {
+            Spacer()
+            Text("Welcome to Traces")
+                .font(.title2)
+                .fontWeight(.bold)
+            //            Text("Enter your login info below")
+            Spacer()
+            TextField("Email", text: $email)
+                .keyboardType(.emailAddress)
+                .textContentType(.emailAddress)
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+                .padding(16)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.white))
+            SecureField("Password", text: $password)
+                .textContentType(.password)
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+                .padding(16)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.white))
+            if mode == .signUp {
+                SecureField("Confirm Password", text: $password)
+                    .textContentType(.password)
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.never)
+                    .padding(16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(.white))
+            }
+            Spacer()
+            buildButtons()
+            Spacer()
+            if let error {
+                Text(error.localizedDescription)
+            }
+            //            Spacer()
+            //            Button(mode == .signIn ? "Sign in" : "Sign up") {
+            //                Task {
+            //                    await primaryActionButtonTapped()
+            //                }
+            //            }
+        }
+        .padding()
+        .background(snow)
+        .frame(height: 480)
+    }
+}
+
+extension AuthPopup {
+    
+    func buildButtons() -> some View {
+        VStack {
+            buildSignupButton()
+            buildSigninButton()
+        }
+    }
+
+    private func buildSigninButton() -> some View {
+        HStack {
+            Spacer()
+            Button(action: {
+                if mode == .signIn {
+                    //Sign in user
+                }
+                withAnimation{ mode = (mode == .signIn) ? .signUp : .signIn}
+            }) {
+                Text(mode == .signUp ? "Sign in instead".uppercased() : "sign up instead".uppercased())
+                    .fontWeight(.bold)
+                    .padding(16)
+            }
+            Spacer()
+        }
+        .foregroundColor(sweetGreen)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(sweetGreen, lineWidth: 2))
+    }
+    
+    private func buildSignupButton() -> some View {
+        HStack {
+            Button(action: {
+                if mode == .signUp {
+                    //Sign Up USER
+                }
+                withAnimation { mode = .signUp }
+            }) {
+                Spacer()
+                Text(mode == .signIn ? "Sign In".uppercased() : "Sign Up".uppercased())
+                    .fontWeight(.bold)
+                    .padding(16)
+                Spacer()
+            }
+            .background(RoundedRectangle(cornerRadius: 12)
+                .fill(sweetGreen))
+            .foregroundColor(.white)
         }
     }
 }

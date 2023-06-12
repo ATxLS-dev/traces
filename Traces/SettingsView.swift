@@ -6,14 +6,30 @@
 //
 
 import SwiftUI
+import Foundation
+import GoTrue
 
 struct SettingsView: View {
+    
+    @State var authEvent: AuthChangeEvent?
+    @EnvironmentObject var authController: AuthController
+    
     var body: some View {
         List{
-            Text("Account Settings")
-            Text("FAQ")
-            Text("Notifications")
-            Text("Tip Jar :)")
+            Section {
+                Text("Account Settings")
+                Text("FAQ")
+                Text("Notifications")
+                Text("Tip Jar :)")
+            }
+            Section {
+                if authEvent == .signedOut {
+                    Text("Log Out")
+                        .foregroundColor(.red)
+                } else {
+                    Text("Sign up/login")
+                }
+            }
         }
     }
 }

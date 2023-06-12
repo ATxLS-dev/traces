@@ -39,7 +39,7 @@ extension ProfileView {
 
 extension ProfileView {
     func buildProfilePage() -> some View {
-        VStack {
+        ScrollView {
             HStack {
                 Image(systemName: "person")
                     .padding(8)

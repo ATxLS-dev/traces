@@ -13,6 +13,8 @@ import Supabase
 import CoreData
 
 struct ContentView: View {
+    
+    @State private var selectedTab: Tab = Tab.home
 
     @State var authEvent: AuthChangeEvent?
     @EnvironmentObject var auth: AuthController
@@ -44,39 +46,21 @@ extension ContentView {
 }
 
 extension ContentView {
+
     func buildNavigation() -> some View {
-        NavigationView {
-            ZStack {
-                Rectangle()
-                    .foregroundColor(snow)
-                    .edgesIgnoringSafeArea(.all)
-                TabView() {
+            ZStack(alignment: .bottom) {
+                TabView(selection: $selectedTab) {
                     HomeView()
-                        .tabItem {
-                            Image(systemName: "house.fill")
-                            Text("Home")
-                        }
+                        .tag(Tab.home)
                     MapView()
-                        .tabItem {
-                            Image(systemName: "map")
-                            Text("Map")
-                        }
-                    Spacer()//NEEDS TO NOT BE CLICKABLE
+                        .tag(Tab.map)
                     ProfileView()
-                        .tabItem {
-                            Image(systemName: "person.fill")
-                            Text("My Profile")
-                        }
+                        .tag(Tab.profile)
                     SettingsView()
-                        .tabItem {
-                            Image(systemName: "gear")
-                            Text("Settings")
-                        }
+                        .tag(Tab.settings)
                 }
-                .accentColor(sweetGreen)
-                NewTraceButton()
+                CustomTabBarView(currentTab: $selectedTab)
             }
-        }
     }
 }
 
