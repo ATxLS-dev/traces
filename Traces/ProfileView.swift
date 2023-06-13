@@ -33,7 +33,6 @@ extension ProfileView {
             Text("Sign in?")
         }
         .padding()
-        .borderRadius(.black, cornerRadius: 10, corners: .allCorners)
     }
 }
 
@@ -58,7 +57,7 @@ extension ProfileView {
         ScrollView {
             ForEach(traces) { trace in
                 Button(action: TraceDetailView(trace: trace).showAndStack) {
-                    TraceTile(trace: trace)
+                    TraceTileWide(trace: trace)
                 }
             }
         }

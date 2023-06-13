@@ -18,6 +18,25 @@ enum Tab: String, Hashable, CaseIterable {
 
 private let buttonDimen: CGFloat = 55
 
+struct BackgroundHelper: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView()
+        DispatchQueue.main.async {
+            var parent = view.superview
+            repeat {
+                if parent?.backgroundColor != nil {
+                    parent?.backgroundColor = UIColor.clear
+                    break
+                }
+                parent = parent?.superview
+            } while (parent != nil)
+        }
+        return view
+    }
+    
+    func updateUIView(_ uiView: UIView, context: Context) {}
+}
+
 struct CustomTabBarView: View {
     
     @Binding var currentTab: Tab
@@ -54,16 +73,21 @@ struct CustomTabBarView: View {
         .padding(.horizontal, 12)
         .background(
             ZStack {
-                Capsule(style: .circular).fill(snow)
-                Capsule(style: .circular).stroke(.black, lineWidth: 2)
+                Capsule(style: .circular)
+                    .fill(snow)
+                Capsule(style: .circular)
+                    .stroke(.black, lineWidth: 2)
             }
         )
         .overlay {
             SelectedTabCircleView(currentTab: $currentTab)
         }
         .shadow(color: Color.gray.opacity(0.4), radius: 6, x: 0, y: 6)
-        .animation(.interactiveSpring(response: 0.34, dampingFraction: 0.69, blendDuration: 0.69), value: currentTab)
-    
+        .animation(
+            .interactiveSpring(
+                response: 0.34, dampingFraction: 0.69, blendDuration: 0.69),
+            value: currentTab)
+        
     }
 }
 
@@ -75,13 +99,12 @@ extension CustomTabBarView {
                     .scaleEffect(1.4)
                     .frame(width: 48, height: 48)
                     .foregroundColor(.black)
-                    .background(RoundedRectangle(cornerRadius: 16).fill(skyBlue))
+                    .background(RoundedRectangle(cornerRadius: 16).fill(warmGray.opacity(0.2)))
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(.black, lineWidth: 2)
                     )
             }
-//            .shadow(color: .gray, radius: 4, x: 2, y: 2)
         }
         .padding(12)
     }
@@ -108,7 +131,7 @@ struct SelectedTabCircleView: View {
     private var horizontalOffset: CGFloat {
         switch currentTab {
         case .home:
-            return -136
+            return -135
         case .map:
             return -72
         case .new:
@@ -116,7 +139,7 @@ struct SelectedTabCircleView: View {
         case .profile:
             return 72
         case .settings:
-            return 136
+            return 135
         }
     }
     

@@ -7,46 +7,79 @@
 
 import SwiftUI
 import Supabase
-import FontAwesomeSwiftUI
 
 struct HomeView: View {
     
     @State var traces: [Trace] = []
     @State var error: Error?
+    @State var filter: String = ""
+    @State var showFilterDropdown: Bool = false
     let index: Int = 0
 
     var body: some View {
         ZStack {
-
             buildVerticalScrollView()
                 .task {
                     await loadTraces()
                 }
-            HStack {
-                Spacer()
-                VStack {
-                    buildSortButton()
-                    Spacer()
-                }
-            }
-            .padding()
+            buildFilterBar()
         }
+    }
+}
+
+extension HomeView {
+    func buildFilterBar() -> some View {
+        VStack {
+            HStack {
+                TextField("Filter by...", text: $filter)
+                buildSortButton()
+            }
+            .padding(4)
+            .padding(.leading)
+            .background(
+                ZStack {
+                    Capsule().fill(snow)
+                    Capsule().stroke(.black, lineWidth: 2)
+                }
+            )
+            .overlay (
+                VStack {
+                    if showFilterDropdown {
+                        Spacer(minLength: 80)
+                        FilterPopup(action: { data in
+                        })
+                    }
+                }, alignment: .top
+            ).onTapGesture {
+                showFilterDropdown.toggle()
+            }
+            Spacer()
+        }
+        .padding(.horizontal)
     }
 }
 
 extension HomeView {
     func buildSortButton() -> some View {
         Button(action: {}) {
-            Image(systemName: "ellipsis.circle")
+            Image(systemName: "line.3.horizontal.decrease.circle")
                 .scaleEffect(1.2)
                 .foregroundColor(.black)
                 .padding()
                 .background(
                     ZStack {
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(.black, lineWidth: 4)
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(skyBlue)
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(.black, lineWidth: 2)
+                            .clipShape(
+                                Rectangle()
+                                    .scale(1.1)
+                                    .trim(from: 0.125, to: 0.625)
+                                    .rotation(Angle(degrees: 180))
+                            )
+                        Circle()
+                            .trim(from: 0.0, to: 0.5)
+                            .rotation(Angle(degrees: -90))
+                            .stroke(.black, lineWidth: 2)
                     }
                 )
         }
@@ -57,31 +90,17 @@ extension HomeView {
     func buildVerticalScrollView() -> some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 10) {
+                Color.clear
+                    .frame(height: 72)
                 ForEach(traces) { trace in
                     HStack {
                         Button(action: TraceDetailView(trace: trace).showAndStack) {
                             TraceTileWide(trace: trace)
                         }
                     }
-                    .padding(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12))
+                    .padding(.horizontal)
                 }
             }
-        }
-    }
-}
-
-extension HomeView {
-    func buildHorizontalScrollView() -> some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack {
-                ForEach(traces) { trace in
-                    Button(action: TraceDetailView(trace: trace).showAndStack) {
-                        TraceTileWide(trace: trace)
-                    }
-                }
-            }
-            .background(snow)
-            .padding()
         }
     }
 }

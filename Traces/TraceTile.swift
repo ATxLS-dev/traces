@@ -15,7 +15,6 @@ struct TraceTile: View {
     var body: some View {
         ZStack {
             Rectangle()
-                .borderRadius(outlineColor, width: 2, cornerRadius: 25, corners: [.topLeft, .topRight, .bottomLeft])
                 .foregroundColor(.clear)
                 .background(snow)
             HStack {

@@ -8,7 +8,7 @@
 import SwiftUI
 import MapKit
 
-struct MapView: View {
+struct AppleMapView: View {
     @State var region = MKCoordinateRegion(center: .init(latitude: 37.789467, longitude: -122.416772), latitudinalMeters: 300, longitudinalMeters: 300)
 
     var body: some View {
@@ -22,21 +22,20 @@ struct MapView: View {
                 }
             }
         )
-        .edgesIgnoringSafeArea(.top)
+        .edgesIgnoringSafeArea(.all)
     }
 }
 
-struct MapView_Previews: PreviewProvider {
+struct AppleMapViews: PreviewProvider {
     static var previews: some View {
-        MapView()
+        AppleMapView()
     }
 }
 
-extension MapView {
+extension AppleMapView {
     func buildTracePin(location: String) -> some View {
         VStack {
             Rectangle()
-                .borderRadius(snow, width: 1, cornerRadius: 7, corners: [.topLeft, .topRight, .bottomLeft])
                 .foregroundColor(sweetGreen)
                 .frame(width: 24, height: 24)
 

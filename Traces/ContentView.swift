@@ -10,9 +10,12 @@ import PopupView
 import GoTrue
 import MapKit
 import Supabase
-import CoreData
 
 struct ContentView: View {
+    
+    init() {
+        UIToolbar.changeAppearance(clear: true)
+    }
     
     @State private var selectedTab: Tab = Tab.home
 
@@ -22,7 +25,6 @@ struct ContentView: View {
     var body: some View {
         Group {
             if authEvent == .signedOut {
-//                buildNavigation()
                 buildAuthPopup()
             } else {
                 buildNavigation()
@@ -47,20 +49,24 @@ extension ContentView {
 
 extension ContentView {
 
+
     func buildNavigation() -> some View {
-            ZStack(alignment: .bottom) {
-                TabView(selection: $selectedTab) {
-                    HomeView()
-                        .tag(Tab.home)
-                    MapView()
-                        .tag(Tab.map)
-                    ProfileView()
-                        .tag(Tab.profile)
-                    SettingsView()
-                        .tag(Tab.settings)
-                }
-                CustomTabBarView(currentTab: $selectedTab)
+        ZStack(alignment: .bottom) {
+            TabView(selection: $selectedTab) {
+                HomeView()
+                    .tag(Tab.home)
+                MapBoxMapView()
+                    .tag(Tab.map)
+                ProfileView()
+                    .tag(Tab.profile)
+                SettingsView()
+                    .tag(Tab.settings)
             }
+            .tabViewStyle(PageTabViewStyle())
+            CustomTabBarView(currentTab: $selectedTab)
+                .padding(.bottom)
+        }
+        .ignoresSafeArea()
     }
 }
 
