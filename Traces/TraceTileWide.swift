@@ -14,14 +14,13 @@ struct TraceTileWide: View {
     
     var body: some View {
         HStack {
-            Map(coordinateRegion: .constant(MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: trace.latitude, longitude: trace.longitude), span: MKCoordinateSpan(latitudeDelta: 0.004, longitudeDelta: 0.004))),
-                interactionModes: [])
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .frame(width: 144, height: 144)
-                .padding(6)
-                .background(
-                    RoundedBorderRectangle()
-                )
+            MapBoxView(center: CLLocationCoordinate2D(latitude: trace.latitude, longitude: trace.longitude))
+            .clipShape(RoundedRectangle(cornerRadius: 9))
+            .frame(width: 144, height: 144)
+            .padding(6)
+            .background(
+                RoundedBorderRectangle()
+            )
             Spacer()
             VStack {
                 Spacer()
@@ -36,7 +35,7 @@ struct TraceTileWide: View {
                 }
             }
         }
-        .padding(12)
+        .padding(8)
     }
 }
 

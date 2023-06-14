@@ -55,7 +55,7 @@ extension ContentView {
             TabView(selection: $selectedTab) {
                 HomeView()
                     .tag(Tab.home)
-                MapBoxMapView()
+                MapPageView()
                     .tag(Tab.map)
                 ProfileView()
                     .tag(Tab.profile)

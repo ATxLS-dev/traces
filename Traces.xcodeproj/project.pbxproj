@@ -20,12 +20,12 @@
 		0243FC702A327712007D097D /* AuthPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0243FC6F2A327712007D097D /* AuthPopup.swift */; };
 		0243FC742A328E9B007D097D /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0243FC732A328E9B007D097D /* ProfileView.swift */; };
 		028250A82A38FE8300B281DA /* MapboxMaps in Frameworks */ = {isa = PBXBuildFile; productRef = 028250A72A38FE8300B281DA /* MapboxMaps */; };
-		028250AA2A39017B00B281DA /* MapBoxMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028250A92A39017B00B281DA /* MapBoxMapView.swift */; };
+		028250AA2A39017B00B281DA /* MapBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028250A92A39017B00B281DA /* MapBoxView.swift */; };
 		028634FC2A1852C400BCDF35 /* Styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028634FB2A1852C400BCDF35 /* Styles.swift */; };
 		028635002A18533700BCDF35 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028634FF2A18533700BCDF35 /* SettingsView.swift */; };
 		028635022A18535C00BCDF35 /* ListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028635012A18535C00BCDF35 /* ListView.swift */; };
 		028635062A18543600BCDF35 /* TraceTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028635052A18543600BCDF35 /* TraceTile.swift */; };
-		028635082A18544800BCDF35 /* AppleMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028635072A18544800BCDF35 /* AppleMapView.swift */; };
+		028635082A18544800BCDF35 /* MapPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028635072A18544800BCDF35 /* MapPageView.swift */; };
 		0286350E2A18548800BCDF35 /* MapTrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0286350D2A18548800BCDF35 /* MapTrace.swift */; };
 		028635102A18566600BCDF35 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0286350F2A18566600BCDF35 /* HomeView.swift */; };
 		0287BE122A350484006B9CCD /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0287BE112A350484006B9CCD /* CircularProgressView.swift */; };
@@ -74,12 +74,12 @@
 		0243FC6D2A327663007D097D /* ErrorText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorText.swift; sourceTree = "<group>"; };
 		0243FC6F2A327712007D097D /* AuthPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthPopup.swift; sourceTree = "<group>"; };
 		0243FC732A328E9B007D097D /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
-		028250A92A39017B00B281DA /* MapBoxMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapBoxMapView.swift; sourceTree = "<group>"; };
+		028250A92A39017B00B281DA /* MapBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapBoxView.swift; sourceTree = "<group>"; };
 		028634FB2A1852C400BCDF35 /* Styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Styles.swift; sourceTree = "<group>"; };
 		028634FF2A18533700BCDF35 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		028635012A18535C00BCDF35 /* ListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListView.swift; sourceTree = "<group>"; };
 		028635052A18543600BCDF35 /* TraceTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraceTile.swift; sourceTree = "<group>"; };
-		028635072A18544800BCDF35 /* AppleMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleMapView.swift; sourceTree = "<group>"; };
+		028635072A18544800BCDF35 /* MapPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPageView.swift; sourceTree = "<group>"; };
 		0286350D2A18548800BCDF35 /* MapTrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTrace.swift; sourceTree = "<group>"; };
 		0286350F2A18566600BCDF35 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		0287BE112A350484006B9CCD /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
@@ -170,7 +170,7 @@
 				0286350F2A18566600BCDF35 /* HomeView.swift */,
 				028635012A18535C00BCDF35 /* ListView.swift */,
 				0286350D2A18548800BCDF35 /* MapTrace.swift */,
-				028635072A18544800BCDF35 /* AppleMapView.swift */,
+				028635072A18544800BCDF35 /* MapPageView.swift */,
 				02952D732A1E88D100793283 /* NewTracePopup.swift */,
 				028FF0AC2A184F090058EB57 /* Preview Content */,
 				0243FC732A328E9B007D097D /* ProfileView.swift */,
@@ -181,7 +181,7 @@
 				0219261E2A2FD90100B1B314 /* Trace.swift */,
 				0219261C2A2FD7BC00B1B314 /* TraceDetailView.swift */,
 				028FF0A62A184F080058EB57 /* TracesApp.swift */,
-				028250A92A39017B00B281DA /* MapBoxMapView.swift */,
+				028250A92A39017B00B281DA /* MapBoxView.swift */,
 				028635052A18543600BCDF35 /* TraceTile.swift */,
 				021D2C1F2A23F4CF001BCA8D /* TraceTileWide.swift */,
 			);
@@ -363,11 +363,11 @@
 				021D2C202A23F4CF001BCA8D /* TraceTileWide.swift in Sources */,
 				028BA3402A3791FF000BD0C0 /* FilterPopup.swift in Sources */,
 				028635102A18566600BCDF35 /* HomeView.swift in Sources */,
-				028635082A18544800BCDF35 /* AppleMapView.swift in Sources */,
+				028635082A18544800BCDF35 /* MapPageView.swift in Sources */,
 				0287BE122A350484006B9CCD /* CircularProgressView.swift in Sources */,
 				021926212A2FE53900B1B314 /* CapsuleToggle.swift in Sources */,
 				028BA3392A363910000BD0C0 /* RoundedBorderRectangle.swift in Sources */,
-				028250AA2A39017B00B281DA /* MapBoxMapView.swift in Sources */,
+				028250AA2A39017B00B281DA /* MapBoxView.swift in Sources */,
 				028635062A18543600BCDF35 /* TraceTile.swift in Sources */,
 				0290B15C2A25864D008A882E /* ColorTheme.swift in Sources */,
 				028BA33E2A377C44000BD0C0 /* CustomTabBarView.swift in Sources */,

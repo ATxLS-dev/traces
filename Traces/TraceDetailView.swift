@@ -20,7 +20,7 @@ struct TraceDetailView: CentrePopup {
     
     @State private var username: String = ""
     @State private var content: String = ""
-    @State var region = MKCoordinateRegion(center: .init(latitude: 37.334722, longitude: -122.008889), latitudinalMeters: 300, longitudinalMeters: 300)
+    @State var region = CLLocationCoordinate2D(latitude: 37.334722, longitude: -122.008889)
     
     @Environment(\.dismiss) var dismiss
     @Environment(\.managedObjectContext) private var viewContext
@@ -40,7 +40,7 @@ struct TraceDetailView: CentrePopup {
 
 extension TraceDetailView {
     func createMap() -> some View {
-        Map(coordinateRegion: $region, interactionModes: [])
+        MapBoxView(center: region)
             .clipShape(RoundedRectangle(cornerRadius: 12))
     }
     func createPrompt() -> some View {

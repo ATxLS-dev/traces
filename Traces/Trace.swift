@@ -10,7 +10,7 @@ import CoreData
 import MapKit
 import PopupView
 
-protocol InteractiveTrace: Codable, Identifiable {
+protocol InteractiveTrace: Codable, Identifiable, Equatable {
     var id: UUID { get }
     var creationDate: Date { get }
     var username: String { get }
@@ -27,7 +27,7 @@ extension InteractiveTrace {
     }
 }
 
-struct Trace: Codable, Identifiable {
+struct Trace: Codable, Identifiable, Equatable {
     var id: UUID
     var creationDate: String
     var username: String
