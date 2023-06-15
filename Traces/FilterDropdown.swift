@@ -10,26 +10,33 @@ import Supabase
 
 struct FilterDropdown: View {
     
-    @State var traces: [Trace] = []
-    @State var error: Error?
-    @State var filter: String = ""
-    @State var categories: [String] = []
+    @ObservedObject var supabaseManager = SupabaseManager.shared
     
     var body: some View {
-        
         ZStack {
             VStack(alignment: .leading, spacing: 16) {
-                ForEach(categories, id: \.self) { category in
-                    Button(action: {}) {
-                        Text(category)
-                            .font(.body)
-                            .foregroundColor(.black)
-                            .padding(4)
+                ForEach(supabaseManager.categories, id: \.self) { category in
+                    Button(action: {
+                        withAnimation { () -> () in
+                            supabaseManager.toggleFilter(category: category)
+                        }
+                    }) {
+                        HStack {
+                            Text(category)
+                                .font(.body)
+                                .foregroundColor(.black)
+                                .padding(4)
+                            Spacer()
+                            if supabaseManager.filters.contains(category) {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(raisinBlack)
+                                    .padding(.trailing, 6)
+                            }
+                        }.frame(width: 180)
                     }
                 }
             }
-            .padding(.all, 12)
-            .padding(.trailing, 69)
+            .padding(12)
             .background(
                 ZStack {
                     RoundedRectangle(cornerRadius: 24).foregroundColor(snow)

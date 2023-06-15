@@ -8,71 +8,69 @@
 
 import Foundation
 import Supabase
+import SwiftUI
 
-let shared = SupabaseManager()
-
-
-struct SupabaseManager {
-
-    var categories: [String] = []
+class SupabaseManager: ObservableObject {
+    static let shared = SupabaseManager()
     
+    let supabase: SupabaseClient
+    private var error: Error?
+    
+    private var isLoaded: Bool = false
+    
+    @Published private(set) var traces: [Trace] = []
+    @Published private(set) var categories: [String] = []
+    @Published private(set) var filters: Set<String> = []
+    @Published private(set) var filteredTraces: [Trace] = []
+    
+    private init() {
+        supabase = SupabaseClient(supabaseURL: Secrets.supabaseURL, supabaseKey: Secrets.supabaseAnonKey)
+        if isLoaded {
+            Task {
+                await loadTraces()
+            }
+        }
+    }
+    
+    private func loadTraces() async {
+        let query = supabase.database.from("traces").select()
+        do {
+            error = nil
+            traces = try await query.execute().value
+            categories = traces.map { $0.category }
+            categories = Array(Set(categories))
+            categories = categories.sorted { $0 < $1 }
+        } catch {
+            self.error = error
+            print(error)
+        }
+    }
+    
+    func reloadTraces() async {
+            await loadTraces()
+    }
+    
+    func toggleFilter(category: String) {
+        filters.contains(category) ? removeFilter(category: category) :
+            addFilter(category: category)
+
+        filterTraces()
+    }
+    
+    func addFilter(category: String) {
+        filters.insert(category)
+    }
+    
+    func removeFilter(category: String) {
+        filters.remove(category)
+    }
+    
+    func filterTraces() {
+        filteredTraces = traces.filter { filters.contains($0.category) }
+    }
 }
 
-
-
-//struct SupabaseManager {
-//    static let shared = SupabaseManager()
-//    
-//    private let supabase: SupabaseClient
-//    
-//    private var traces: [Trace]
-//    
-//    private init() {
-//        let supabaseURL = URL(string: "https://ivdcgbbkxazshjuxgnwu.supabase.co'")!
-//        let supabasePublicKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2ZGNnYmJreGF6c2hqdXhnbnd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODYyNDQwNzQsImV4cCI6MjAwMTgyMDA3NH0.psBYXva3kS6o4psOtIOBkp34q3u3Gmh_5By8hYaG52Y"
-//        
-//        supabase = SupabaseClient(supabaseURL: supabaseURL, supabaseKey: supabasePublicKey)
-//        
-//    }
-//    
-//    
-//    func fetchTraces() async {
-//        traces = Task {
-//            let response: [Trace] = try await supabase.database
-//                    .from("traces")
-//                    .select()
-//                    .execute()
-//                    .value
-//            return response
-//            }
-//        }
-//    }
-//
-//    
-//    func fetchTraces(completion: @escaping (Result<[Trace], Error>) -> Void) {
-//        
-//        let query = supabase.database
-//            .from("traces")
-//            .select()
-//        
-//        Task {
-//            do {
-//                let response: [Trace] = try await query.execute().value
-//                print("### Returned: \(response)")
-//            } catch {
-//                print("### Insert Error: \(error)")
-//            }
-//        }
-//    }
-//    
-//    private func parseTraces(traces: [Trace]) {
-//        
-//        
-//        
-//    }
-//}
-//
-//private enum SupabaseError: Error {
-//    case dataNotFound
-//    case concurrentRequest
-//}
+private enum SupabaseError: Error {
+    case dataNotFound
+    case concurrentRequest
+}

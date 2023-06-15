@@ -43,3 +43,4 @@ let supabase = SupabaseClient(
     )
 
 let auth = supabase.auth
+

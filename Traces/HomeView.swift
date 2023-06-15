@@ -10,18 +10,16 @@ import Supabase
 
 struct HomeView: View {
     
-    @State var traces: [Trace] = []
-    @State var error: Error?
-    @State var filter: String = ""
     @State var showFilterDropdown: Bool = false
-    @State private var categories: [String] = []
+    @ObservedObject var supabaseManager = SupabaseManager.shared
+
     let index: Int = 0
 
     var body: some View {
         ZStack {
             buildVerticalScrollView()
                 .task {
-                    await loadTraces()
+                    await supabaseManager.reloadTraces()
                 }
             buildFilterBar()
         }.onTapGesture {
@@ -41,8 +39,19 @@ extension HomeView {
                 .animation(.easeInOut(duration: 0.4), value: showFilterDropdown)
             VStack {
                 HStack {
-//                    TextField("Filter by...", text: $filter)
-                    Text("Filter").opacity(0.4)
+                    if supabaseManager.filters.isEmpty {
+                        Text("Filters...").opacity(0.4)
+                    } else {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack {
+                                ForEach(Array(supabaseManager.filters), id: \.self) { category in
+                                    CategoryTag(category: category)
+                                }
+                            }.transition(AnyTransition.scale)
+                        }
+
+                    }
+
                     Spacer()
                     buildSortButton()
                 }
@@ -54,30 +63,30 @@ extension HomeView {
                         Capsule().stroke(.black, lineWidth: 2)
                     }
                 )
-                .overlay (alignment: .topLeading) {
-                    VStack {
-                        Spacer(minLength: 80)
-                        if showFilterDropdown {
-                            FilterDropdown(categories: categories)
-                                .transition(.move(edge: self.showFilterDropdown ? .leading : .trailing))
-                        }
-                    }
-                    .animation(.easeInOut(duration: 0.5), value: self.showFilterDropdown)
-                }
-                
                 .onTapGesture {
                     showFilterDropdown.toggle()
                 }
                 Spacer()
             }
-            .padding(.horizontal)
+            .padding()
+            VStack {
+                Spacer(minLength: 80)
+                if showFilterDropdown {
+                    FilterDropdown()
+                        .transition(.move(edge: self.showFilterDropdown ? .leading : .trailing))
+                }
+            }
+            .padding(16)
+            .animation(.easeInOut(duration: 0.5), value: self.showFilterDropdown)
         }
     }
 }
 
 extension HomeView {
     func buildSortButton() -> some View {
-        Button(action: {}) {
+        Button(action: {
+            showFilterDropdown.toggle()
+        }) {
             Image(systemName: "line.3.horizontal.decrease.circle")
                 .scaleEffect(1.2)
                 .foregroundColor(.black)
@@ -108,7 +117,10 @@ extension HomeView {
             VStack(spacing: 10) {
                 Color.clear
                     .frame(height: 72)
-                ForEach(traces) { trace in
+                ForEach(
+                    supabaseManager.filteredTraces.isEmpty ?
+                    supabaseManager.traces : supabaseManager.filteredTraces
+                ) { trace in
                     HStack {
                         Button(action: TraceDetailView(trace: trace).showAndStack) {
                             TraceTile(trace: trace)
@@ -116,24 +128,6 @@ extension HomeView {
                     }
                     .padding(.horizontal)
                 }
-            }
-        }
-    }
-}
-
-extension HomeView {
-    func loadTraces() async {
-        let query = supabase.database.from("traces").select()
-        Task {
-            do {
-                error = nil
-                traces = try await query.execute().value
-                categories = traces.map { $0.category }
-                categories = Array(Set(categories))
-                categories = categories.sorted { $0 < $1 }
-            } catch {
-                self.error = error
-                print(error)
             }
         }
     }

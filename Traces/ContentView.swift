@@ -64,7 +64,7 @@ extension ContentView {
             }
             .tabViewStyle(PageTabViewStyle())
             CustomTabBarView(currentTab: $selectedTab)
-                .padding(.bottom)
+                .padding(.bottom, 28)
         }
         .ignoresSafeArea()
     }
