@@ -1,15 +1,25 @@
-////
-////  Supabaseinator.swift
-////  Traces
-////
-////  Created by Bryce on 6/8/23.
-////
+
 //
-//import Foundation
-//import Supabase
+//  Supabaseinator.swift
+//  Traces
 //
-//
-//
+//  Created by Bryce on 6/8/23.
+
+
+import Foundation
+import Supabase
+
+let shared = SupabaseManager()
+
+
+struct SupabaseManager {
+
+    var categories: [String] = []
+    
+}
+
+
+
 //struct SupabaseManager {
 //    static let shared = SupabaseManager()
 //    

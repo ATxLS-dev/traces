@@ -14,6 +14,7 @@ struct HomeView: View {
     @State var error: Error?
     @State var filter: String = ""
     @State var showFilterDropdown: Bool = false
+    @State private var categories: [String] = []
     let index: Int = 0
 
     var body: some View {
@@ -23,39 +24,54 @@ struct HomeView: View {
                     await loadTraces()
                 }
             buildFilterBar()
+        }.onTapGesture {
+            if showFilterDropdown {
+                showFilterDropdown.toggle()
+            }
         }
     }
 }
 
 extension HomeView {
     func buildFilterBar() -> some View {
-        VStack {
-            HStack {
-                TextField("Filter by...", text: $filter)
-                buildSortButton()
-            }
-            .padding(4)
-            .padding(.leading)
-            .background(
-                ZStack {
-                    Capsule().fill(snow)
-                    Capsule().stroke(.black, lineWidth: 2)
-                }
-            )
-            .overlay (
-                VStack {
-                    if showFilterDropdown {
-                        Spacer(minLength: 80)
-                        FilterPopup(action: { data in
-                        })
-                    }
-                }, alignment: .top
-            ).onTapGesture {
-                showFilterDropdown.toggle()
-            }
+        ZStack {
             Spacer()
+                .background(.ultraThinMaterial)
+                .opacity(showFilterDropdown ? 0.8 : 0.0)
+                .animation(.easeInOut(duration: 0.4), value: showFilterDropdown)
+            VStack {
+                HStack {
+//                    TextField("Filter by...", text: $filter)
+                    Text("Filter").opacity(0.4)
+                    Spacer()
+                    buildSortButton()
+                }
+                .padding(4)
+                .padding(.leading)
+                .background(
+                    ZStack {
+                        Capsule().fill(snow)
+                        Capsule().stroke(.black, lineWidth: 2)
+                    }
+                )
+                .overlay (alignment: .topLeading) {
+                    VStack {
+                        Spacer(minLength: 80)
+                        if showFilterDropdown {
+                            FilterDropdown(categories: categories)
+                                .transition(.move(edge: self.showFilterDropdown ? .leading : .trailing))
+                        }
+                    }
+                    .animation(.easeInOut(duration: 0.5), value: self.showFilterDropdown)
+                }
+                
+                .onTapGesture {
+                    showFilterDropdown.toggle()
+                }
+                Spacer()
+            }
+            .padding(.horizontal)
         }
-        .padding(.horizontal)
     }
 }
 
@@ -95,7 +111,7 @@ extension HomeView {
                 ForEach(traces) { trace in
                     HStack {
                         Button(action: TraceDetailView(trace: trace).showAndStack) {
-                            TraceTileWide(trace: trace)
+                            TraceTile(trace: trace)
                         }
                     }
                     .padding(.horizontal)
@@ -112,6 +128,9 @@ extension HomeView {
             do {
                 error = nil
                 traces = try await query.execute().value
+                categories = traces.map { $0.category }
+                categories = Array(Set(categories))
+                categories = categories.sorted { $0 < $1 }
             } catch {
                 self.error = error
                 print(error)

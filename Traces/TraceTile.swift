@@ -13,41 +13,44 @@ struct TraceTile: View {
     var trace: Trace
     
     var body: some View {
-        ZStack {
-            Rectangle()
-                .foregroundColor(.clear)
-                .background(snow)
-            HStack {
-                Map(coordinateRegion: .constant(MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: trace.latitude, longitude: trace.longitude), span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))), interactionModes: [])
-                    .frame(width: 96, height: 96)
-                    .clipShape(Circle())
-                    .overlay(
-                        Circle()
-                            .stroke(outlineColor, lineWidth: 1)
-                    )
-                    .shadow(color: .gray, radius: 4)
-                    .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
-                Divider()
-                Spacer(minLength: 12)
-                VStack(alignment: .trailing) {
-                    Text(trace.username)
-                        .font(.body)
-                    Text((trace.creationDate)
-//                        .formatted(
-//                            .dateTime
-//                                .day(.twoDigits)
-//                                .month(.defaultDigits)
-//                                .year(.twoDigits)
-//                        )
-                    )
-                    Spacer()
-                    Text(trace.locationName)
-                        .multilineTextAlignment(.trailing)
+        HStack {
+            MapBoxView(center: CLLocationCoordinate2D(latitude: trace.latitude, longitude: trace.longitude))
+            .clipShape(RoundedRectangle(cornerRadius: 9))
+            .frame(width: 144, height: 144)
+            .padding(6)
+            .background(
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(.black, lineWidth: 3)
+                        .shadow(color: .gray, radius: 6, x: 0, y: 6.0)
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.white)
                 }
-                .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 20))
+            )
+            Spacer()
+            VStack {
+                Spacer()
+                Text(trace.locationName)
+                    .foregroundColor(.black)
+                Spacer()
+                HStack {
+                    Spacer()
+                    Text(trace.username)
+                        .foregroundColor(.gray)
+                        .font(.caption)
+                }
             }
-            .frame(height: 140)
         }
-        .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+        .padding(8)
     }
 }
+
+extension TraceTile {
+    func buildTracePin(location: String) -> some View {
+        VStack {
+            Image(systemName: "pin.circle.fill").foregroundColor(sweetGreen)
+            Text(location)
+        }
+    }
+}
+

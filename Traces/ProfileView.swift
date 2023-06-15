@@ -57,7 +57,7 @@ extension ProfileView {
         ScrollView {
             ForEach(traces) { trace in
                 Button(action: TraceDetailView(trace: trace).showAndStack) {
-                    TraceTileWide(trace: trace)
+                    TraceTile(trace: trace)
                 }
             }
         }
