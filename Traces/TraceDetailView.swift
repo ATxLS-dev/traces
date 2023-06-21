@@ -21,6 +21,8 @@ struct TraceDetailView: CentrePopup {
     @State private var username: String = ""
     @State private var content: String = ""
     @State var region = CLLocationCoordinate2D(latitude: 37.334722, longitude: -122.008889)
+    @ObservedObject var themeManager = ThemeManager.shared
+
     
     @Environment(\.dismiss) var dismiss
     @Environment(\.managedObjectContext) private var viewContext
@@ -40,7 +42,7 @@ struct TraceDetailView: CentrePopup {
 
 extension TraceDetailView {
     func createMap() -> some View {
-        MapBoxView(center: region)
+        MapBox(center: region)
             .clipShape(RoundedRectangle(cornerRadius: 12))
     }
     func createPrompt() -> some View {
@@ -79,14 +81,13 @@ extension TraceDetailView {
                 Image(systemName: "checkmark")
                     .frame(width: width * 3, height: width)
                     .foregroundColor(snow)
-                    .background(sweetGreen)
+                    .background(themeManager.theme.text)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .font(.system(size: width / 2))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(snow, lineWidth: 1)
+                            .stroke(themeManager.theme.background, lineWidth: 1)
                     )
-                    .shadow(color: .gray, radius: 4, x: 2, y: 2)
             }
         }
     }

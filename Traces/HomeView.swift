@@ -12,6 +12,7 @@ struct HomeView: View {
     
     @State var showFilterDropdown: Bool = false
     @ObservedObject var supabaseManager = SupabaseManager.shared
+    @ObservedObject var themeManager = ThemeManager.shared
 
     let index: Int = 0
 
@@ -22,11 +23,13 @@ struct HomeView: View {
                     await supabaseManager.reloadTraces()
                 }
             buildFilterBar()
-        }.onTapGesture {
+        }
+        .onTapGesture {
             if showFilterDropdown {
                 showFilterDropdown.toggle()
             }
         }
+        .background(themeManager.theme.background)
     }
 }
 
@@ -41,6 +44,7 @@ extension HomeView {
                 HStack {
                     if supabaseManager.filters.isEmpty {
                         Text("Filters...").opacity(0.4)
+                            .foregroundColor(themeManager.theme.accent)
                     } else {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
@@ -49,9 +53,7 @@ extension HomeView {
                                 }
                             }.transition(AnyTransition.scale)
                         }
-
                     }
-
                     Spacer()
                     buildSortButton()
                 }
@@ -59,8 +61,8 @@ extension HomeView {
                 .padding(.leading)
                 .background(
                     ZStack {
-                        Capsule().fill(snow)
-                        Capsule().stroke(.black, lineWidth: 2)
+                        Capsule().fill(themeManager.theme.background)
+                        Capsule().stroke(themeManager.theme.text, lineWidth: 2)
                     }
                 )
                 .onTapGesture {
@@ -89,12 +91,12 @@ extension HomeView {
         }) {
             Image(systemName: "line.3.horizontal.decrease.circle")
                 .scaleEffect(1.2)
-                .foregroundColor(.black)
+                .foregroundColor(themeManager.theme.text)
                 .padding()
                 .background(
                     ZStack {
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(.black, lineWidth: 2)
+                            .stroke(themeManager.theme.text, lineWidth: 2)
                             .clipShape(
                                 Rectangle()
                                     .scale(1.1)
@@ -104,7 +106,7 @@ extension HomeView {
                         Circle()
                             .trim(from: 0.0, to: 0.5)
                             .rotation(Angle(degrees: -90))
-                            .stroke(.black, lineWidth: 2)
+                            .stroke(themeManager.theme.text, lineWidth: 2)
                     }
                 )
         }
@@ -115,8 +117,7 @@ extension HomeView {
     func buildVerticalScrollView() -> some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 10) {
-                Color.clear
-                    .frame(height: 72)
+                Spacer(minLength: 72)
                 ForEach(
                     supabaseManager.filteredTraces.isEmpty ?
                     supabaseManager.traces : supabaseManager.filteredTraces
@@ -128,6 +129,7 @@ extension HomeView {
                     }
                     .padding(.horizontal)
                 }
+                Spacer(minLength: 72)
             }
         }
     }

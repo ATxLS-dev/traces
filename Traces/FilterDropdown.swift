@@ -11,6 +11,7 @@ import Supabase
 struct FilterDropdown: View {
     
     @ObservedObject var supabaseManager = SupabaseManager.shared
+    @ObservedObject var themeManager = ThemeManager.shared
     
     var body: some View {
         ZStack {
@@ -24,23 +25,24 @@ struct FilterDropdown: View {
                         HStack {
                             Text(category)
                                 .font(.body)
-                                .foregroundColor(.black)
+                                .foregroundColor(themeManager.theme.text)
                                 .padding(4)
                             Spacer()
                             if supabaseManager.filters.contains(category) {
                                 Image(systemName: "checkmark")
-                                    .foregroundColor(raisinBlack)
+                                    .foregroundColor(themeManager.theme.accent)
                                     .padding(.trailing, 6)
                             }
-                        }.frame(width: 180)
+                        }
+                        .frame(width: 180)
                     }
                 }
             }
             .padding(12)
             .background(
                 ZStack {
-                    RoundedRectangle(cornerRadius: 24).foregroundColor(snow)
-                    RoundedRectangle(cornerRadius: 24).stroke(.black, lineWidth: 2)
+                    RoundedRectangle(cornerRadius: 24).foregroundColor(themeManager.theme.background)
+                    RoundedRectangle(cornerRadius: 24).stroke(themeManager.theme.text, lineWidth: 2)
                 }
             )
         }
@@ -58,6 +60,6 @@ struct FilterDropdown: View {
 
 struct FilterPopup_Previews: PreviewProvider {
     static var previews: some View {
-        FilterDropdown().padding()
+        FilterDropdown()
     }
 }

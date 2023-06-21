@@ -27,6 +27,7 @@ struct AuthPopup: CentrePopup {
     @State var mode: Mode = .signUp
     @State var error: Error?
     @State var loginInProgress: Bool = false
+    @ObservedObject var themeManager = ThemeManager.shared
 
     func createContent() -> some View {
         ZStack {
@@ -137,10 +138,10 @@ extension AuthPopup {
             }
             Spacer()
         }
-        .foregroundColor(sweetGreen)
+        .foregroundColor(themeManager.theme.accent)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(sweetGreen, lineWidth: 2))
+                .stroke(themeManager.theme.accent, lineWidth: 2))
     }
     
     private func buildSignupButton() -> some View {
@@ -158,7 +159,7 @@ extension AuthPopup {
                 Spacer()
             }
             .background(RoundedRectangle(cornerRadius: 12)
-                .fill(sweetGreen))
+                .fill(themeManager.theme.accent))
             .foregroundColor(.white)
         }
     }

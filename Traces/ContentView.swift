@@ -13,10 +13,6 @@ import Supabase
 
 struct ContentView: View {
     
-    init() {
-        UIToolbar.changeAppearance(clear: true)
-    }
-    
     @State private var selectedTab: Tab = Tab.home
 
     @State var authEvent: AuthChangeEvent?
@@ -62,7 +58,7 @@ extension ContentView {
                 SettingsView()
                     .tag(Tab.settings)
             }
-            .tabViewStyle(PageTabViewStyle())
+            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             CustomTabBarView(currentTab: $selectedTab)
                 .padding(.bottom, 28)
         }

@@ -11,30 +11,30 @@ struct CategoryTag: View {
     
     let category: String
     @ObservedObject var supabaseManager = SupabaseManager.shared
+    @ObservedObject var themeManager = ThemeManager.shared
     
     var body: some View {
         Button(action: {
-            withAnimation { () -> () in
+            withAnimation {
                 supabaseManager.toggleFilter(category: category)
-            }
-        }) {
+            }}) {
             HStack(spacing: 12) {
                 Text(category)
                     .font(.caption)
                 Image(systemName: "x.circle")
-                    .opacity(0.2)
+                    .foregroundColor(themeManager.theme.accent.opacity(0.4))
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
             .background(
                 ZStack {
                     Capsule()
-                        .fill(snow)
+                        .fill(themeManager.theme.background)
                     Capsule()
-                        .stroke(.black, lineWidth: 1.4)
+                        .stroke(themeManager.theme.accent, lineWidth: 1.4)
                 }
             )
-            .foregroundColor(raisinBlack)
+            .foregroundColor(themeManager.theme.text)
         }.padding(2)
     }
 }

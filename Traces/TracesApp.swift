@@ -37,10 +37,3 @@ struct TracesApp: App {
     }
 }
 
-let supabase = SupabaseClient(
-    supabaseURL: Secrets.supabaseURL,
-    supabaseKey: Secrets.supabaseAnonKey
-    )
-
-let auth = supabase.auth
-

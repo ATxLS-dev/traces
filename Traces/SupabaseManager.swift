@@ -10,6 +10,13 @@ import Foundation
 import Supabase
 import SwiftUI
 
+let supabase = SupabaseClient(
+    supabaseURL: Secrets.supabaseURL,
+    supabaseKey: Secrets.supabaseAnonKey
+)
+
+let auth = supabase.auth
+
 class SupabaseManager: ObservableObject {
     static let shared = SupabaseManager()
     
@@ -49,6 +56,20 @@ class SupabaseManager: ObservableObject {
     func reloadTraces() async {
             await loadTraces()
     }
+    
+    
+    func addTrace(trace: Trace) async {
+        let query = supabase.database
+            .from("traces")
+            .insert(values: trace)
+        do {
+            try await query.execute()
+        } catch {
+            self.error = error
+            print(error)
+        }
+    }
+    
     
     func toggleFilter(category: String) {
         filters.contains(category) ? removeFilter(category: category) :

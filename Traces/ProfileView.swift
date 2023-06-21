@@ -15,6 +15,7 @@ struct ProfileView: View {
     @EnvironmentObject var authController: AuthController
     @State var traces: [Trace] = []
     @State var error: Error?
+    @ObservedObject var themeManager = ThemeManager.shared
     
     var body: some View {
         Group {
@@ -24,6 +25,8 @@ struct ProfileView: View {
                 buildProfilePage()
             }
         }
+        .background(themeManager.theme.background)
+
     }
 }
 
@@ -42,11 +45,12 @@ extension ProfileView {
             HStack {
                 Image(systemName: "person")
                     .padding(8)
-                    .background(Circle().fill(.black))
-                    .foregroundColor(.white)
+                    .background(Circle().fill(themeManager.theme.text))
+                    .foregroundColor(themeManager.theme.background)
                     .scaleEffect(3)
                 Spacer()
-                Text("USERNAME")
+                Text("Charlie Bean")
+                    .foregroundColor(themeManager.theme.text)
             }
             .padding(64)
             Spacer()

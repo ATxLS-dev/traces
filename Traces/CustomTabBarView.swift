@@ -40,6 +40,7 @@ struct BackgroundHelper: UIViewRepresentable {
 struct CustomTabBarView: View {
     
     @Binding var currentTab: Tab
+    @ObservedObject var themeManager = ThemeManager.shared
     
     var body: some View {
         HStack {
@@ -74,15 +75,15 @@ struct CustomTabBarView: View {
         .background(
             ZStack {
                 Capsule(style: .circular)
-                    .fill(snow)
+                    .fill(themeManager.theme.background)
                 Capsule(style: .circular)
-                    .stroke(.black, lineWidth: 2)
+                    .stroke(themeManager.theme.text, lineWidth: 2)
             }
         )
         .overlay {
             SelectedTabCircleView(currentTab: $currentTab)
         }
-        .shadow(color: Color.gray.opacity(0.4), radius: 6, x: 0, y: 6)
+//        .shadow(color: themeManager.theme.text.opacity(0.4), radius: 6, x: 0, y: 6)
         .animation(
             .interactiveSpring(
                 response: 0.34, dampingFraction: 0.69, blendDuration: 0.69),
@@ -98,11 +99,11 @@ extension CustomTabBarView {
                 Image(systemName: "plus")
                     .scaleEffect(1.4)
                     .frame(width: 48, height: 48)
-                    .foregroundColor(.black)
-                    .background(RoundedRectangle(cornerRadius: 16).fill(warmGray.opacity(0.2)))
+                    .foregroundColor(themeManager.theme.text)
+                    .background(RoundedRectangle(cornerRadius: 16).fill(themeManager.theme.button.opacity(0.6)))
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
-                            .stroke(.black, lineWidth: 2)
+                            .stroke(themeManager.theme.text, lineWidth: 2)
                     )
             }
         }
@@ -113,11 +114,12 @@ extension CustomTabBarView {
 
 
 private struct TabBarButton: View {
+    @ObservedObject var themeManager = ThemeManager.shared
     let imageName: String
     var body: some View {
         Image(systemName: imageName)
             .renderingMode(.template)
-            .tint(.black)
+            .foregroundColor(themeManager.theme.text)
             .fontWeight(.bold)
             .scaleEffect(1)
         
@@ -127,6 +129,7 @@ private struct TabBarButton: View {
 struct SelectedTabCircleView: View {
     
     @Binding var currentTab: Tab
+    @ObservedObject var themeManager = ThemeManager.shared
     
     private var horizontalOffset: CGFloat {
         switch currentTab {
@@ -146,13 +149,13 @@ struct SelectedTabCircleView: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(skyBlue)
+                .fill(themeManager.theme.button)
                 .frame(width: buttonDimen , height: buttonDimen)
             Circle()
-                .stroke(.black, lineWidth: 2)
+                .stroke(themeManager.theme.text, lineWidth: 2)
                 .frame(width: buttonDimen , height: buttonDimen)
             TabBarButton(imageName: "\(currentTab.rawValue).fill")
-                .foregroundColor(.black)
+                .foregroundColor(themeManager.theme.text)
         }
         .offset(x: horizontalOffset)
     }

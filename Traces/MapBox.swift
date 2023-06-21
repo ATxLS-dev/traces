@@ -8,7 +8,7 @@ import SwiftUI
 import Supabase
 import MapboxMaps
 
-struct MapBoxView: View {
+struct MapBox: View {
     @State var center = CLLocationCoordinate2D(latitude: 37.789467, longitude: -122.416772)
     @State var traces: [Trace] = []
     @State var error: Error?
@@ -60,6 +60,7 @@ class MapViewController: UIViewController {
     let style: StyleURI
     let zoom: Double
     @Binding var annotations: [CLLocationCoordinate2D]
+    @ObservedObject var themeManager = ThemeManager.shared
     internal var mapView: MapView!
     
     init(center: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 40.83647410051574, longitude: 14.30582273457794),
@@ -80,16 +81,23 @@ class MapViewController: UIViewController {
     
     override public func viewDidLoad() {
         super.viewDidLoad()
-        
-        let myResourceOptions = ResourceOptions(accessToken: mapBoxAccessToken)
+
+        let scaleBarOptions = ScaleBarViewOptions(margins: CGPoint(x: 10, y: 40))
+        let logoOptions = LogoViewOptions(margins: CGPoint(x: 10, y: 106))
+        let attributionOptions = AttributionButtonOptions(margins: CGPoint(x: 0, y: 106))
+        let ornamentOptions = OrnamentOptions(scaleBar: scaleBarOptions, logo: logoOptions, attributionButton: attributionOptions)
+        let resourceOptions = ResourceOptions(accessToken: mapBoxAccessToken)
         let cameraOptions = CameraOptions(center: center, zoom: zoom)
-        let myMapInitOptions = MapInitOptions(resourceOptions: myResourceOptions, cameraOptions: cameraOptions, styleURI: style)
+        let myMapInitOptions = MapInitOptions(resourceOptions: resourceOptions, cameraOptions: cameraOptions, styleURI: StyleURI(rawValue: themeManager.theme.mapStyle) ?? style)
         
         mapView = MapView(frame: view.bounds, mapInitOptions: myMapInitOptions)
         updateAnnotations(annotations: annotations)
+
+        mapView.ornaments.options = ornamentOptions
         
         mapView.autoresizingMask = [.flexibleTopMargin, .flexibleBottomMargin]
         self.view.addSubview(mapView)
+        
     }
     
     func updateAnnotations(annotations: [CLLocationCoordinate2D]) {
