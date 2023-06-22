@@ -100,7 +100,6 @@ class ThemeManager: ObservableObject {
         isDarkMode.toggle()
         UserDefaults.standard.set(isDarkMode, forKey: "darkMode")
         self.theme = isDarkMode ? light : dark
-        
     }
 }
 

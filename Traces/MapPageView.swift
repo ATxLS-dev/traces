@@ -13,7 +13,7 @@ struct MapPageView: View {
     @State var center = CLLocationCoordinate2D(latitude: 37.789467, longitude: -122.416772)
 
     var body: some View {
-        MapBox(center: center)
+        MapBox(center: center, interactable: true)
             .offset(y: -6.5)
     }
 }

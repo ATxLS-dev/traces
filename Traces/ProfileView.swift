@@ -13,8 +13,8 @@ struct ProfileView: View {
     
     @State var authEvent: AuthChangeEvent?
     @EnvironmentObject var authController: AuthController
-    @State var traces: [Trace] = []
     @State var error: Error?
+    @ObservedObject var supabaseManager = SupabaseManager.shared
     @ObservedObject var themeManager = ThemeManager.shared
     
     var body: some View {
@@ -43,43 +43,38 @@ extension ProfileView {
     func buildProfilePage() -> some View {
         ScrollView {
             HStack {
-                Image(systemName: "person")
-                    .padding(8)
+                Image(systemName: "person.fill")
+                    .padding(10)
                     .background(Circle().fill(themeManager.theme.text))
                     .foregroundColor(themeManager.theme.background)
-                    .scaleEffect(3)
+                    .scaleEffect(2)
                 Spacer()
                 Text("Charlie Bean")
                     .foregroundColor(themeManager.theme.text)
+                    .font(.title)
             }
             .padding(64)
             Spacer()
             buildProfileTraces()
         }
     }
-    func buildProfileTraces() -> some View {
-        ScrollView {
-            ForEach(traces) { trace in
-                Button(action: TraceDetailView(trace: trace).showAndStack) {
-                    TraceTile(trace: trace)
-                }
-            }
-        }
-        .task {
-            await loadTraces()
-        }
-    }
     
-    func loadTraces() async {
-        let query = supabase.database.from("traces").select()
-        Task {
-            do {
-                error = nil
-                traces = try await query.execute().value
-            } catch {
-                self.error = error
-                print(error)
-            }
+    func buildProfileTraces() -> some View {
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 10) {
+                    ForEach(
+                        supabaseManager.filteredTraces.isEmpty ?
+                        supabaseManager.traces : supabaseManager.filteredTraces
+                    ) { trace in
+                        HStack {
+                            Button(action: TraceDetailView(trace: trace).showAndStack) {
+                                TraceTile(trace: trace)
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                    Spacer(minLength: 72)
+                }
         }
     }
 }
