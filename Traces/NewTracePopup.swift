@@ -37,9 +37,9 @@ struct NewTracePopup: CentrePopup {
         .background(
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(snow)
+                    .fill(themeManager.theme.background)
                 RoundedRectangle(cornerRadius: 16)
-                    .stroke(.black, lineWidth: 2)
+                    .stroke(themeManager.theme.text, lineWidth: 2)
             }
         )
     }
@@ -63,34 +63,31 @@ struct NewTracePopup: CentrePopup {
 private extension NewTracePopup {
     func createMap() -> some View {
         MapBox(center: region)
-            .clipped()
             .cornerRadius(12)
     }
     func createPrompt() -> some View {
         Text("Leave a trace?")
+            .foregroundColor(themeManager.theme.text)
     }
     func createField() -> some View {
         TextField("Title", text: $title)
             .textFieldStyle(.plain)
-            .padding(8)
+            .padding(12)
             .background(
                 ZStack {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(themeManager.theme.background)
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(themeManager.theme.text, lineWidth: 1.4)
-                        .opacity(1)
+                    Capsule()
+                        .fill(themeManager.theme.accent)
+                    Capsule()
+                        .stroke(themeManager.theme.text, lineWidth: 2)
                 }
-
             )
     }
     func createEditor() -> some View {
         TextEditor(text: $content)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(themeManager.theme.text, lineWidth: 1.4)
-            )
-            .font(.body)
+            .foregroundColor(.black)
+            .cornerRadius(24)
+            .padding()
+            .frame(height: 150)
     }
     func createSubmitButton() -> some View {
         HStack {
@@ -102,7 +99,7 @@ private extension NewTracePopup {
                     .background(
                         ZStack {
                             RoundedRectangle(cornerRadius: 12)
-                                .stroke(.black, lineWidth: 1.4)
+                                .stroke(themeManager.theme.text, lineWidth: 1.4)
                         }
                     )
             }
@@ -115,7 +112,7 @@ private extension NewTracePopup {
                     .background(
                         ZStack {
                             RoundedRectangle(cornerRadius: 12)
-                                .stroke(.black, lineWidth: 1.4)
+                                .stroke(themeManager.theme.text, lineWidth: 1.4)
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(themeManager.theme.button.opacity(0.4))
                         }

@@ -9,18 +9,16 @@
 import Foundation
 import Supabase
 import SwiftUI
+import MapboxStatic
+import Combine
 
-let supabase = SupabaseClient(
-    supabaseURL: Secrets.supabaseURL,
-    supabaseKey: Secrets.supabaseAnonKey
-)
-
-let auth = supabase.auth
-
+@MainActor
 class SupabaseManager: ObservableObject {
     static let shared = SupabaseManager()
     
-    let supabase: SupabaseClient
+    let supabase: SupabaseClient = SupabaseClient(supabaseURL: Secrets.supabaseURL, supabaseKey: Secrets.supabaseAnonKey)
+    let authManager = AuthManager.shared
+    
     private var error: Error?
     
     private var isLoaded: Bool = false
@@ -29,24 +27,31 @@ class SupabaseManager: ObservableObject {
     @Published private(set) var categories: [String] = []
     @Published private(set) var filters: Set<String> = []
     @Published private(set) var filteredTraces: [Trace] = []
+    @Published private(set) var userTraceHistory: [Trace] = []
     
-    private init() {
-        supabase = SupabaseClient(supabaseURL: Secrets.supabaseURL, supabaseKey: Secrets.supabaseAnonKey)
-        if isLoaded {
-            Task {
-                await loadTraces()
+    private var cancellables = Set<AnyCancellable>()
+    
+    init() {
+        authManager.$isSignedIn
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isSignedIn in
+                if let userID = self?.authManager.userID {
+                    self?.loadTracesFromUser(userID)
+                } else {
+                    self?.clearUserTraceHistory()  // Clear user-specific data
+                }
             }
-        }
+            .store(in: &cancellables)
     }
     
     private func loadTraces() async {
         let query = supabase.database.from("traces").select()
         do {
             error = nil
-            traces = try await query.execute().value
-            categories = traces.map { $0.category }
-            categories = Array(Set(categories))
-            categories = categories.sorted { $0 < $1 }
+            traces = try await query.execute().value //TEMP VALUES??
+            var trimmedCategories = traces.map { $0.category }
+            trimmedCategories = Array(Set(trimmedCategories))
+            categories = trimmedCategories.sorted { $0 < $1 }
         } catch {
             self.error = error
             print(error)
@@ -54,7 +59,27 @@ class SupabaseManager: ObservableObject {
     }
     
     func reloadTraces() async {
-            await loadTraces()
+        await loadTraces()
+    }
+    
+    func loadTracesFromUser(_ userID: UUID) {
+        let query = supabase.database
+            .from("traces")
+            .select()
+            .match(query: ["user_id": userID])
+        Task {
+            userTraceHistory = try await query.execute().value
+        }
+//        do {
+//            userTraceHistory = try await query.execute().value
+//        } catch {
+//            self.error = error
+//            print(error)
+//        }
+    }
+    
+    func clearUserTraceHistory() {
+        userTraceHistory = []
     }
     
     
@@ -74,7 +99,7 @@ class SupabaseManager: ObservableObject {
     func toggleFilter(category: String) {
         filters.contains(category) ? removeFilter(category: category) :
             addFilter(category: category)
-
+        
         filterTraces()
     }
     

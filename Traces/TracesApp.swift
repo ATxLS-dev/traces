@@ -8,12 +8,15 @@
 import SwiftUI
 import PopupView
 import Supabase
+import GoTrue
 
 @main
 struct TracesApp: App {
     
+    @State var authEvent: AuthChangeEvent?
     @State var supabaseInitialized = false
     @StateObject var auth = AuthController()
+    @ObservedObject var authManager = AuthManager.shared
 
     var body: some Scene {
         WindowGroup {
@@ -23,17 +26,29 @@ struct TracesApp: App {
     
     @ViewBuilder
     var main: some View {
-        if supabaseInitialized {
+        if authManager.authChangeEvent == .signedIn {
             ContentView()
                 .implementPopupView()
                 .environmentObject(auth)
         } else {
-            ProgressView()
-                .task {
-                    await supabase.auth.initialize()
-                    supabaseInitialized = true
-                }
+            SettingsView()
+//            ProgressView()
+//                .task {
+//                    await supabase.auth.initialize()
+//                    supabaseInitialized = true
+//                }
         }
+//        if supabaseInitialized {
+//            ContentView()
+//                .implementPopupView()
+//                .environmentObject(auth)
+//        } else {
+//            ProgressView()
+//                .task {
+//                    await supabase.auth.initialize()
+//                    supabaseInitialized = true
+//                }
+//        }
     }
 }
 

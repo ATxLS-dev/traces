@@ -16,32 +16,33 @@ struct ContentView: View {
     @State private var selectedTab: Tab = Tab.home
 
     @State var authEvent: AuthChangeEvent?
-    @EnvironmentObject var auth: AuthController
+
     
     var body: some View {
         Group {
-            if authEvent == .signedOut {
-                buildAuthPopup()
-            } else {
+//            if authEvent == .signedOut {
+//                buildAuthPopup()
+
+//            } else {
                 buildNavigation()
-            }
+//            }
         }
-//        .task {
+        .task {
 //            for await event in supabase.auth.authEventChange {
 //                withAnimation {
 //                    authEvent = event
 //                }
 //                auth.session = try? await supabase.auth.session
 //            }
-//        }
+        }
     }
 }
 
-extension ContentView {
-    func buildAuthPopup() -> some View {
-        AuthPopup()
-    }
-}
+//extension ContentView {
+//    func buildAuthPopup() -> some View {
+//        AuthView()
+//    }
+//}
 
 extension ContentView {
 

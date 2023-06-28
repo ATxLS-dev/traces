@@ -10,8 +10,6 @@ import SwiftUI
 
 let warmGray: Color = Color(hex: 0x494947)
 
-
-//let sweetGreen: Color = Color(hex: 0x4E7E63)
 let skyBlue: Color = Color(hex: 0xADD6EB)
 let raisinBlack: Color = Color(hex: 0x2D242C)
 let flame: Color = Color(hex: 0xCF5C36)
@@ -124,8 +122,36 @@ struct LightTheme: ColorTheme {
 
 struct DarkTheme: ColorTheme {
     var background: Color = licorice
-    var accent: Color = ash
+    var accent: Color = veridian
     var text: Color = snow
     var button: Color = veridian
     var mapStyle: String = "mapbox://styles/atxls/clj4rozom000401pw7na12c30"
+}
+
+
+
+struct ClearBackgroundView: UIViewRepresentable {
+    func makeUIView(context: Context) -> some UIView {
+        let view = UIView()
+        DispatchQueue.main.async {
+            view.superview?.superview?.backgroundColor = .clear
+        }
+        return view
+    }
+    func updateUIView(_ uiView: UIViewType, context: Context) {
+    }
+}
+
+struct ClearBackgroundViewModifier: ViewModifier {
+    
+    func body(content: Content) -> some View {
+        content
+            .background(ClearBackgroundView())
+    }
+}
+
+extension View {
+    func clearModalBackground()->some View {
+        self.modifier(ClearBackgroundViewModifier())
+    }
 }

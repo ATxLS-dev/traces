@@ -12,6 +12,7 @@ import PopupView
 
 
 struct TraceDetailView: CentrePopup {
+    
     func configurePopup(popup: CentrePopupConfig) -> CentrePopupConfig {
         popup.horizontalPadding(10);
     }
@@ -22,39 +23,68 @@ struct TraceDetailView: CentrePopup {
     @State private var content: String = ""
     @State var region = CLLocationCoordinate2D(latitude: 37.334722, longitude: -122.008889)
     @ObservedObject var themeManager = ThemeManager.shared
-
     
     @Environment(\.dismiss) var dismiss
     @Environment(\.managedObjectContext) private var viewContext
     
+    init(trace: Trace? = nil) {
+        if let trace = trace {
+            self.region = CLLocationCoordinate2D(latitude: trace.latitude, longitude: trace.longitude)
+        }
+    }
+    
     func createContent() -> some View {
         VStack {
-            createMap()
-            createPrompt()
-            createEditButton()
+            HStack {
+                createMap()
+                Spacer()
+                createPrompt()
+            }
+            .frame(height: 180)
+            Spacer()
+            createDescription()
+            Spacer()
             createSubmitButton()
         }
-        .padding(10)
-        .frame(height: 600)
-        .background(snow)
+        .padding(16)
+        .frame(height: 480)
+        .background(themeManager.theme.background)
     }
 }
 
 extension TraceDetailView {
     func createMap() -> some View {
         MapBox(center: region)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .frame(width: 160, height: 160)
+            .cornerRadius(24)
+            .padding(4)
+            .background(
+                RoundedRectangle(cornerRadius: 24)
+                    .stroke(themeManager.theme.text)
+            )
+  
     }
     func createPrompt() -> some View {
-        Text(trace?.locationName ?? "Location Name")
-            .font(.title)
+
+        VStack {
+            HStack {
+                Spacer()
+                Text(Date().formatted())
+                    .font(.caption)
+            }
+            Spacer()
+            Text(trace?.locationName ?? "Location Name")
+                .font(.title)
+            Spacer()
+        }
+        .foregroundColor(themeManager.theme.text)
+
     }
-    func createField() -> some View {
-        TextField("User", text: $username)
-            .textFieldStyle(.roundedBorder)
-    }
-    func createEditButton() -> some View {
+    
+    func createDescription() -> some View {
         Text(trace?.content ?? "Description")
+            .foregroundColor(themeManager.theme.text)
+
     }
     
     func createSubmitButton() -> some View {
@@ -63,15 +93,15 @@ extension TraceDetailView {
                 let width: CGFloat = 48
                 Image(systemName: "ellipsis")
                     .frame(width: width * 3, height: width)
-                    .foregroundColor(snow)
-                    .background(.gray)
-                    .clipShape(RoundedRectangle(cornerRadius: 18))
-                    .font(.system(size: width / 2))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(snow, lineWidth: 1)
+                    .foregroundColor(themeManager.theme.text)
+                    .background(
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(themeManager.theme.accent)
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(themeManager.theme.text, lineWidth: 2)
+                        }
                     )
-                    .shadow(color: .gray, radius: 4, x: 2, y: 2)
             }
             Spacer()
             Button(action: {
@@ -80,13 +110,14 @@ extension TraceDetailView {
                 let width: CGFloat = 48
                 Image(systemName: "checkmark")
                     .frame(width: width * 3, height: width)
-                    .foregroundColor(snow)
-                    .background(themeManager.theme.text)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .font(.system(size: width / 2))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(themeManager.theme.background, lineWidth: 1)
+                    .foregroundColor(themeManager.theme.text)
+                    .background(
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(themeManager.theme.button)
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(themeManager.theme.text, lineWidth: 2)
+                        }
                     )
             }
         }

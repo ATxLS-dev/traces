@@ -36,6 +36,9 @@
 		028FF0C92A184F090058EB57 /* TracesUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028FF0C82A184F090058EB57 /* TracesUITestsLaunchTests.swift */; };
 		02952D722A1E85C900793283 /* PopupView in Frameworks */ = {isa = PBXBuildFile; productRef = 02952D712A1E85C900793283 /* PopupView */; };
 		02952D742A1E88D100793283 /* NewTracePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02952D732A1E88D100793283 /* NewTracePopup.swift */; };
+		02956F292A4B50BE00E8537C /* MapboxStatic in Frameworks */ = {isa = PBXBuildFile; productRef = 02956F282A4B50BE00E8537C /* MapboxStatic */; };
+		02956F2B2A4B56AB00E8537C /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02956F2A2A4B56AB00E8537C /* AuthView.swift */; };
+		02956F2F2A4B57FF00E8537C /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02956F2E2A4B57FF00E8537C /* AuthManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +89,8 @@
 		028FF0C62A184F090058EB57 /* TracesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracesUITests.swift; sourceTree = "<group>"; };
 		028FF0C82A184F090058EB57 /* TracesUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracesUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		02952D732A1E88D100793283 /* NewTracePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTracePopup.swift; sourceTree = "<group>"; };
+		02956F2A2A4B56AB00E8537C /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
+		02956F2E2A4B57FF00E8537C /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +101,7 @@
 				028250A82A38FE8300B281DA /* MapboxMaps in Frameworks */,
 				0243FC622A324007007D097D /* Supabase in Frameworks */,
 				02952D722A1E85C900793283 /* PopupView in Frameworks */,
+				02956F292A4B50BE00E8537C /* MapboxStatic in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,6 +152,9 @@
 				0243FC732A328E9B007D097D /* ProfileView.swift */,
 				028634FF2A18533700BCDF35 /* SettingsView.swift */,
 				0243FC6F2A327712007D097D /* AuthPopup.swift */,
+				02956F2A2A4B56AB00E8537C /* AuthView.swift */,
+				02956F2E2A4B57FF00E8537C /* AuthManager.swift */,
+				0243FC692A327581007D097D /* AuthController.swift */,
 				026BB76F2A3BA144000B765E /* CategoryTag.swift */,
 				0287BE112A350484006B9CCD /* CircularProgressView.swift */,
 				028BA33D2A377C44000BD0C0 /* CustomTabBarView.swift */,
@@ -156,7 +165,6 @@
 				028250A92A39017B00B281DA /* MapBox.swift */,
 				0243FC632A324180007D097D /* SupabaseManager.swift */,
 				02376E0C2A3E0B7200257B5D /* LocationManager.swift */,
-				0243FC692A327581007D097D /* AuthController.swift */,
 				02376E0F2A3F70C700257B5D /* ThemeManager.swift */,
 				0219261E2A2FD90100B1B314 /* Trace.swift */,
 				028FF0AC2A184F090058EB57 /* Preview Content */,
@@ -212,6 +220,7 @@
 				02952D712A1E85C900793283 /* PopupView */,
 				0243FC612A324007007D097D /* Supabase */,
 				028250A72A38FE8300B281DA /* MapboxMaps */,
+				02956F282A4B50BE00E8537C /* MapboxStatic */,
 			);
 			productName = Traces;
 			productReference = 028FF0A32A184F080058EB57 /* Traces.app */;
@@ -289,6 +298,7 @@
 				02952D702A1E85C900793283 /* XCRemoteSwiftPackageReference "PopupView" */,
 				0243FC602A324007007D097D /* XCRemoteSwiftPackageReference "supabase-swift" */,
 				028250A62A38FE8300B281DA /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */,
+				02956F272A4B50BE00E8537C /* XCRemoteSwiftPackageReference "MapboxStatic.swift" */,
 			);
 			productRefGroup = 028FF0A42A184F080058EB57 /* Products */;
 			projectDirPath = "";
@@ -333,6 +343,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				028635002A18533700BCDF35 /* SettingsView.swift in Sources */,
+				02956F2F2A4B57FF00E8537C /* AuthManager.swift in Sources */,
 				0243FC642A324180007D097D /* SupabaseManager.swift in Sources */,
 				0243FC682A327463007D097D /* _Secrets.swift in Sources */,
 				0219261D2A2FD7BC00B1B314 /* TraceDetailView.swift in Sources */,
@@ -352,6 +363,7 @@
 				02376E102A3F70C700257B5D /* ThemeManager.swift in Sources */,
 				028FF0A92A184F080058EB57 /* ContentView.swift in Sources */,
 				02952D742A1E88D100793283 /* NewTracePopup.swift in Sources */,
+				02956F2B2A4B56AB00E8537C /* AuthView.swift in Sources */,
 				028FF0A72A184F080058EB57 /* TracesApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -705,6 +717,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		02956F272A4B50BE00E8537C /* XCRemoteSwiftPackageReference "MapboxStatic.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mapbox/MapboxStatic.swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.4.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -722,6 +742,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 02952D702A1E85C900793283 /* XCRemoteSwiftPackageReference "PopupView" */;
 			productName = PopupView;
+		};
+		02956F282A4B50BE00E8537C /* MapboxStatic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 02956F272A4B50BE00E8537C /* XCRemoteSwiftPackageReference "MapboxStatic.swift" */;
+			productName = MapboxStatic;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

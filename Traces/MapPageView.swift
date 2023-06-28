@@ -14,7 +14,7 @@ struct MapPageView: View {
 
     var body: some View {
         MapBox(center: center, interactable: true)
-            .offset(y: -6.5)
+            .offset(y: -12.5)
     }
 }
 

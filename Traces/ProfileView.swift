@@ -4,42 +4,42 @@
 //
 //  Created by Bryce on 6/8/23.
 //
+//
 
 import SwiftUI
 import PopupView
 import GoTrue
+import Combine
 
 struct ProfileView: View {
     
-    @State var authEvent: AuthChangeEvent?
-    @EnvironmentObject var authController: AuthController
     @State var error: Error?
     @ObservedObject var supabaseManager = SupabaseManager.shared
     @ObservedObject var themeManager = ThemeManager.shared
+    @ObservedObject var authManager = AuthManager.shared
+    @State var shouldPresentSheet: Bool = false
     
     var body: some View {
-        Group {
-            if authEvent == .signedOut {
-                buildSignInButton()
-            } else {
-                buildProfilePage()
-            }
+        if (authManager.authChangeEvent == .signedOut) {
+            buildSignInButton()
+        } else {
+            buildProfilePage()
         }
-        .background(themeManager.theme.background)
-
     }
-}
 
-extension ProfileView {
+    @ViewBuilder
     func buildSignInButton() -> some View {
-        Button(action: AuthPopup().showAndStack) {
-            Text("Sign in?")
+        VStack {
+            Label("Log in / Sign up", systemImage: "hand.wave")
+                .onTapGesture { shouldPresentSheet.toggle() }
+                .padding()
+                .sheet(isPresented: $shouldPresentSheet) {
+                    AuthView(isPresented: $shouldPresentSheet)
+                }
         }
-        .padding()
     }
-}
-
-extension ProfileView {
+    
+    @ViewBuilder
     func buildProfilePage() -> some View {
         ScrollView {
             HStack {
@@ -49,9 +49,9 @@ extension ProfileView {
                     .foregroundColor(themeManager.theme.background)
                     .scaleEffect(2)
                 Spacer()
-                Text("Charlie Bean")
+                Text(authManager.session?.user.email ?? "---")
                     .foregroundColor(themeManager.theme.text)
-                    .font(.title)
+                    .font(.body)
             }
             .padding(64)
             Spacer()
@@ -59,22 +59,24 @@ extension ProfileView {
         }
     }
     
+    @ViewBuilder
     func buildProfileTraces() -> some View {
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: 10) {
-                    ForEach(
-                        supabaseManager.filteredTraces.isEmpty ?
-                        supabaseManager.traces : supabaseManager.filteredTraces
-                    ) { trace in
-                        HStack {
-                            Button(action: TraceDetailView(trace: trace).showAndStack) {
-                                TraceTile(trace: trace)
-                            }
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(spacing: 10) {
+                ForEach(supabaseManager.userTraceHistory) { trace in
+                    HStack {
+                        Button(action: TraceDetailView(trace: trace).showAndStack) {
+                            TraceTile(trace: trace)
                         }
-                        .padding(.horizontal)
                     }
-                    Spacer(minLength: 72)
+                    .padding(.horizontal)
                 }
+                Spacer(minLength: 72)
+            }
+            .task {
+                let userID = authManager.session?.user.id ?? UUID()
+                await supabaseManager.loadTracesFromUser(userID)
+            }
         }
     }
 }
@@ -84,3 +86,103 @@ struct ProfileView_Previews: PreviewProvider {
         ProfileView()
     }
 }
+
+
+
+//struct ProfileView: View {
+//
+//    @State var error: Error?
+//    @ObservedObject var supabaseManager = SupabaseManager.shared
+//    @ObservedObject var themeManager = ThemeManager.shared
+//    @ObservedObject var authManager = AuthManager.shared
+//    @State var shouldPresentSheet: Bool = false
+//    @State private var reloadView = false
+//
+//    init() {
+//        // Add observation of authChangeEvent
+//        authManager.$authChangeEvent
+//            .sink { _ in }
+//            .store(in: &cancellables)
+//    }
+//
+//    @State private var cancellables: Set<AnyCancellable> = []
+//
+//    var body: some View {
+//        Group {
+//            if (authManager.authChangeEvent == .signedOut) {
+//                buildSignInButton()
+//            } else {
+//                buildProfilePage()
+//            }
+//        }
+//        .id(reloadView) // Use the reload flag as an identifier for the view
+//    }
+//
+//    func reload() {
+//        reloadView.toggle() // Toggle the reload flag to force a view reload
+//    }
+//}
+//
+//extension ProfileView {
+//    func buildSignInButton() -> some View {
+//        Label("Log in / Sign up", systemImage: "hand.wave")
+//            .onTapGesture {
+//                shouldPresentSheet.toggle()
+//            }
+//            .padding()
+//            .sheet(isPresented: $shouldPresentSheet) {
+//                AuthView(isPresented: $shouldPresentSheet)
+//                //                            .frame(width: 300, height: 400)
+//                //                            .clearModalBackground()
+//            }
+//    }
+//}
+//
+//extension ProfileView {
+//    func buildProfilePage() -> some View {
+//        ScrollView {
+//            HStack {
+//                Image(systemName: "person.fill")
+//                    .padding(10)
+//                    .background(Circle().fill(themeManager.theme.text))
+//                    .foregroundColor(themeManager.theme.background)
+//                    .scaleEffect(2)
+//                Spacer()
+//                Text(authManager.session?.user.email ?? "---")
+//                    .foregroundColor(themeManager.theme.text)
+//                    .font(.body)
+//            }
+//            .padding(64)
+//            Spacer()
+//            buildProfileTraces()
+//        }
+//    }
+//
+//    func buildProfileTraces() -> some View {
+//            ScrollView(.vertical, showsIndicators: false) {
+//                VStack(spacing: 10) {
+//                    ForEach(
+//                        supabaseManager.userTraceHistory
+//                    ) { trace in
+//                        HStack {
+//                            Button(action: TraceDetailView(trace: trace).showAndStack) {
+//                                TraceTile(trace: trace)
+//                            }
+//                        }
+//                        .padding(.horizontal)
+//                    }
+//                    Spacer(minLength: 72)
+//                }
+//                .task {
+//                    let userID = authManager.session?.user.id ?? UUID()
+//                    await supabaseManager.loadTracesFromUser(userID)
+//                }
+//        }
+//    }
+//}
+//
+//struct ProfileView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ProfileView()
+//    }
+//}

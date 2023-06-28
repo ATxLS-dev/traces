@@ -18,6 +18,7 @@ protocol InteractiveTrace: Codable, Identifiable, Equatable {
     var latitude: Double { get }
     var longitude: Double { get }
     var content: String { get }
+    var user_id: UUID { get }
     func buildPopup()
 }
 
@@ -36,10 +37,11 @@ struct Trace: Codable, Identifiable, Equatable {
     var longitude: Double
     var content: String
     var category: String
+    var user_id: UUID
     func buildPopup() {}
     
     enum CodingKeys: String, CodingKey {
-        case id = "id"
+        case id = "post_id"
         case creationDate = "creation_date"
         case username = "username"
         case locationName = "location_name"
@@ -47,6 +49,7 @@ struct Trace: Codable, Identifiable, Equatable {
         case longitude = "longitude"
         case content = "content"
         case category = "category"
+        case user_id = "user_id"
         
         var stringValue: String {
             return rawValue
