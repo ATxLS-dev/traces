@@ -20,10 +20,25 @@ struct ProfileView: View {
     @State var shouldPresentSheet: Bool = false
     
     var body: some View {
-        if (authManager.authChangeEvent == .signedOut) {
+        if authManager.authChangeEvent == .signedOut {
             buildSignInButton()
         } else {
             buildProfilePage()
+                .onAppear {
+                    loadUserProfile()
+                }
+                .onChange(of: authManager.authChangeEvent) { _ in
+                    loadUserProfile()
+                }
+        }
+    }
+    
+    func loadUserProfile() {
+        guard let userID = authManager.userID else {
+            return
+        }
+        Task {
+            await supabaseManager.loadTracesFromUser(userID)
         }
     }
 

@@ -15,7 +15,6 @@ struct TracesApp: App {
     
     @State var authEvent: AuthChangeEvent?
     @State var supabaseInitialized = false
-    @StateObject var auth = AuthController()
     @ObservedObject var authManager = AuthManager.shared
 
     var body: some Scene {
@@ -29,7 +28,6 @@ struct TracesApp: App {
         if authManager.authChangeEvent == .signedIn {
             ContentView()
                 .implementPopupView()
-                .environmentObject(auth)
         } else {
             SettingsView()
 //            ProgressView()

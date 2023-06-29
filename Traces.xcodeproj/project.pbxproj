@@ -15,8 +15,6 @@
 		0243FC622A324007007D097D /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 0243FC612A324007007D097D /* Supabase */; };
 		0243FC642A324180007D097D /* SupabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0243FC632A324180007D097D /* SupabaseManager.swift */; };
 		0243FC682A327463007D097D /* _Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0243FC672A327463007D097D /* _Secrets.swift */; };
-		0243FC6A2A327581007D097D /* AuthController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0243FC692A327581007D097D /* AuthController.swift */; };
-		0243FC702A327712007D097D /* AuthPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0243FC6F2A327712007D097D /* AuthPopup.swift */; };
 		0243FC742A328E9B007D097D /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0243FC732A328E9B007D097D /* ProfileView.swift */; };
 		026BB7702A3BA144000B765E /* CategoryTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026BB76F2A3BA144000B765E /* CategoryTag.swift */; };
 		028250A82A38FE8300B281DA /* MapboxMaps in Frameworks */ = {isa = PBXBuildFile; productRef = 028250A72A38FE8300B281DA /* MapboxMaps */; };
@@ -66,8 +64,6 @@
 		02376E0F2A3F70C700257B5D /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		0243FC632A324180007D097D /* SupabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseManager.swift; sourceTree = "<group>"; };
 		0243FC672A327463007D097D /* _Secrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _Secrets.swift; sourceTree = "<group>"; };
-		0243FC692A327581007D097D /* AuthController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthController.swift; sourceTree = "<group>"; };
-		0243FC6F2A327712007D097D /* AuthPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthPopup.swift; sourceTree = "<group>"; };
 		0243FC732A328E9B007D097D /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		026BB76F2A3BA144000B765E /* CategoryTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTag.swift; sourceTree = "<group>"; };
 		028250A92A39017B00B281DA /* MapBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapBox.swift; sourceTree = "<group>"; };
@@ -151,10 +147,7 @@
 				028635072A18544800BCDF35 /* MapPageView.swift */,
 				0243FC732A328E9B007D097D /* ProfileView.swift */,
 				028634FF2A18533700BCDF35 /* SettingsView.swift */,
-				0243FC6F2A327712007D097D /* AuthPopup.swift */,
 				02956F2A2A4B56AB00E8537C /* AuthView.swift */,
-				02956F2E2A4B57FF00E8537C /* AuthManager.swift */,
-				0243FC692A327581007D097D /* AuthController.swift */,
 				026BB76F2A3BA144000B765E /* CategoryTag.swift */,
 				0287BE112A350484006B9CCD /* CircularProgressView.swift */,
 				028BA33D2A377C44000BD0C0 /* CustomTabBarView.swift */,
@@ -163,6 +156,7 @@
 				0219261C2A2FD7BC00B1B314 /* TraceDetailView.swift */,
 				021D2C1F2A23F4CF001BCA8D /* TraceTile.swift */,
 				028250A92A39017B00B281DA /* MapBox.swift */,
+				02956F2E2A4B57FF00E8537C /* AuthManager.swift */,
 				0243FC632A324180007D097D /* SupabaseManager.swift */,
 				02376E0C2A3E0B7200257B5D /* LocationManager.swift */,
 				02376E0F2A3F70C700257B5D /* ThemeManager.swift */,
@@ -347,7 +341,6 @@
 				0243FC642A324180007D097D /* SupabaseManager.swift in Sources */,
 				0243FC682A327463007D097D /* _Secrets.swift in Sources */,
 				0219261D2A2FD7BC00B1B314 /* TraceDetailView.swift in Sources */,
-				0243FC702A327712007D097D /* AuthPopup.swift in Sources */,
 				0219261F2A2FD90100B1B314 /* Trace.swift in Sources */,
 				021D2C202A23F4CF001BCA8D /* TraceTile.swift in Sources */,
 				028BA3402A3791FF000BD0C0 /* FilterDropdown.swift in Sources */,
@@ -358,7 +351,6 @@
 				028250AA2A39017B00B281DA /* MapBox.swift in Sources */,
 				028BA33E2A377C44000BD0C0 /* CustomTabBarView.swift in Sources */,
 				026BB7702A3BA144000B765E /* CategoryTag.swift in Sources */,
-				0243FC6A2A327581007D097D /* AuthController.swift in Sources */,
 				0243FC742A328E9B007D097D /* ProfileView.swift in Sources */,
 				02376E102A3F70C700257B5D /* ThemeManager.swift in Sources */,
 				028FF0A92A184F080058EB57 /* ContentView.swift in Sources */,

@@ -24,6 +24,7 @@ class AuthManager: ObservableObject {
     @Published var authChangeEvent: AuthChangeEvent?
     @Published var isSignedIn: Bool = false
     @Published var userID: UUID?
+    @Published var user: User?
     
     let supabase: SupabaseClient = SupabaseClient(
         supabaseURL: Secrets.supabaseURL,
@@ -35,6 +36,8 @@ class AuthManager: ObservableObject {
             do {
                 self.session = try await supabase.auth.session
                 self.authChangeEvent = .signedOut
+                self.user = self.session?.user
+                print(self.user?.email)
             } catch {
                 print(error)
             }
@@ -49,12 +52,12 @@ class AuthManager: ObservableObject {
         }
     }
     
-    func login(email: String, password: String) async {
+    func login(email: String, password: String) async throws {
         do {
             try await supabase.auth.signIn(email: email, password: password)
             await handleLoginSuccess()
         } catch {
-            print(error)
+            throw CreateUserError.signUpFailed(error.localizedDescription)
         }
     }
     
@@ -76,7 +79,6 @@ class AuthManager: ObservableObject {
     private func handleLogoutSuccess() async {
         self.authChangeEvent = .signedOut
         self.isSignedIn = false
-        
         self.userID = nil
     }
 }

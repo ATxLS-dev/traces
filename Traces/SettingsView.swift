@@ -12,7 +12,6 @@ import GoTrue
 struct SettingsView: View {
     
     @State var authEvent: AuthChangeEvent?
-    @EnvironmentObject var authController: AuthController
     @ObservedObject var themeManager = ThemeManager.shared
     @ObservedObject var authManager = AuthManager.shared
     @ObservedObject var supabaseManager = SupabaseManager.shared
