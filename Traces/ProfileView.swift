@@ -14,30 +14,36 @@ import Combine
 struct ProfileView: View {
     
     @State var error: Error?
-    @ObservedObject var supabaseManager = SupabaseManager.shared
+    @ObservedObject var supabase = SupabaseManager.shared
     @ObservedObject var themeManager = ThemeManager.shared
     @State var shouldPresentSheet: Bool = false
     
     var body: some View {
-        if supabaseManager.authChangeEvent == .signedOut {
-            buildSignInButton()
-        } else {
-            buildProfilePage()
-                .onAppear {
-                    loadUserProfile()
-                }
-                .onChange(of: supabaseManager.authChangeEvent) { _ in
-                    loadUserProfile()
-                }
+        ZStack {
+            Spacer()
+                .background(themeManager.theme.background)
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                .edgesIgnoringSafeArea(.all)
+            if supabase.authChangeEvent == .signedOut {
+                buildSignInButton()
+            } else {
+                buildProfilePage()
+                    .onAppear {
+                        loadUserProfile()
+                    }
+                    .onChange(of: supabase.authChangeEvent) { _ in
+                        loadUserProfile()
+                    }
+            }
         }
     }
     
     func loadUserProfile() {
-        guard let userID = supabaseManager.userID else {
+        guard supabase.user != nil else {
             return
         }
         Task {
-            await supabaseManager.loadTracesFromUser(userID)
+            await supabase.loadTracesFromUser()
         }
     }
 
@@ -63,7 +69,7 @@ struct ProfileView: View {
                     .foregroundColor(themeManager.theme.background)
                     .scaleEffect(2)
                 Spacer()
-                Text(supabaseManager.session?.user.email ?? "---")
+                Text(supabase.session?.user.email ?? "---")
                     .foregroundColor(themeManager.theme.text)
                     .font(.body)
             }
@@ -77,7 +83,7 @@ struct ProfileView: View {
     func buildProfileTraces() -> some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 10) {
-                ForEach(supabaseManager.userTraceHistory) { trace in
+                ForEach(supabase.userTraceHistory) { trace in
                     HStack {
                         Button(action: TraceDetailView(trace: trace).showAndStack) {
                             TraceTile(trace: trace)
@@ -86,10 +92,6 @@ struct ProfileView: View {
                     .padding(.horizontal)
                 }
                 Spacer(minLength: 72)
-            }
-            .task {
-                let userID = supabaseManager.session?.user.id ?? UUID()
-                await supabaseManager.loadTracesFromUser(userID)
             }
         }
     }

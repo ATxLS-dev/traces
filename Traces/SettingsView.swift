@@ -13,8 +13,9 @@ struct SettingsView: View {
     
     @State var authEvent: AuthChangeEvent?
     @ObservedObject var themeManager = ThemeManager.shared
-    @ObservedObject var supabaseManager = SupabaseManager.shared
-    @State var shouldPresentSheet: Bool = false
+    @ObservedObject var supabase = SupabaseManager.shared
+    @State var shouldPresentAuthSheet: Bool = false
+    @State var shouldPresentAccountSheet: Bool = false
     
     var body: some View {
         ZStack {
@@ -24,6 +25,16 @@ struct SettingsView: View {
                 .edgesIgnoringSafeArea(.all)
             VStack {
                 buildListItem(item: buildLabel(title: "Manage Account", systemImage: "person"))
+                    .onTapGesture {
+                        Task {
+                            if supabase.authChangeEvent == .signedIn {
+                                shouldPresentAccountSheet.toggle()
+                            }
+                        }
+                    }
+                    .sheet(isPresented: $shouldPresentAccountSheet) {
+                        AccountView(isPresented: $shouldPresentAccountSheet)
+                    }
                 buildListItem(item: buildLabel(title: "FAQ", systemImage: "questionmark"))
                 buildListItem(item: buildLabel(title: "Notifications", systemImage: "bell"))
                 buildListItem(item: themeManager.isDarkMode ?
@@ -32,23 +43,25 @@ struct SettingsView: View {
                     .onTapGesture {
                         themeManager.toggleTheme()
                     }
-                buildListItem(item: buildLabel(title: supabaseManager.authChangeEvent == .signedIn ? "Log Out" : "Log in / Sign up", systemImage: "hand.wave"))
+                buildListItem(item: buildLabel(title: supabase.authChangeEvent == .signedIn ? "Log Out" : "Log in / Sign up", systemImage: "hand.wave"))
                     .onTapGesture {
                         Task {
-                            if supabaseManager.authChangeEvent == .signedIn {
-                                await supabaseManager.logout()
+                            if supabase.authChangeEvent == .signedIn {
+                                await supabase.logout()
                             } else {
-                                shouldPresentSheet.toggle()
+                                shouldPresentAuthSheet.toggle()
                             }
                         }
                     }
-                    .sheet(isPresented: $shouldPresentSheet) {
-                        AuthView(isPresented: $shouldPresentSheet)
+                    .sheet(isPresented: $shouldPresentAuthSheet) {
+                        AuthView(isPresented: $shouldPresentAuthSheet)
 //                            .frame(width: 300, height: 400)
 //                            .clearModalBackground()
                     }
+                Spacer()
                 
             }
+            .padding(.top, 69)
         }
         .foregroundColor(themeManager.theme.text)
     }

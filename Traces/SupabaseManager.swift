@@ -24,53 +24,37 @@ class SupabaseManager: ObservableObject {
     let supabase: SupabaseClient = SupabaseClient(supabaseURL: Secrets.supabaseURL, supabaseKey: Secrets.supabaseAnonKey)
     
     private var error: Error?
-    
-    private var isLoaded: Bool = false
+    private(set) var session: Session?
     
     @Published private(set) var traces: [Trace] = []
     @Published private(set) var categories: [String] = []
     @Published private(set) var filters: Set<String> = []
     @Published private(set) var filteredTraces: [Trace] = []
     @Published private(set) var userTraceHistory: [Trace] = []
-    @Published var session: Session?
     @Published var authChangeEvent: AuthChangeEvent?
-//    @Published var isSignedIn: Bool = false
-    @Published var userID: UUID?
     @Published var user: User?
 
-    
-//    private var cancellables = Set<AnyCancellable>()
-    
     init() {
         checkLogin()
-
     }
-    
+
     private func checkLogin() {
+        self.authChangeEvent = (user != nil) ? .signedIn : .signedOut
         Task {
             do {
                 self.session = try await supabase.auth.session
                 self.user = self.session?.user
+                if user != nil {
+                    self.authChangeEvent = .signedIn
+                } else {
+                    self.authChangeEvent = .signedOut
+                }
             } catch {
                 print(error)
             }
         }
-//        authManager.$authChangeEvent
-//            .receive(on: DispatchQueue.main)
-//            .sink { [weak self] event in
-//                guard event == .signedIn, let userID = self?.authManager.userID else {
-//                    self?.clearUserTraceHistory()
-//                    return
-//                }
-//                Task {
-//                    await self?.loadTracesFromUser(userID)
-//                }
-//            }
-//            .store(in: &cancellables)
-        
     }
 
-    
     private func loadTraces() async {
         let query = supabase.database.from("traces").select()
         do {
@@ -87,28 +71,28 @@ class SupabaseManager: ObservableObject {
         await loadTraces()
     }
     
-    func loadTracesFromUser(_ userID: UUID) async {
-        let query = supabase.database
-            .from("traces")
-            .select()
-            .match(query: ["user_id": userID])
+    func loadTracesFromUser() async {
         
-        checkLogin()
-        
-        if self.authChangeEvent == .signedIn {
+        if let userID = self.user?.id {
+            let query = supabase.database
+                .from("traces")
+                .select()
+                .match(query: ["user_id": userID])
+            
+            checkLogin()
+            
             do {
                 userTraceHistory = try await query.execute().value
             } catch {
                 self.error = error
                 print(error)
             }
-        } else {
-            print("not signed in")
         }
     }
     
     func clearUserTraceHistory() {
         userTraceHistory = []
+        checkLogin()
     }
     
     func addTrace(trace: Trace) async {
@@ -143,8 +127,10 @@ class SupabaseManager: ObservableObject {
     func login(email: String, password: String) async throws {
         do {
             try await supabase.auth.signIn(email: email, password: password)
+            self.session = try await supabase.auth.session
+            self.user = session?.user
             self.authChangeEvent = .signedIn
-            self.userID = session?.user.id
+            await loadTracesFromUser()
         } catch {
             throw CreateUserError.signUpFailed(error.localizedDescription)
         }
@@ -154,7 +140,8 @@ class SupabaseManager: ObservableObject {
         do {
             try await supabase.auth.signOut()
             self.authChangeEvent = .signedOut
-            self.userID = nil
+            self.user = nil
+            clearUserTraceHistory()
         } catch {
             print(error)
         }

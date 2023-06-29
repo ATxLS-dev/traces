@@ -9,15 +9,15 @@ import SwiftUI
 
 struct AuthView: View {
 
-    @State var email = ""
-    @State var password = ""
-    @State var mode: Mode?
+    @State var email: String = ""
+    @State var password: String = ""
+    @State var mode: Mode = .signIn
     @State var error: Error?
     @State var errorMessage: String?
     @State var loginInProgress: Bool = false
     @Binding var isPresented: Bool
     @ObservedObject var themeManager = ThemeManager.shared
-    @ObservedObject var auth = SupabaseManager.shared
+    @ObservedObject var supabase = SupabaseManager.shared
 
     enum Mode {
         case signIn, signUp
@@ -38,6 +38,7 @@ extension AuthView {
                 .foregroundColor(themeManager.theme.text)
                 .padding(.bottom)
             TextField("Email", text: $email)
+                .foregroundColor(themeManager.theme.text)
                 .keyboardType(.emailAddress)
                 .textContentType(.emailAddress)
                 .autocorrectionDisabled()
@@ -47,6 +48,7 @@ extension AuthView {
                     RoundedRectangle(cornerRadius: 24)
                         .stroke(themeManager.theme.text, lineWidth: 2))
             SecureField("Password", text: $password)
+                .foregroundColor(themeManager.theme.text)
                 .textContentType(.password)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
@@ -56,6 +58,7 @@ extension AuthView {
                         .stroke(themeManager.theme.text, lineWidth: 2))
             if mode == .signUp {
                 SecureField("Confirm Password", text: $password)
+                    .foregroundColor(themeManager.theme.text)
                     .textContentType(.password)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
@@ -90,8 +93,8 @@ extension AuthView {
                 if mode == .signUp {
                     Task {
                         do {
-                            try await auth.createNewUser(email: email, password: password)
-                            try await auth.login(email: email, password: password)
+                            try await supabase.createNewUser(email: email, password: password)
+                            try await supabase.login(email: email, password: password)
                             self.isPresented = false
                         } catch CreateUserError.signUpFailed(let errorMessage) {
                             self.errorMessage = errorMessage
@@ -103,15 +106,18 @@ extension AuthView {
                 }
                 if mode == .signIn {
                     Task {
-                        try await auth.login(email: email, password: password)
-                        self.isPresented = false
+                        do {
+                            try await supabase.login(email: email, password: password)
+                            self.isPresented = false
+                        } catch {
+                            self.errorMessage = "S"
+                        }
                     }
                 }
             }) {
                 Text(mode == .signIn ? "Sign In".uppercased() : "Sign Up".uppercased())
                     .fontWeight(.bold)
                     .padding(16)
-                
             }
             Spacer()
         }
@@ -144,9 +150,4 @@ extension AuthView {
 
 
 }
-//
-//struct AuthView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        AuthView()
-//    }
-//}
+
