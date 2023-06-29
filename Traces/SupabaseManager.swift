@@ -13,6 +13,10 @@ import MapboxStatic
 import Combine
 import GoTrue
 
+enum CreateUserError: Error {
+    case signUpFailed(String)
+}
+
 @MainActor
 class SupabaseManager: ObservableObject {
     static let shared = SupabaseManager()
@@ -30,18 +34,27 @@ class SupabaseManager: ObservableObject {
     @Published private(set) var userTraceHistory: [Trace] = []
     @Published var session: Session?
     @Published var authChangeEvent: AuthChangeEvent?
-    @Published var isSignedIn: Bool = false
+//    @Published var isSignedIn: Bool = false
     @Published var userID: UUID?
     @Published var user: User?
 
     
-    private var cancellables = Set<AnyCancellable>()
+//    private var cancellables = Set<AnyCancellable>()
     
     init() {
         checkLogin()
+
     }
     
     private func checkLogin() {
+        Task {
+            do {
+                self.session = try await supabase.auth.session
+                self.user = self.session?.user
+            } catch {
+                print(error)
+            }
+        }
 //        authManager.$authChangeEvent
 //            .receive(on: DispatchQueue.main)
 //            .sink { [weak self] event in
@@ -54,7 +67,9 @@ class SupabaseManager: ObservableObject {
 //                }
 //            }
 //            .store(in: &cancellables)
+        
     }
+
     
     private func loadTraces() async {
         let query = supabase.database.from("traces").select()
@@ -77,11 +92,18 @@ class SupabaseManager: ObservableObject {
             .from("traces")
             .select()
             .match(query: ["user_id": userID])
-        do {
-            userTraceHistory = try await query.execute().value
-        } catch {
-            self.error = error
-            print(error)
+        
+        checkLogin()
+        
+        if self.authChangeEvent == .signedIn {
+            do {
+                userTraceHistory = try await query.execute().value
+            } catch {
+                self.error = error
+                print(error)
+            }
+        } else {
+            print("not signed in")
         }
     }
     
@@ -109,20 +131,7 @@ class SupabaseManager: ObservableObject {
         }
         filteredTraces = traces.filter { filters.contains($0.category) }
     }
-//
-//    private init() {
-//        Task {
-//            do {
-//                self.session = try await supabase.auth.session
-//                self.authChangeEvent = .signedOut
-//                self.user = self.session?.user
-//                print(self.user?.email)
-//            } catch {
-//                print(error)
-//            }
-//        }
-//    }
-//
+
     func createNewUser(email: String, password: String) async throws {
         do {
             try await supabase.auth.signUp(email: email, password: password)
@@ -134,7 +143,8 @@ class SupabaseManager: ObservableObject {
     func login(email: String, password: String) async throws {
         do {
             try await supabase.auth.signIn(email: email, password: password)
-            await handleLoginSuccess()
+            self.authChangeEvent = .signedIn
+            self.userID = session?.user.id
         } catch {
             throw CreateUserError.signUpFailed(error.localizedDescription)
         }
@@ -143,22 +153,11 @@ class SupabaseManager: ObservableObject {
     func logout() async {
         do {
             try await supabase.auth.signOut()
-            await handleLogoutSuccess()
+            self.authChangeEvent = .signedOut
+            self.userID = nil
         } catch {
             print(error)
         }
-    }
-    
-    private func handleLoginSuccess() async {
-        self.authChangeEvent = .signedIn
-        self.isSignedIn = true
-        self.userID = session?.user.id
-    }
-    
-    private func handleLogoutSuccess() async {
-        self.authChangeEvent = .signedOut
-        self.isSignedIn = false
-        self.userID = nil
     }
 }
 

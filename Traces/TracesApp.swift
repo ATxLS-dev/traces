@@ -15,7 +15,7 @@ struct TracesApp: App {
     
     @State var authEvent: AuthChangeEvent?
     @State var supabaseInitialized = false
-    @ObservedObject var authManager = AuthManager.shared
+    @ObservedObject var supabaseManager = SupabaseManager.shared
 
     var body: some Scene {
         WindowGroup {
@@ -25,7 +25,7 @@ struct TracesApp: App {
     
     @ViewBuilder
     var main: some View {
-        if authManager.authChangeEvent == .signedIn {
+        if supabaseManager.authChangeEvent == .signedIn {
             ContentView()
                 .implementPopupView()
         } else {

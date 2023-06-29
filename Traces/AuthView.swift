@@ -17,7 +17,7 @@ struct AuthView: View {
     @State var loginInProgress: Bool = false
     @Binding var isPresented: Bool
     @ObservedObject var themeManager = ThemeManager.shared
-    @ObservedObject var authManager = AuthManager.shared
+    @ObservedObject var auth = SupabaseManager.shared
 
     enum Mode {
         case signIn, signUp
@@ -90,8 +90,8 @@ extension AuthView {
                 if mode == .signUp {
                     Task {
                         do {
-                            try await authManager.createNewUser(email: email, password: password)
-                            try await authManager.login(email: email, password: password)
+                            try await auth.createNewUser(email: email, password: password)
+                            try await auth.login(email: email, password: password)
                             self.isPresented = false
                         } catch CreateUserError.signUpFailed(let errorMessage) {
                             self.errorMessage = errorMessage
@@ -103,7 +103,7 @@ extension AuthView {
                 }
                 if mode == .signIn {
                     Task {
-                        try await authManager.login(email: email, password: password)
+                        try await auth.login(email: email, password: password)
                         self.isPresented = false
                     }
                 }
@@ -132,6 +132,7 @@ extension AuthView {
             }) {
                 Text(mode == .signUp ? "Sign in instead".uppercased() : "sign up instead".uppercased())
                     .padding(16)
+                    .foregroundColor(themeManager.theme.text)
             }
             Spacer()
         }

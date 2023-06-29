@@ -13,7 +13,6 @@ struct SettingsView: View {
     
     @State var authEvent: AuthChangeEvent?
     @ObservedObject var themeManager = ThemeManager.shared
-    @ObservedObject var authManager = AuthManager.shared
     @ObservedObject var supabaseManager = SupabaseManager.shared
     @State var shouldPresentSheet: Bool = false
     
@@ -33,11 +32,11 @@ struct SettingsView: View {
                     .onTapGesture {
                         themeManager.toggleTheme()
                     }
-                buildListItem(item: buildLabel(title: authManager.authChangeEvent == .signedIn ? "Log Out" : "Log in / Sign up", systemImage: "hand.wave"))
+                buildListItem(item: buildLabel(title: supabaseManager.authChangeEvent == .signedIn ? "Log Out" : "Log in / Sign up", systemImage: "hand.wave"))
                     .onTapGesture {
                         Task {
-                            if authManager.authChangeEvent == .signedIn {
-                                await authManager.logout()
+                            if supabaseManager.authChangeEvent == .signedIn {
+                                await supabaseManager.logout()
                             } else {
                                 shouldPresentSheet.toggle()
                             }

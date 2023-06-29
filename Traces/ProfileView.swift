@@ -16,25 +16,24 @@ struct ProfileView: View {
     @State var error: Error?
     @ObservedObject var supabaseManager = SupabaseManager.shared
     @ObservedObject var themeManager = ThemeManager.shared
-    @ObservedObject var authManager = AuthManager.shared
     @State var shouldPresentSheet: Bool = false
     
     var body: some View {
-        if authManager.authChangeEvent == .signedOut {
+        if supabaseManager.authChangeEvent == .signedOut {
             buildSignInButton()
         } else {
             buildProfilePage()
                 .onAppear {
                     loadUserProfile()
                 }
-                .onChange(of: authManager.authChangeEvent) { _ in
+                .onChange(of: supabaseManager.authChangeEvent) { _ in
                     loadUserProfile()
                 }
         }
     }
     
     func loadUserProfile() {
-        guard let userID = authManager.userID else {
+        guard let userID = supabaseManager.userID else {
             return
         }
         Task {
@@ -64,7 +63,7 @@ struct ProfileView: View {
                     .foregroundColor(themeManager.theme.background)
                     .scaleEffect(2)
                 Spacer()
-                Text(authManager.session?.user.email ?? "---")
+                Text(supabaseManager.session?.user.email ?? "---")
                     .foregroundColor(themeManager.theme.text)
                     .font(.body)
             }
@@ -89,7 +88,7 @@ struct ProfileView: View {
                 Spacer(minLength: 72)
             }
             .task {
-                let userID = authManager.session?.user.id ?? UUID()
+                let userID = supabaseManager.session?.user.id ?? UUID()
                 await supabaseManager.loadTracesFromUser(userID)
             }
         }
