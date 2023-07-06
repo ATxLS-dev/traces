@@ -15,29 +15,32 @@ struct FilterDropdown: View {
     
     var body: some View {
         ZStack {
-            VStack(alignment: .leading, spacing: 16) {
-                ForEach(supabaseManager.categories, id: \.self) { category in
-                    Button(action: {
-                        withAnimation { () -> () in
-                            supabaseManager.toggleFilter(category: category)
-                        }
-                    }) {
-                        HStack {
-                            Text(category)
-                                .font(.body)
-                                .foregroundColor(themeManager.theme.text)
-                                .padding(4)
-                            Spacer()
-                            if supabaseManager.filters.contains(category) {
-                                Image(systemName: "checkmark")
-                                    .foregroundColor(themeManager.theme.accent)
-                                    .padding(.trailing, 6)
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 16) {
+                    ForEach(supabaseManager.categories, id: \.self) { category in
+                        Button(action: {
+                            withAnimation { () -> () in
+                                supabaseManager.toggleFilter(category: category)
                             }
+                        }) {
+                            HStack {
+                                Text(category)
+                                    .font(.body)
+                                    .foregroundColor(themeManager.theme.text)
+                                    .padding(4)
+                                Spacer()
+                                if supabaseManager.filters.contains(category) {
+                                    Image(systemName: "checkmark")
+                                        .foregroundColor(themeManager.theme.accent)
+                                        .padding(.trailing, 6)
+                                }
+                            }
+                            .frame(width: 220)
                         }
-                        .frame(width: 180)
                     }
                 }
             }
+            .frame(height: 480)
             .padding(12)
             .background(
                 ZStack {

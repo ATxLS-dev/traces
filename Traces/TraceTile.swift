@@ -15,18 +15,18 @@ struct TraceTile: View {
     
     var body: some View {
         HStack {
-            MapBox(center: CLLocationCoordinate2D(latitude: trace.latitude, longitude: trace.longitude))
-            .clipShape(RoundedRectangle(cornerRadius: 20))
-            .frame(width: 144, height: 144)
-            .padding(4)
-            .background(
-                ZStack {
-                    RoundedRectangle(cornerRadius: 24)
-                        .stroke(themeManager.theme.text, lineWidth: 4)
-                    RoundedRectangle(cornerRadius: 24)
-                        .fill(themeManager.theme.background)
-                }
-            )
+            MapBox(center: CLLocationCoordinate2D(latitude: trace.latitude, longitude: trace.longitude), isMini: true)
+                .clipShape(RoundedRectangle(cornerRadius: 29))
+                .frame(width: 144, height: 144)
+                .padding(4)
+                .background(
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 32)
+                            .stroke(themeManager.theme.text, lineWidth: 4)
+                        RoundedRectangle(cornerRadius: 32)
+                            .fill(themeManager.theme.background)
+                    }
+                )
             Spacer()
             VStack {
                 Spacer()
@@ -44,13 +44,3 @@ struct TraceTile: View {
         .padding(8)
     }
 }
-
-extension TraceTile {
-    func buildTracePin(location: String) -> some View {
-        VStack {
-            Image(systemName: "pin.circle.fill").foregroundColor(themeManager.theme.accent)
-            Text(location)
-        }
-    }
-}
-

@@ -18,7 +18,7 @@ struct HomeView: View {
 
     var body: some View {
         ZStack {
-            buildVerticalScrollView()
+            verticalScrollView()
                 .task {
                     await supabaseManager.reloadTraces()
                 }
@@ -55,7 +55,7 @@ extension HomeView {
                         }
                     }
                     Spacer()
-                    buildSortButton()
+                    sortButton()
                 }
                 .padding(4)
                 .padding(.leading)
@@ -85,7 +85,7 @@ extension HomeView {
 }
 
 extension HomeView {
-    func buildSortButton() -> some View {
+    func sortButton() -> some View {
         Button(action: {
             showFilterDropdown.toggle()
         }) {
@@ -114,7 +114,7 @@ extension HomeView {
 }
 
 extension HomeView {
-    func buildVerticalScrollView() -> some View {
+    func verticalScrollView() -> some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 10) {
                 Spacer(minLength: 72)

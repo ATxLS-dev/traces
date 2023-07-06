@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		020D9C422A4E3A3200958A6D /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020D9C412A4E3A3200958A6D /* AccountView.swift */; };
+		0214A98C2A56320A00A3AF7E /* IceCreamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0214A98B2A56320A00A3AF7E /* IceCreamView.swift */; };
+		0214A98E2A5635E300A3AF7E /* AnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0214A98D2A5635E300A3AF7E /* AnnotationView.swift */; };
 		0219261D2A2FD7BC00B1B314 /* TraceDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0219261C2A2FD7BC00B1B314 /* TraceDetailView.swift */; };
 		0219261F2A2FD90100B1B314 /* Trace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0219261E2A2FD90100B1B314 /* Trace.swift */; };
 		021D2C202A23F4CF001BCA8D /* TraceTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021D2C1F2A23F4CF001BCA8D /* TraceTile.swift */; };
@@ -59,6 +61,8 @@
 
 /* Begin PBXFileReference section */
 		020D9C412A4E3A3200958A6D /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
+		0214A98B2A56320A00A3AF7E /* IceCreamView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IceCreamView.swift; sourceTree = "<group>"; };
+		0214A98D2A5635E300A3AF7E /* AnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationView.swift; sourceTree = "<group>"; };
 		0219261C2A2FD7BC00B1B314 /* TraceDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraceDetailView.swift; sourceTree = "<group>"; };
 		0219261E2A2FD90100B1B314 /* Trace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trace.swift; sourceTree = "<group>"; };
 		021D2C1F2A23F4CF001BCA8D /* TraceTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraceTile.swift; sourceTree = "<group>"; };
@@ -158,6 +162,8 @@
 				0219261C2A2FD7BC00B1B314 /* TraceDetailView.swift */,
 				021D2C1F2A23F4CF001BCA8D /* TraceTile.swift */,
 				028250A92A39017B00B281DA /* MapBox.swift */,
+				0214A98B2A56320A00A3AF7E /* IceCreamView.swift */,
+				0214A98D2A5635E300A3AF7E /* AnnotationView.swift */,
 				02956F2E2A4B57FF00E8537C /* AuthManager.swift */,
 				0243FC632A324180007D097D /* SupabaseManager.swift */,
 				020D9C412A4E3A3200958A6D /* AccountView.swift */,
@@ -339,6 +345,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0214A98C2A56320A00A3AF7E /* IceCreamView.swift in Sources */,
 				028635002A18533700BCDF35 /* SettingsView.swift in Sources */,
 				02956F2F2A4B57FF00E8537C /* AuthManager.swift in Sources */,
 				0243FC642A324180007D097D /* SupabaseManager.swift in Sources */,
@@ -351,6 +358,7 @@
 				028635102A18566600BCDF35 /* HomeView.swift in Sources */,
 				028635082A18544800BCDF35 /* MapPageView.swift in Sources */,
 				0287BE122A350484006B9CCD /* CircularProgressView.swift in Sources */,
+				0214A98E2A5635E300A3AF7E /* AnnotationView.swift in Sources */,
 				02376E0D2A3E0B7200257B5D /* LocationManager.swift in Sources */,
 				028250AA2A39017B00B281DA /* MapBox.swift in Sources */,
 				028BA33E2A377C44000BD0C0 /* CustomTabBarView.swift in Sources */,

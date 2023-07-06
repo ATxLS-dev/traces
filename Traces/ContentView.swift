@@ -19,34 +19,13 @@ struct ContentView: View {
 
     
     var body: some View {
-        Group {
-//            if authEvent == .signedOut {
-//                buildAuthPopup()
-
-//            } else {
-                buildNavigation()
-//            }
-        }
-        .task {
-//            for await event in supabase.auth.authEventChange {
-//                withAnimation {
-//                    authEvent = event
-//                }
-//                auth.session = try? await supabase.auth.session
-//            }
-        }
+        buildNavigation()
     }
 }
 
-//extension ContentView {
-//    func buildAuthPopup() -> some View {
-//        AuthView()
-//    }
-//}
 
 extension ContentView {
-
-
+    
     func buildNavigation() -> some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
