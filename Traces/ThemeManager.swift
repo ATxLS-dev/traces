@@ -126,7 +126,7 @@ struct LightTheme: ColorTheme {
 
 struct DarkTheme: ColorTheme {
     var backgroundAccent: Color = .black
-    var border: Color = snow.opacity(0.5)
+    var border: Color = taupeGray
     var background: Color = licorice
     var accent: Color = veridian
     var text: Color = snow

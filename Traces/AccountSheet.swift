@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AccountView: View {
+struct AccountSheet: View {
     
     @State var email: String = ""
     @State var password: String = ""
@@ -29,7 +29,7 @@ struct AccountView: View {
     }
 }
 
-extension AccountView {
+extension AccountSheet {
     func createBody() -> some View {
         VStack {
             Spacer()
@@ -54,7 +54,7 @@ extension AccountView {
     }
 }
 
-extension AccountView {
+extension AccountSheet {
     
     func buildButtons() -> some View {
         VStack {

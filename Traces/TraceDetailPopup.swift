@@ -11,7 +11,7 @@ import MapKit
 import PopupView
 
 
-struct TraceDetailView: CentrePopup {
+struct TraceDetailPopup: CentrePopup {
     
     func configurePopup(popup: CentrePopupConfig) -> CentrePopupConfig {
         popup.horizontalPadding(10);
@@ -67,7 +67,7 @@ struct TraceDetailView: CentrePopup {
     }
 }
 
-extension TraceDetailView {
+extension TraceDetailPopup {
     func createMap() -> some View {
         MapBox(center: region)
             .clipShape(RoundedRectangle(cornerRadius: 29))
@@ -220,6 +220,6 @@ extension TraceDetailView {
 
 struct TraceDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        TraceDetailView()
+        TraceDetailPopup()
     }
 }

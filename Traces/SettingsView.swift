@@ -11,18 +11,14 @@ import GoTrue
 
 struct SettingsView: View {
     
-    @State var authEvent: AuthChangeEvent?
     @ObservedObject var themeManager = ThemeManager.shared
     @ObservedObject var supabase = SupabaseManager.shared
     @State var shouldPresentAuthSheet: Bool = false
     @State var shouldPresentAccountSheet: Bool = false
+    @State var shouldPresentFAQSheet: Bool = false
     
     var body: some View {
         ZStack {
-            Spacer()
-                .background(themeManager.theme.background)
-                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                .edgesIgnoringSafeArea(.all)
             VStack {
                 buildListItem(item: buildLabel(title: "Manage Account", systemImage: "person"))
                     .onTapGesture {
@@ -33,10 +29,15 @@ struct SettingsView: View {
                         }
                     }
                     .sheet(isPresented: $shouldPresentAccountSheet) {
-                        AccountView(isPresented: $shouldPresentAccountSheet)
+                        AccountSheet(isPresented: $shouldPresentAccountSheet)
                     }
                 buildListItem(item: buildLabel(title: "FAQ", systemImage: "questionmark"))
-                buildListItem(item: buildLabel(title: "Notifications", systemImage: "bell"))
+                    .onTapGesture {
+                        shouldPresentFAQSheet.toggle()
+                    }
+                    .sheet(isPresented: $shouldPresentFAQSheet) {
+                        FAQSheet(isPresented: $shouldPresentFAQSheet)
+                    }
                 buildListItem(item: themeManager.isDarkMode ?
                               buildLabel(title: "Dark Mode", systemImage: "moon")
                               : buildLabel(title: "Light Mode", systemImage: "sun.max"))
@@ -55,8 +56,6 @@ struct SettingsView: View {
                     }
                     .sheet(isPresented: $shouldPresentAuthSheet) {
                         AuthView(isPresented: $shouldPresentAuthSheet)
-//                            .frame(width: 300, height: 400)
-//                            .clearModalBackground()
                     }
                 Spacer()
                 
@@ -64,6 +63,7 @@ struct SettingsView: View {
             .padding(.top, 69)
         }
         .foregroundColor(themeManager.theme.text)
+        .background(themeManager.theme.background)
     }
 }
 
@@ -92,16 +92,14 @@ extension SettingsView {
         }
         .padding(.horizontal, 10)
         .background(
-            capsuleBackground()
+            ZStack {
+                Capsule()
+                    .fill(themeManager.theme.backgroundAccent)
+                Capsule()
+                    .stroke(themeManager.theme.border, lineWidth: 2)
+            }
         )
         .padding(.horizontal)
-    }
-    
-    func capsuleBackground() -> some View {
-        ZStack {
-            Capsule().fill(themeManager.theme.backgroundAccent)
-            Capsule().stroke(themeManager.theme.border, lineWidth: 2)
-        }
     }
 }
 

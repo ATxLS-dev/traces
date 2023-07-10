@@ -14,9 +14,6 @@ import Supabase
 struct ContentView: View {
     
     @State private var selectedTab: Tab = Tab.home
-
-    @State var authEvent: AuthChangeEvent?
-
     
     var body: some View {
         buildNavigation()

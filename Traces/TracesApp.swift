@@ -13,8 +13,6 @@ import GoTrue
 @main
 struct TracesApp: App {
     
-    @State var authEvent: AuthChangeEvent?
-    @State var supabaseInitialized = false
     @ObservedObject var supabaseManager = SupabaseManager.shared
 
     var body: some Scene {

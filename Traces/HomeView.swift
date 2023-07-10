@@ -14,8 +14,6 @@ struct HomeView: View {
     @ObservedObject var supabaseManager = SupabaseManager.shared
     @ObservedObject var themeManager = ThemeManager.shared
 
-    let index: Int = 0
-
     var body: some View {
         ZStack {
             verticalScrollView()
@@ -39,7 +37,7 @@ extension HomeView {
             Spacer()
                 .background(.ultraThinMaterial)
                 .opacity(showFilterDropdown ? 0.8 : 0.0)
-                .animation(.easeInOut(duration: 0.4), value: showFilterDropdown)
+                .animation(.easeInOut(duration: 0.3), value: showFilterDropdown)
             VStack {
                 HStack {
                     if !supabaseManager.filters.isEmpty {
@@ -85,7 +83,6 @@ extension HomeView {
             }
             .padding()
 
-            
             VStack {
                 Spacer(minLength: 80)
                 if showFilterDropdown {
@@ -150,7 +147,7 @@ extension HomeView {
                     supabaseManager.traces : supabaseManager.filteredTraces
                 ) { trace in
                     HStack {
-                        Button(action: TraceDetailView(trace: trace).showAndStack) {
+                        Button(action: TraceDetailPopup(trace: trace).showAndStack) {
                             TraceTile(trace: trace)
                         }
                     }

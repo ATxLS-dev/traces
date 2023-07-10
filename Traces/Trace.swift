@@ -24,7 +24,7 @@ protocol InteractiveTrace: Codable, Identifiable, Equatable {
 
 extension InteractiveTrace {
     static func buildPopup() -> some View {
-        TraceDetailView()
+        TraceDetailPopup()
     }
 }
 
