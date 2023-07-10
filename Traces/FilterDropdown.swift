@@ -44,7 +44,7 @@ struct FilterDropdown: View {
             .padding(12)
             .background(
                 ZStack {
-                    RoundedRectangle(cornerRadius: 24).foregroundColor(themeManager.theme.background)
+                    RoundedRectangle(cornerRadius: 24).foregroundColor(themeManager.theme.backgroundAccent)
                     RoundedRectangle(cornerRadius: 24).stroke(themeManager.theme.text, lineWidth: 2)
                 }
             )

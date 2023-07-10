@@ -42,10 +42,7 @@ extension HomeView {
                 .animation(.easeInOut(duration: 0.4), value: showFilterDropdown)
             VStack {
                 HStack {
-                    if supabaseManager.filters.isEmpty {
-                        Text("Filters...").opacity(0.4)
-                            .foregroundColor(themeManager.theme.accent)
-                    } else {
+                    if !supabaseManager.filters.isEmpty {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
                                 ForEach(Array(supabaseManager.filters), id: \.self) { category in
@@ -61,16 +58,34 @@ extension HomeView {
                 .padding(.leading)
                 .background(
                     ZStack {
-                        Capsule().fill(themeManager.theme.background)
-                        Capsule().stroke(themeManager.theme.text, lineWidth: 2)
+                        Capsule().fill(themeManager.theme.backgroundAccent)
+                        Capsule().stroke(themeManager.theme.border, lineWidth: 2)
                     }
                 )
                 .onTapGesture {
                     showFilterDropdown.toggle()
                 }
+                Text("Filters")
+                    .foregroundColor(themeManager.theme.text)
+                    .font(.subheadline)
+                    .padding(.horizontal)
+                    .padding(.vertical, 4)
+                    .background(
+                        Capsule()
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [themeManager.theme.background, themeManager.theme.backgroundAccent]),
+                                    startPoint: UnitPoint(x: 0, y: 0.4),
+                                    endPoint: UnitPoint(x: 0, y: 1)
+                                )
+                            )
+                        )
+                    .offset(x: -100, y: -80)
                 Spacer()
             }
             .padding()
+
+            
             VStack {
                 Spacer(minLength: 80)
                 if showFilterDropdown {
@@ -96,7 +111,19 @@ extension HomeView {
                 .background(
                     ZStack {
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(themeManager.theme.text, lineWidth: 2)
+                            .fill(themeManager.theme.button)
+                            .clipShape(
+                                Rectangle()
+                                    .scale(2)
+                                    .trim(from: 0, to: 0.5)
+                                    .rotation(Angle(degrees: -135))
+                            )
+                        Circle()
+                            .trim(from: 0.0, to: 0.5)
+                            .rotation(Angle(degrees: -90))
+                            .fill(themeManager.theme.button)
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(themeManager.theme.border, lineWidth: 2)
                             .clipShape(
                                 Rectangle()
                                     .scale(1.1)
@@ -106,7 +133,7 @@ extension HomeView {
                         Circle()
                             .trim(from: 0.0, to: 0.5)
                             .rotation(Angle(degrees: -90))
-                            .stroke(themeManager.theme.text, lineWidth: 2)
+                            .stroke(themeManager.theme.border, lineWidth: 2)
                     }
                 )
         }

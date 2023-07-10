@@ -22,25 +22,47 @@ struct TraceTile: View {
                 .background(
                     ZStack {
                         RoundedRectangle(cornerRadius: 32)
-                            .stroke(themeManager.theme.text, lineWidth: 4)
+                            .stroke(themeManager.theme.border, lineWidth: 4)
                         RoundedRectangle(cornerRadius: 32)
-                            .fill(themeManager.theme.background)
+                            .fill(themeManager.theme.backgroundAccent)
                     }
                 )
             Spacer()
-            VStack {
-                Spacer()
-                Text(trace.locationName)
-                    .foregroundColor(themeManager.theme.text)
-                Spacer()
+            ZStack {
                 HStack {
                     Spacer()
-                    Text(trace.username)
-                        .foregroundColor(themeManager.theme.text.opacity(0.4))
-                        .font(.caption)
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Spacer()
+                        Text("@\(trace.username)")
+                            .foregroundColor(themeManager.theme.text.opacity(0.6))
+                            .font(.caption)
+                        Text(getFormattedDate())
+                            .foregroundColor(themeManager.theme.text.opacity(0.8))
+                            .font(.caption2)
+                    }
+                    .padding(.vertical, 4)
                 }
+                
+                Text(trace.locationName)
+                    .foregroundColor(themeManager.theme.text)
             }
         }
         .padding(8)
+    }
+    
+    private func getFormattedDate() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssxxxxx"
+        
+        print(trace.creationDate)
+
+        guard let date = dateFormatter.date(from: trace.creationDate) else {
+            return "date not found"
+        }
+        
+        dateFormatter.dateFormat = "MM/d/yy, h:mm a"
+
+        let result = dateFormatter.string(from: date)
+        return result
     }
 }

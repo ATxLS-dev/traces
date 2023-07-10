@@ -22,10 +22,7 @@ struct NewTracePopup: CentrePopup {
     @State var showFilterDropdown: Bool = false
     @State var showNoteEditor: Bool = false
     
-    @Environment(\.dismiss) var dismiss
-    @Environment(\.managedObjectContext) private var viewContext
     @ObservedObject var themeManager = ThemeManager.shared
-
     @ObservedObject var supabaseManager = SupabaseManager.shared
 
     func createContent() -> some View {
@@ -34,25 +31,22 @@ struct NewTracePopup: CentrePopup {
                 RoundedRectangle(cornerRadius: 30)
                     .fill(themeManager.theme.background)
                 RoundedRectangle(cornerRadius: 28)
-                    .stroke(themeManager.theme.text, lineWidth: 2)
-                VStack(spacing: 10) {
+                    .stroke(themeManager.theme.border, lineWidth: 2)
+                VStack(spacing: 28) {
                     HStack {
                         createMap()
                         Spacer()
                         createPrompt()
-                            .padding()
+                        Spacer()
                     }
-                    Spacer()
                     filterBar()
-                    Spacer()
+                        .zIndex(1)
                     createField()
-                    Spacer()
                     if showNoteEditor {
                         createEditor()
                     } else {
                         addDescription()
                     }
-                    Spacer()
                     HStack(spacing: 24) {
                         Spacer()
                         cancelButton()
@@ -61,15 +55,13 @@ struct NewTracePopup: CentrePopup {
                 }
                 .padding(16)
             }
-
             .frame(height: 480)
-            if showFilterDropdown {
-                FilterDropdown()
-                    .transition(.move(edge: self.showFilterDropdown ? .leading : .trailing))
+            .onTapGesture {
+                if showFilterDropdown {
+                    showFilterDropdown.toggle()
+                }
             }
         }
-
-        .animation(.easeInOut(duration: 0.5), value: self.showFilterDropdown)
     }
 //    private func addEntry(username: String = "New", content: String = "Nothing") {
 //        withAnimation {
@@ -97,7 +89,7 @@ private extension NewTracePopup {
             .background(
                 ZStack {
                     RoundedRectangle(cornerRadius: 32)
-                        .stroke(themeManager.theme.text, lineWidth: 4)
+                        .stroke(themeManager.theme.border, lineWidth: 4)
                     RoundedRectangle(cornerRadius: 32)
                         .fill(themeManager.theme.background)
                 }
@@ -118,17 +110,19 @@ private extension NewTracePopup {
                 .background(
                     ZStack {
                         Capsule()
-                            .fill(themeManager.theme.background)
+                            .fill(themeManager.theme.backgroundAccent)
                         Capsule()
-                            .stroke(themeManager.theme.text, lineWidth: 2)
+                            .stroke(themeManager.theme.border, lineWidth: 2)
                     }
                 )
             Text("Title")
+                .foregroundColor(themeManager.theme.text)
                 .font(.subheadline)
                 .padding(.horizontal)
+                .padding(.vertical, 4)
                 .background(
-                    Rectangle()
-                        .fill(themeManager.theme.background)
+                    Capsule()
+                        .fill(Gradient(colors: [themeManager.theme.background, themeManager.theme.backgroundAccent]))
                 )
                 .offset(x: -100, y: -30)
         }
@@ -136,33 +130,6 @@ private extension NewTracePopup {
     
     func addDescription() -> some View {
         Button("add any notes?", action: {showNoteEditor.toggle()})
-    }
-    
-    func sortButton() -> some View {
-        Button(action: {
-            showFilterDropdown.toggle()
-        }) {
-            Image(systemName: "line.3.horizontal.decrease.circle")
-                .scaleEffect(1.2)
-                .foregroundColor(themeManager.theme.text)
-                .padding()
-                .background(
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(themeManager.theme.text, lineWidth: 2)
-                            .clipShape(
-                                Rectangle()
-                                    .scale(1.1)
-                                    .trim(from: 0.125, to: 0.625)
-                                    .rotation(Angle(degrees: 180))
-                            )
-                        Circle()
-                            .trim(from: 0.0, to: 0.5)
-                            .rotation(Angle(degrees: -90))
-                            .stroke(themeManager.theme.text, lineWidth: 2)
-                    }
-                )
-        }
     }
     
     func filterBar() -> some View {
@@ -189,22 +156,71 @@ private extension NewTracePopup {
                 .padding(.leading)
                 .background(
                     ZStack {
-                        Capsule().fill(themeManager.theme.background)
-                        Capsule().stroke(themeManager.theme.text, lineWidth: 2)
+                        Capsule().fill(themeManager.theme.backgroundAccent)
+                        Capsule().stroke(themeManager.theme.border, lineWidth: 2)
                         Text("Tag")
+                            .foregroundColor(themeManager.theme.text)
                             .font(.subheadline)
                             .padding(.horizontal)
                             .background(
-                                Rectangle()
-                                    .fill(themeManager.theme.background)
+                                Capsule()
+                                    .fill(Gradient(colors: [themeManager.theme.background, themeManager.theme.backgroundAccent]))
                             )
-                            .offset(x: -100, y: -30)
+                            .offset(x: -102, y: -30)
                     }
                 )
                 .onTapGesture {
                     showFilterDropdown.toggle()
                 }
             }
+            VStack {
+                if showFilterDropdown {
+                    FilterDropdown()
+                        .offset(y: -200)
+                        .zIndex(1)
+                        .transition(.move(edge: self.showFilterDropdown ? .leading : .trailing))
+                }
+            }
+            .animation(.easeInOut(duration: 0.5), value: self.showFilterDropdown)
+        }
+    }
+    
+    func sortButton() -> some View {
+        Button(action: {
+            showFilterDropdown.toggle()
+        }) {
+            Image(systemName: "line.3.horizontal.decrease.circle")
+                .scaleEffect(1.2)
+                .foregroundColor(themeManager.theme.text)
+                .padding()
+                .background(
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(themeManager.theme.button)
+                            .clipShape(
+                                Rectangle()
+                                    .scale(1.8)
+                                    .trim(from: 0, to: 0.5)
+                                    .rotation(Angle(degrees: -135))
+                            )
+                        Circle()
+                            .trim(from: 0.0, to: 0.5)
+                            .rotation(Angle(degrees: -90))
+                            .fill(themeManager.theme.button)
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(themeManager.theme.border, lineWidth: 2)
+                            .clipShape(
+                                Rectangle()
+                                    .scale(1.1)
+                                    .trim(from: 0.125, to: 0.625)
+                                    .rotation(Angle(degrees: 180))
+                            )
+                        Circle()
+                            .trim(from: 0.0, to: 0.5)
+                            .rotation(Angle(degrees: -90))
+                            .stroke(themeManager.theme.border, lineWidth: 2)
+                    }
+                )
         }
     }
 
@@ -215,7 +231,7 @@ private extension NewTracePopup {
             .background(
                 ZStack {
                     RoundedRectangle(cornerRadius: 24)
-                        .stroke(themeManager.theme.text, lineWidth: 4)
+                        .stroke(themeManager.theme.border, lineWidth: 4)
                     RoundedRectangle(cornerRadius: 24)
                         .fill(themeManager.theme.background)
                 }
@@ -247,7 +263,7 @@ private extension NewTracePopup {
                             .rotation(Angle(degrees: -90))
                             .fill(themeManager.theme.button)
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(themeManager.theme.text, lineWidth: 2)
+                            .stroke(themeManager.theme.border, lineWidth: 2)
                             .clipShape(
                                 Rectangle()
                                     .scale(2)
@@ -257,7 +273,7 @@ private extension NewTracePopup {
                         Circle()
                             .trim(from: 0.0, to: 0.5)
                             .rotation(Angle(degrees: -90))
-                            .stroke(themeManager.theme.text, lineWidth: 2)
+                            .stroke(themeManager.theme.border, lineWidth: 2)
                         
                 }
             )
@@ -274,7 +290,7 @@ private extension NewTracePopup {
                 .background(
                     ZStack {
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(themeManager.theme.text, lineWidth: 2)
+                            .fill(themeManager.theme.backgroundAccent)
                             .clipShape(
                                 Rectangle()
                                     .scale(1.1)
@@ -284,7 +300,19 @@ private extension NewTracePopup {
                         Circle()
                             .trim(from: 0.0, to: 0.5)
                             .rotation(Angle(degrees: 90))
-                            .stroke(themeManager.theme.text, lineWidth: 2)
+                            .fill(themeManager.theme.backgroundAccent)
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(themeManager.theme.border, lineWidth: 2)
+                            .clipShape(
+                                Rectangle()
+                                    .scale(1.1)
+                                    .trim(from: 0.125, to: 0.625)
+                                    .rotation(Angle(degrees: 0))
+                            )
+                        Circle()
+                            .trim(from: 0.0, to: 0.5)
+                            .rotation(Angle(degrees: 90))
+                            .stroke(themeManager.theme.border, lineWidth: 2)
                     }
                 )
         }

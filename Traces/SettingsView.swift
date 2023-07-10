@@ -99,8 +99,8 @@ extension SettingsView {
     
     func capsuleBackground() -> some View {
         ZStack {
-            Capsule().fill(themeManager.theme.background)
-            Capsule().stroke(themeManager.theme.text, lineWidth: 2)
+            Capsule().fill(themeManager.theme.backgroundAccent)
+            Capsule().stroke(themeManager.theme.border, lineWidth: 2)
         }
     }
 }

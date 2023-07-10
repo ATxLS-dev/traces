@@ -22,10 +22,10 @@ struct TraceDetailView: CentrePopup {
     @State private var username: String = ""
     @State private var content: String = ""
     @State var region = CLLocationCoordinate2D(latitude: 37.334722, longitude: -122.008889)
-    @ObservedObject var themeManager = ThemeManager.shared
     
-    @Environment(\.dismiss) var dismiss
-    @Environment(\.managedObjectContext) private var viewContext
+    @ObservedObject var themeManager = ThemeManager.shared
+    @ObservedObject var supabaseManager = SupabaseManager.shared
+
     
     init(trace: Trace? = nil) {
         if let trace = trace {
@@ -34,92 +34,186 @@ struct TraceDetailView: CentrePopup {
     }
     
     func createContent() -> some View {
-        VStack {
-            HStack {
-                createMap()
-                Spacer()
-                createPrompt()
+        ZStack {
+            RoundedRectangle(cornerRadius: 30)
+                .fill(themeManager.theme.background)
+            RoundedRectangle(cornerRadius: 28)
+                .stroke(themeManager.theme.border, lineWidth: 2)
+            VStack(spacing: 20) {
+                HStack {
+                    createMap()
+                    Spacer()
+                    VStack(alignment: .trailing) {
+                        createTitle()
+                        Spacer()
+                        createUsername()
+                        createDate()
+                    }
+                    .frame(height: 144)
+                    .padding(6)
+                }
+                createCategory()
+                createDescription()
+                Divider()
+                HStack(spacing: 24) {
+                    Spacer()
+                    cancelButton()
+                    submitButton()
+                }
             }
-            .frame(height: 180)
-            Spacer()
-            createDescription()
-            Spacer()
-            createSubmitButton()
+            .padding()
         }
-        .padding(16)
-        .frame(height: 480)
-        .background(themeManager.theme.background)
+        .frame(height: 600)
     }
 }
 
 extension TraceDetailView {
     func createMap() -> some View {
         MapBox(center: region)
-            .frame(width: 160, height: 160)
-            .cornerRadius(24)
+            .clipShape(RoundedRectangle(cornerRadius: 29))
+            .frame(width: 144, height: 144)
             .padding(4)
             .background(
-                RoundedRectangle(cornerRadius: 24)
-                    .stroke(themeManager.theme.text)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 32)
+                        .stroke(themeManager.theme.border, lineWidth: 4)
+                    RoundedRectangle(cornerRadius: 32)
+                        .fill(themeManager.theme.background)
+                }
             )
-  
     }
-    func createPrompt() -> some View {
-
-        VStack {
-            HStack {
-                Spacer()
-                Text(Date().formatted())
-                    .font(.caption)
-            }
-            Spacer()
-            Text(trace?.locationName ?? "Location Name")
-                .font(.title)
-            Spacer()
+    
+    func createTitle() -> some View {
+        Text(trace?.locationName ?? "Location Name")
+            .font(.title2)
+            .foregroundColor(themeManager.theme.text)
+    }
+    
+    func createDate() -> some View {
+        Text(Date().formatted())
+            .font(.caption)
+            .foregroundColor(themeManager.theme.text)
+    }
+    
+    func createCategory() -> some View {
+        HStack {
+            CategoryTag(category: trace?.category ?? "Category")
         }
-        .foregroundColor(themeManager.theme.text)
 
     }
     
     func createDescription() -> some View {
-        Text(trace?.content ?? "Description")
+        VStack {
+            Text("Notes")
+                .foregroundColor(themeManager.theme.text)
+                .font(.subheadline)
+                .padding(.horizontal)
+                .padding(.vertical, 4)
+                .background(
+                    Capsule()
+                        .fill(Gradient(colors: [themeManager.theme.background, themeManager.theme.backgroundAccent]))
+                )
+                .offset(x: -100, y: 20)
+                .zIndex(1)
+            ZStack {
+                RoundedRectangle(cornerRadius: 32)
+                    .stroke(themeManager.theme.border, lineWidth: 2)
+                RoundedRectangle(cornerRadius: 32)
+                    .fill(themeManager.theme.backgroundAccent)
+                VStack {
+                    Text(trace?.content ?? "    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vel risus commodo viverra maecenas accumsan lacus vel facilisis volutpat. Mauris a diam maecenas sed enim ut sem viverra aliquet.")
+                        .foregroundColor(themeManager.theme.text)
+                    Spacer()
+                }
+                .padding()
+            }
+        }
+
+    }
+    
+    func createUsername() -> some View {
+        Text(trace?.username ?? "@not-logged-in")
+            .font(.caption)
             .foregroundColor(themeManager.theme.text)
 
     }
     
-    func createSubmitButton() -> some View {
-        HStack {
-            Button(action: PopupManager.dismiss) {
-                let width: CGFloat = 48
-                Image(systemName: "ellipsis")
-                    .frame(width: width * 3, height: width)
-                    .foregroundColor(themeManager.theme.text)
-                    .background(
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(themeManager.theme.accent)
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(themeManager.theme.text, lineWidth: 2)
-                        }
-                    )
-            }
-            Spacer()
-            Button(action: {
-                PopupManager.dismiss();
-            }) {
-                let width: CGFloat = 48
-                Image(systemName: "checkmark")
-                    .frame(width: width * 3, height: width)
-                    .foregroundColor(themeManager.theme.text)
-                    .background(
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(themeManager.theme.button)
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(themeManager.theme.text, lineWidth: 2)
-                        }
-                    )
-            }
+    func submitButton() -> some View {
+        Button(action: {
+            
+        }) {
+            Image(systemName: "xmark.circle")
+                .scaleEffect(1.2)
+                .foregroundColor(themeManager.theme.text)
+                .padding()
+                .background(
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(themeManager.theme.button)
+                            .clipShape(
+                                Rectangle()
+                                    .scale(2)
+                                    .trim(from: 0, to: 0.5)
+                                    .rotation(Angle(degrees: -120))
+                            )
+                            .frame(width: 90)
+                        Circle()
+                            .trim(from: 0.0, to: 0.5)
+                            .rotation(Angle(degrees: -90))
+                            .fill(themeManager.theme.button)
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(themeManager.theme.border, lineWidth: 2)
+                            .clipShape(
+                                Rectangle()
+                                    .scale(2)
+                                    .trim(from: 0, to: 0.5)
+                                    .rotation(Angle(degrees: -120))
+                            )
+                        Circle()
+                            .trim(from: 0.0, to: 0.5)
+                            .rotation(Angle(degrees: -90))
+                            .stroke(themeManager.theme.border, lineWidth: 2)
+                        
+                    }
+                )
+        }
+    }
+    func cancelButton() -> some View {
+        Button(action: {
+            PopupManager.dismiss()
+        }) {
+            Image(systemName: "pencil.circle")
+                .scaleEffect(1.2)
+                .foregroundColor(themeManager.theme.text)
+                .padding()
+                .background(
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(themeManager.theme.backgroundAccent)
+                            .clipShape(
+                                Rectangle()
+                                    .scale(1.1)
+                                    .trim(from: 0.125, to: 0.625)
+                                    .rotation(Angle(degrees: 0))
+                            )
+                        Circle()
+                            .trim(from: 0.0, to: 0.5)
+                            .rotation(Angle(degrees: 90))
+                            .fill(themeManager.theme.backgroundAccent)
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(themeManager.theme.border, lineWidth: 2)
+                            .clipShape(
+                                Rectangle()
+                                    .scale(1.1)
+                                    .trim(from: 0.125, to: 0.625)
+                                    .rotation(Angle(degrees: 0))
+                            )
+                        Circle()
+                            .trim(from: 0.0, to: 0.5)
+                            .rotation(Angle(degrees: 90))
+                            .stroke(themeManager.theme.border, lineWidth: 2)
+                    }
+                )
         }
     }
 }

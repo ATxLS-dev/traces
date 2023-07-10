@@ -110,7 +110,8 @@ class MapViewController: UIViewController {
                 allowOverlap: false,
                 anchor: .center
             )
-            let customAnnotation = AnnotationView(frame: CGRect(x: 0, y: 0, width: 16, height: 16))
+            let annotationSize = interactable ? 24 : 42
+            let customAnnotation = AnnotationView(frame: CGRect(x: 0, y: 0, width: annotationSize, height: annotationSize))
             try? mapView.viewAnnotations.add(customAnnotation, options: options)
         }
     }

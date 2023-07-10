@@ -105,6 +105,8 @@ let light: ColorTheme = LightTheme()
 let dark: ColorTheme = DarkTheme()
 
 protocol ColorTheme {
+    var backgroundAccent: Color { get }
+    var border: Color { get }
     var background: Color { get }
     var accent: Color { get }
     var text: Color { get }
@@ -113,6 +115,8 @@ protocol ColorTheme {
 }
 
 struct LightTheme: ColorTheme {
+    var backgroundAccent: Color = .white
+    var border: Color = .black
     var background: Color = snow
     var accent: Color = veridian
     var text: Color = licorice
@@ -121,14 +125,14 @@ struct LightTheme: ColorTheme {
 }
 
 struct DarkTheme: ColorTheme {
+    var backgroundAccent: Color = .black
+    var border: Color = snow.opacity(0.5)
     var background: Color = licorice
     var accent: Color = veridian
     var text: Color = snow
     var button: Color = veridian
     var mapStyle: String = "mapbox://styles/atxls/clj4rozom000401pw7na12c30"
 }
-
-
 
 struct ClearBackgroundView: UIViewRepresentable {
     func makeUIView(context: Context) -> some UIView {
