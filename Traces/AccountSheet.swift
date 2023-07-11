@@ -76,7 +76,7 @@ extension AccountSheet {
         }
         .background(
             Capsule()
-                .stroke(themeManager.theme.text, lineWidth: 2))
+                .stroke(themeManager.theme.border, lineWidth: 2))
     }
     
     private func editButton() -> some View {
@@ -142,7 +142,7 @@ extension AccountSheet {
                 .padding()
                 .background(
                     Capsule()
-                        .stroke(themeManager.theme.text, lineWidth: 2)
+                        .stroke(themeManager.theme.border, lineWidth: 2)
                 )
                 .disableAutocorrection(true)
                 .autocapitalization(.none)
@@ -152,7 +152,7 @@ extension AccountSheet {
                 .padding()
                 .background(
                     Capsule()
-                        .stroke(themeManager.theme.text, lineWidth: 2)
+                        .stroke(themeManager.theme.border, lineWidth: 2)
                 )
                 .disableAutocorrection(true)
                 .autocapitalization(.none)

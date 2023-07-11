@@ -103,7 +103,7 @@ extension CustomTabBarView {
                     .background(RoundedRectangle(cornerRadius: 16).fill(themeManager.theme.button.opacity(0.6)))
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
-                            .stroke(themeManager.theme.border, lineWidth: 2)
+                            .stroke(themeManager.theme.text, lineWidth: 2)
                     )
             }
         }
@@ -149,7 +149,7 @@ struct SelectedTabCircleView: View {
                 .fill(themeManager.theme.button)
                 .frame(width: buttonDimen , height: buttonDimen)
             Circle()
-                .stroke(themeManager.theme.border, lineWidth: 2)
+                .stroke(themeManager.theme.text, lineWidth: 2)
                 .frame(width: buttonDimen , height: buttonDimen)
             TabBarButton(imageName: "\(currentTab.rawValue).fill")
                 .foregroundColor(themeManager.theme.text)

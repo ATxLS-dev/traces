@@ -82,7 +82,6 @@ extension HomeView {
                 Spacer()
             }
             .padding()
-
             VStack {
                 Spacer(minLength: 80)
                 if showFilterDropdown {
@@ -112,7 +111,7 @@ extension HomeView {
                             .clipShape(
                                 Rectangle()
                                     .scale(2)
-                                    .trim(from: 0, to: 0.5)
+                                    .trim(from: 0, to: 0.502)
                                     .rotation(Angle(degrees: -135))
                             )
                         Circle()
@@ -120,7 +119,7 @@ extension HomeView {
                             .rotation(Angle(degrees: -90))
                             .fill(themeManager.theme.button)
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(themeManager.theme.border, lineWidth: 2)
+                            .stroke(themeManager.theme.text, lineWidth: 2)
                             .clipShape(
                                 Rectangle()
                                     .scale(1.1)
@@ -130,7 +129,7 @@ extension HomeView {
                         Circle()
                             .trim(from: 0.0, to: 0.5)
                             .rotation(Angle(degrees: -90))
-                            .stroke(themeManager.theme.border, lineWidth: 2)
+                            .stroke(themeManager.theme.text, lineWidth: 2)
                     }
                 )
         }

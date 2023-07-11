@@ -14,12 +14,15 @@ import Supabase
 struct ContentView: View {
     
     @State private var selectedTab: Tab = Tab.home
+    @StateObject var locationManager: LocationManager = LocationManager()
     
     var body: some View {
         buildNavigation()
+            .onAppear {
+                locationManager.checkLocationAuthorization()
+            }
     }
 }
-
 
 extension ContentView {
     

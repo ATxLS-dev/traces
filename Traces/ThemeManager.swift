@@ -34,6 +34,7 @@ let snow: Color = Color(hex: 0xF9F3F1)
 let ash: Color = Color(hex: 0xA4B9AA)
 let veridian: Color = Color(hex: 0x4E7E63)
 let licorice: Color = Color(hex: 0x171216)
+let night: Color = Color(hex: 0x121717)
 
 
 //MAYBE
@@ -127,7 +128,7 @@ struct LightTheme: ColorTheme {
 struct DarkTheme: ColorTheme {
     var backgroundAccent: Color = .black
     var border: Color = taupeGray
-    var background: Color = licorice
+    var background: Color = night
     var accent: Color = veridian
     var text: Color = snow
     var button: Color = veridian

@@ -54,8 +54,6 @@ struct TraceTile: View {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssxxxxx"
         
-        print(trace.creationDate)
-
         guard let date = dateFormatter.date(from: trace.creationDate) else {
             return "date not found"
         }

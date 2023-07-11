@@ -24,7 +24,7 @@ struct FAQSheet: View {
     }
     
     func buildQuestion(q question: String, a answer: String) -> some View {
-        VStack {
+        VStack(spacing: 16) {
             Text("Q: \(question)")
                 .font(.title3)
                 .fontWeight(.semibold)

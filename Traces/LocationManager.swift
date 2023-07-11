@@ -5,28 +5,40 @@
 //  Created by Bryce on 6/17/23.
 //
 
-import Foundation
-import SwiftUI
-import MapKit
+import CoreLocation
+import Combine
 
-class LocationManager: ObservableObject {
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        switch manager.authorizationStatus {
-        case .authorizedWhenInUse:  // Location services are available.
-//            enableLocationFeatures()
-            break
-            
-        case .restricted, .denied:  // Location services currently unavailable.
-//            disableLocationFeatures()
-            break
-            
-        case .notDetermined:        // Authorization not determined yet.
-            manager.requestWhenInUseAuthorization()
-            break
-            
-        default:
-            break
+class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject {
+    private let locationManager = CLLocationManager()
+    @Published var userLocation: CLLocationCoordinate2D?
+    
+    override init() {
+        super.init()
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+    }
+    
+    func checkLocationAuthorization() {
+        if CLLocationManager.locationServicesEnabled() {
+            switch locationManager.authorizationStatus {
+            case .restricted, .denied:
+                print("Location permission denied")
+            default:
+                locationManager.requestWhenInUseAuthorization()
+            }
+        } else {
+            print("Location services are not enabled")
         }
     }
-
+    
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        if manager.authorizationStatus == .authorizedWhenInUse {
+            manager.startUpdatingLocation()
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else { return }
+        userLocation = location.coordinate
+    }
 }

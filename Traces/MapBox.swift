@@ -10,25 +10,33 @@ import MapboxMaps
 
 struct MapBox: View {
 
-    @State var center = CLLocationCoordinate2D(latitude: 37.789467, longitude: -122.416772)
+    @State var center: CLLocationCoordinate2D?
     var interactable: Bool = false
     var isMini: Bool = false
     @State var annotations: [CLLocationCoordinate2D] = []
     @StateObject var themeManager: ThemeManager = ThemeManager.shared
     @ObservedObject var supabaseManager: SupabaseManager = SupabaseManager.shared
+    @StateObject var locationManager: LocationManager = LocationManager()
+    
+    let defaultLocation = CLLocationCoordinate2D(latitude: 37.789467, longitude: -122.416772)
     
     var body: some View {
-        MapBoxViewConverter(center: center, interactable: interactable, style: StyleURI(rawValue: themeManager.theme.mapStyle)!, annotations: $annotations)
+        MapBoxViewConverter(center: center ?? defaultLocation, interactable: interactable, style: StyleURI(rawValue: themeManager.theme.mapStyle)!, annotations: $annotations)
             .task {
                 await supabaseManager.reloadTraces()
             }
             .onAppear {
+                locationManager.checkLocationAuthorization()
                 updateAnnotations()
             }
     }
     
     func updateAnnotations() {
-        annotations = isMini ? [center] : supabaseManager.traces.map { CLLocationCoordinate2D(latitude: $0.latitude, longitude: $0.longitude) }
+        if isMini {
+            annotations = [center ?? defaultLocation]
+        } else {
+            annotations = supabaseManager.traces.map { CLLocationCoordinate2D(latitude: $0.latitude, longitude: $0.longitude) }
+        }
     }
 }
 
