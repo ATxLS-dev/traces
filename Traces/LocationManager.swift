@@ -8,13 +8,14 @@
 import CoreLocation
 import Combine
 
-
 class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject {
     
-    private let locationManager = CLLocationManager()
-    @Published var userLocation: CLLocationCoordinate2D?
+    static let shared = LocationManager()
     
-    override init() {
+    private let locationManager = CLLocationManager()
+    @Published var userLocation: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.789467, longitude: -122.416772)
+    
+    private override init() {
         super.init()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -37,7 +38,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject {
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         if manager.authorizationStatus == .authorizedWhenInUse {
-            manager.startUpdatingLocation()
+            manager.requestLocation()
         }
     }
     
@@ -45,4 +46,13 @@ class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject {
         guard let location = locations.last else { return }
         userLocation = location.coordinate
     }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Location update failed with error: \(error.localizedDescription)")
+    }
+    
+    func updateUserLocation() {
+        locationManager.requestLocation()
+    }
+
 }

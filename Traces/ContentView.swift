@@ -14,7 +14,7 @@ import Supabase
 struct ContentView: View {
     
     @State private var selectedTab: Tab = Tab.home
-    @StateObject var locationManager: LocationManager = LocationManager()
+    @ObservedObject var locationManager: LocationManager = LocationManager.shared
     
     var body: some View {
         buildNavigation()

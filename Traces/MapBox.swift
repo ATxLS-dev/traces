@@ -12,29 +12,31 @@ struct MapBox: View {
 
     @State var center: CLLocationCoordinate2D?
     @State var annotations: [CLLocationCoordinate2D] = []
+    @State var recenter: Bool = false
     
     var interactable: Bool = false
 
     @ObservedObject var supabaseManager: SupabaseManager = SupabaseManager.shared
-    @ObservedObject var locationManager: LocationManager = LocationManager()
+    @ObservedObject var locationManager: LocationManager = LocationManager.shared
     @StateObject var themeManager: ThemeManager = ThemeManager.shared
 
     let defaultLocation = CLLocationCoordinate2D(latitude: 37.789467, longitude: -122.416772)
     
     var body: some View {
         MapBoxViewConverter(
-            center: center ?? defaultLocation,
+            fixedLocation: center ?? defaultLocation,
+            userLocation: $locationManager.userLocation,
             interactable: interactable,
             style: StyleURI(rawValue: themeManager.theme.mapStyle)!,
             annotations: $annotations
         )
-            .task {
-                await supabaseManager.reloadTraces()
-                await locationManager.checkLocationAuthorization()
-            }
-            .onAppear {
-                getAnnotations()
-            }
+        .task {
+            await supabaseManager.reloadTraces()
+            await locationManager.checkLocationAuthorization()
+        }
+        .onAppear {
+            getAnnotations()
+        }
     }
     
     func getAnnotations() {
@@ -48,27 +50,32 @@ struct MapBox: View {
 
 struct MapBoxViewConverter: UIViewControllerRepresentable {
     
-    let center: CLLocationCoordinate2D
+    let fixedLocation: CLLocationCoordinate2D
+    @Binding var userLocation: CLLocationCoordinate2D
     let interactable: Bool
     @State var style: StyleURI
     @Binding var annotations: [CLLocationCoordinate2D]
     @ObservedObject var themeManager: ThemeManager = ThemeManager.shared
+
     
     func makeUIViewController(context: Context) -> MapViewController {
-        return MapViewController(center: center, style: style, annotations: $annotations, themeManager: themeManager, interactable: interactable)
+        return MapViewController(userLocation: interactable ? userLocation : fixedLocation, style: style, annotations: $annotations, themeManager: themeManager, interactable: interactable)
     }
     
     func updateUIViewController(_ uiViewController: MapViewController, context: Context) {
         uiViewController.updateAnnotations(annotations)
         uiViewController.updateStyle(StyleURI(rawValue: themeManager.theme.mapStyle)!)
-        uiViewController.centerOnPosition(center)
+        if interactable {
+            uiViewController.centerOnPosition(userLocation)
+        }
+
     }
     
 }
 
 class MapViewController: UIViewController {
     
-    let center: CLLocationCoordinate2D
+    let userLocation: CLLocationCoordinate2D
     let style: StyleURI
     let zoom: Double
     @Binding var annotations: [CLLocationCoordinate2D]
@@ -77,14 +84,14 @@ class MapViewController: UIViewController {
     var interactable: Bool
     internal var mapView: MapView!
     
-    init(center: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 40.83647410051574, longitude: 14.30582273457794),
+    init(userLocation: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 40.83647410051574, longitude: 14.30582273457794),
          style: StyleURI = StyleURI(rawValue: "mapbox://styles/atxls/cliuqmp8400kv01pw57wxga7l")!,
          zoom: Double = 10,
          annotations: Binding<[CLLocationCoordinate2D]>,
          themeManager: ThemeManager,
          interactable: Bool = false
     ) {
-        self.center = center
+        self.userLocation = userLocation
         self.style = style
         self.zoom = zoom
         self._annotations = annotations
@@ -102,7 +109,7 @@ class MapViewController: UIViewController {
         super.viewDidLoad()
         
         let resourceOptions = ResourceOptions(accessToken: mapBoxAccessToken)
-        let cameraOptions = CameraOptions(center: center, zoom: interactable ? zoom : 14)
+        let cameraOptions = CameraOptions(center: userLocation, zoom: interactable ? zoom : 14)
         let myMapInitOptions = MapInitOptions(resourceOptions: resourceOptions, cameraOptions: cameraOptions, styleURI: style)
         
         mapView = MapView(frame: view.bounds, mapInitOptions: myMapInitOptions)

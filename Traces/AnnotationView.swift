@@ -13,12 +13,30 @@ class AnnotationView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        setupGestureRecognizer()
         draw(frame)
     }
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
 
+    }
+    
+    private func setupGestureRecognizer() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(_:)))
+        addGestureRecognizer(tapGesture)
+    }
+    
+    @objc private func handleTapGesture(_ gestureRecognizer: UITapGestureRecognizer) {
+        if gestureRecognizer.state == .ended {
+            let hostingController = UIHostingController(rootView: TraceDetailPopup())
+            hostingController.modalPresentationStyle = .automatic
+            
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let viewController = windowScene.windows.first?.rootViewController {
+                viewController.present(hostingController, animated: true)
+            }
+        }
     }
     
     override func draw(_ rect: CGRect) {

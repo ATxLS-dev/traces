@@ -9,19 +9,20 @@ import MapKit
 import CoreLocation
 
 struct MapPageView: View {
-    @StateObject var locationManager = LocationManager()
+    
+    @ObservedObject var locationManager = LocationManager.shared
     @ObservedObject var themeManager = ThemeManager.shared
     
-    private let defaultLocation = CLLocationCoordinate2D(latitude: 37.789467, longitude: -122.416772)
     private let buttonDimen: CGFloat = 55
     
     var body: some View {
         ZStack {
-            MapBox(center: locationManager.userLocation, interactable: true)
+            MapBox(interactable: true)
                 .offset(y: -12.5)
                 .onAppear {
                     Task {
                         await locationManager.checkLocationAuthorization()
+                        print(locationManager.userLocation)
                     }
                 }
             userLocatorButton()
@@ -32,7 +33,9 @@ struct MapPageView: View {
         VStack {
             Spacer()
             HStack {
-                Button(action: {}) {
+                Button(action: {
+                    locationManager.updateUserLocation()
+                }) {
                     ZStack {
                         Circle()
                             .fill(themeManager.theme.backgroundAccent)
