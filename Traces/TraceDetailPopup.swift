@@ -17,10 +17,7 @@ struct TraceDetailPopup: CentrePopup {
         popup.horizontalPadding(10);
     }
     
-    var trace: Trace?
-    
-    @State private var username: String = ""
-    @State private var content: String = ""
+    @State var trace: Trace?
     @State var region = CLLocationCoordinate2D(latitude: 37.334722, longitude: -122.008889)
     
     @ObservedObject var themeManager = ThemeManager.shared
@@ -29,6 +26,7 @@ struct TraceDetailPopup: CentrePopup {
     
     init(trace: Trace? = nil) {
         if let trace = trace {
+            self.trace = trace
             self.region = CLLocationCoordinate2D(latitude: trace.latitude, longitude: trace.longitude)
         }
     }

@@ -15,7 +15,7 @@ struct TraceTile: View {
     
     var body: some View {
         HStack {
-            MapBox(center: CLLocationCoordinate2D(latitude: trace.latitude, longitude: trace.longitude), isMini: true)
+            MapBox(center: CLLocationCoordinate2D(latitude: trace.latitude, longitude: trace.longitude), interactable: false)
                 .clipShape(RoundedRectangle(cornerRadius: 29))
                 .frame(width: 144, height: 144)
                 .padding(4)

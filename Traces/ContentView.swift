@@ -19,7 +19,9 @@ struct ContentView: View {
     var body: some View {
         buildNavigation()
             .onAppear {
-                locationManager.checkLocationAuthorization()
+                Task {
+                    await locationManager.checkLocationAuthorization()
+                }
             }
     }
 }

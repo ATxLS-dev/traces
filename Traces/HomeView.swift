@@ -74,11 +74,11 @@ extension HomeView {
                                 LinearGradient(
                                     gradient: Gradient(colors: [themeManager.theme.background, themeManager.theme.backgroundAccent]),
                                     startPoint: UnitPoint(x: 0, y: 0.4),
-                                    endPoint: UnitPoint(x: 0, y: 1)
+                                    endPoint: UnitPoint(x: 0, y: 0.6)
                                 )
                             )
                         )
-                    .offset(x: -100, y: -80)
+                    .offset(x: -100, y: -78)
                 Spacer()
             }
             .padding()

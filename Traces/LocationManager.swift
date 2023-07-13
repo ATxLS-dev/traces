@@ -8,7 +8,9 @@
 import CoreLocation
 import Combine
 
+
 class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject {
+    
     private let locationManager = CLLocationManager()
     @Published var userLocation: CLLocationCoordinate2D?
     
@@ -18,16 +20,18 @@ class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject {
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
     }
     
-    func checkLocationAuthorization() {
-        if CLLocationManager.locationServicesEnabled() {
-            switch locationManager.authorizationStatus {
-            case .restricted, .denied:
-                print("Location permission denied")
-            default:
-                locationManager.requestWhenInUseAuthorization()
+    func checkLocationAuthorization() async {
+        Task {
+            if CLLocationManager.locationServicesEnabled() {
+                switch locationManager.authorizationStatus {
+                case .restricted, .denied:
+                    print("Location permission denied")
+                default:
+                    locationManager.requestWhenInUseAuthorization()
+                }
+            } else {
+                print("Location services are not enabled")
             }
-        } else {
-            print("Location services are not enabled")
         }
     }
     

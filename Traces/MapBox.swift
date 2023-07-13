@@ -11,28 +11,34 @@ import MapboxMaps
 struct MapBox: View {
 
     @State var center: CLLocationCoordinate2D?
-    var interactable: Bool = false
-    var isMini: Bool = false
     @State var annotations: [CLLocationCoordinate2D] = []
-    @StateObject var themeManager: ThemeManager = ThemeManager.shared
-    @ObservedObject var supabaseManager: SupabaseManager = SupabaseManager.shared
-    @StateObject var locationManager: LocationManager = LocationManager()
     
+    var interactable: Bool = false
+
+    @ObservedObject var supabaseManager: SupabaseManager = SupabaseManager.shared
+    @ObservedObject var locationManager: LocationManager = LocationManager()
+    @StateObject var themeManager: ThemeManager = ThemeManager.shared
+
     let defaultLocation = CLLocationCoordinate2D(latitude: 37.789467, longitude: -122.416772)
     
     var body: some View {
-        MapBoxViewConverter(center: center ?? defaultLocation, interactable: interactable, style: StyleURI(rawValue: themeManager.theme.mapStyle)!, annotations: $annotations)
+        MapBoxViewConverter(
+            center: center ?? defaultLocation,
+            interactable: interactable,
+            style: StyleURI(rawValue: themeManager.theme.mapStyle)!,
+            annotations: $annotations
+        )
             .task {
                 await supabaseManager.reloadTraces()
+                await locationManager.checkLocationAuthorization()
             }
             .onAppear {
-                locationManager.checkLocationAuthorization()
-                updateAnnotations()
+                getAnnotations()
             }
     }
     
-    func updateAnnotations() {
-        if isMini {
+    func getAnnotations() {
+        if !interactable {
             annotations = [center ?? defaultLocation]
         } else {
             annotations = supabaseManager.traces.map { CLLocationCoordinate2D(latitude: $0.latitude, longitude: $0.longitude) }
@@ -41,6 +47,7 @@ struct MapBox: View {
 }
 
 struct MapBoxViewConverter: UIViewControllerRepresentable {
+    
     let center: CLLocationCoordinate2D
     let interactable: Bool
     @State var style: StyleURI
@@ -52,9 +59,11 @@ struct MapBoxViewConverter: UIViewControllerRepresentable {
     }
     
     func updateUIViewController(_ uiViewController: MapViewController, context: Context) {
-        uiViewController.updateAnnotations(annotations: annotations)
+        uiViewController.updateAnnotations(annotations)
         uiViewController.updateStyle(StyleURI(rawValue: themeManager.theme.mapStyle)!)
+        uiViewController.centerOnPosition(center)
     }
+    
 }
 
 class MapViewController: UIViewController {
@@ -97,8 +106,9 @@ class MapViewController: UIViewController {
         let myMapInitOptions = MapInitOptions(resourceOptions: resourceOptions, cameraOptions: cameraOptions, styleURI: style)
         
         mapView = MapView(frame: view.bounds, mapInitOptions: myMapInitOptions)
-        updateAnnotations(annotations: annotations)
+        updateAnnotations(annotations)
         mapView.ornaments.options = ornamentOptions()
+        mapView.location.options.puckType = .puck2D()
         
         if !interactable {
             mapView.gestures.options = disabledGestureOptions
@@ -111,7 +121,7 @@ class MapViewController: UIViewController {
         self.view.addSubview(mapView)
     }
     
-    func updateAnnotations(annotations: [CLLocationCoordinate2D]) {
+    func updateAnnotations(_ annotations: [CLLocationCoordinate2D]) {
         for annotation in annotations {
             let options = ViewAnnotationOptions(
                 geometry: Point(annotation),
@@ -122,6 +132,11 @@ class MapViewController: UIViewController {
             let customAnnotation = AnnotationView(frame: CGRect(x: 0, y: 0, width: annotationSize, height: annotationSize))
             try? mapView.viewAnnotations.add(customAnnotation, options: options)
         }
+    }
+    
+    func centerOnPosition(_ position: CLLocationCoordinate2D) {
+        let recenteredCamera: CameraOptions = CameraOptions(center: position, zoom: 14)
+        mapView.mapboxMap.setCamera(to: recenteredCamera)
     }
     
     func updateStyle(_ style: StyleURI) {
