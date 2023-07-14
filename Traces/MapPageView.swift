@@ -17,8 +17,7 @@ struct MapPageView: View {
     
     var body: some View {
         ZStack {
-            MapBox(interactable: true)
-                .offset(y: -12.5)
+            MapBox(mapType: .interactive)
                 .onAppear {
                     Task {
                         await locationManager.checkLocationAuthorization()
@@ -27,6 +26,7 @@ struct MapPageView: View {
                 }
             userLocatorButton()
         }
+        .edgesIgnoringSafeArea(.all)
     }
     
     func userLocatorButton() -> some View {

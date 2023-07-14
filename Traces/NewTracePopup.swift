@@ -63,6 +63,10 @@ struct NewTracePopup: CentrePopup {
                 }
             }
         }
+        .onAppear {
+            locationManager.updateUserLocation()
+            print("appeared")
+        }
     }
 //    private func addEntry(username: String = "New", content: String = "Nothing") {
 //        withAnimation {
@@ -83,7 +87,7 @@ struct NewTracePopup: CentrePopup {
 
 private extension NewTracePopup {
     func createMap() -> some View {
-        MapBox(interactable: false)
+        MapBox(mapType: .newTrace)
             .clipShape(RoundedRectangle(cornerRadius: 29))
             .frame(width: 144, height: 144)
             .padding(4)
@@ -95,7 +99,6 @@ private extension NewTracePopup {
                         .fill(themeManager.theme.background)
                 }
             )
-            .onAppear { locationManager.updateUserLocation() }
     }
     
     func createPrompt() -> some View {

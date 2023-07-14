@@ -41,7 +41,7 @@ struct CustomTabBarView: View {
     
     @Binding var currentTab: Tab
     @ObservedObject var themeManager = ThemeManager.shared
-
+    @ObservedObject var locationManager = LocationManager.shared
     
     var body: some View {
         HStack {
@@ -58,6 +58,7 @@ struct CustomTabBarView: View {
                 }
             
             buildNewTraceButton()
+
             
             TabBarButton(imageName: Tab.profile.rawValue)
                 .frame(width: buttonDimen, height: buttonDimen)

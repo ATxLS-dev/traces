@@ -9,99 +9,122 @@ import Supabase
 import MapboxMaps
 
 enum MapType {
-    case newTrace, fixed, interactable
+    case newTrace, fixed, interactive
 }
 
 struct MapBox: View {
 
-//    @State var mapType: MapType
+    @State var mapType: MapType
     
-    @State var focalTrace: Trace?
-    @State var annotations: [Trace]?
-
-    var interactable: Bool = false
+    @State var focalTrace: Trace = Trace(
+        id: UUID(),
+        creationDate: "2023-07-14",
+        username: "John Doe",
+        locationName: "Sample Location",
+        latitude: 37.123456,
+        longitude: -122.654321,
+        content: "Sample content",
+        category: "Sample category",
+        user_id: UUID()
+    )
+    @State var annotations: [Trace] = []
 
     @ObservedObject var supabaseManager: SupabaseManager = SupabaseManager.shared
     @ObservedObject var locationManager: LocationManager = LocationManager.shared
-    @StateObject var themeManager: ThemeManager = ThemeManager.shared
 
-    let defaultLocation = CLLocationCoordinate2D(latitude: 37.789467, longitude: -122.416772)
     
+
     var body: some View {
-        MapBoxViewConverter(
-            fixedLocation: CLLocationCoordinate2D(latitude: focalTrace?.latitude ?? locationManager.userLocation.latitude, longitude: focalTrace?.longitude ?? locationManager.userLocation.longitude),
-//            fixedLocation: CLLocationCoordinate2D(latitude: focalTrace?.latitude, longitude: focalTrace?.longitude),
-            userLocation: $locationManager.userLocation,
-            interactable: interactable,
-            style: StyleURI(rawValue: themeManager.theme.mapStyle)!,
-            annotations: $annotations
-        )
-        .task {
-            await supabaseManager.reloadTraces()
-            await locationManager.checkLocationAuthorization()
-        }
-        .onAppear {
-            getAnnotations()
-        }
+        
+        buildConvertedMap(mapType)
+            .task {
+                await supabaseManager.reloadTraces()
+                await locationManager.checkLocationAuthorization()
+            }
+            .onAppear {
+                getAnnotations()
+            }
     }
     
+    func buildConvertedMap(_ mapType: MapType) -> some View {
+        switch mapType {
+        case .newTrace:
+            return MapBoxViewConverter(mapType: .newTrace, fixedLocation: locationManager.userLocation, userLocation: $locationManager.userLocation, annotations: $annotations)
+        case .fixed:
+            return MapBoxViewConverter(mapType: .fixed, fixedLocation: CLLocationCoordinate2D(latitude: focalTrace.latitude , longitude: focalTrace.longitude ), userLocation: $locationManager.userLocation, annotations: $annotations)
+        case .interactive:
+            return MapBoxViewConverter(mapType: .interactive, userLocation: $locationManager.userLocation, annotations: $annotations)
+        }
+    }
+
     func getAnnotations() {
-        if !interactable {
-            annotations = focalTrace.map { [$0] }
-        } else {
+        switch mapType {
+        case .newTrace:
+            annotations = []
+        case .fixed:
+            annotations = [focalTrace]
+        case .interactive:
             annotations = supabaseManager.traces
         }
     }
 }
-
+    
 struct MapBoxViewConverter: UIViewControllerRepresentable {
     
-    var fixedLocation: CLLocationCoordinate2D
+    var mapType: MapType
+    var fixedLocation: CLLocationCoordinate2D?
+
     @Binding var userLocation: CLLocationCoordinate2D
-    let interactable: Bool
-    @State var style: StyleURI
-    @Binding var annotations: [Trace]?
+    @Binding var annotations: [Trace]
+    
+    @ObservedObject var locationManager: LocationManager = LocationManager.shared
     @ObservedObject var themeManager: ThemeManager = ThemeManager.shared
     
+    let defaultLocation = CLLocationCoordinate2D(latitude: 37.789467, longitude: -122.416772)
+    
     func makeUIViewController(context: Context) -> MapViewController {
-        return MapViewController(userLocation: interactable ? userLocation : fixedLocation, style: style, annotations: $annotations, interactable: interactable)
+        let center: CLLocationCoordinate2D = fixedLocation ?? userLocation
+        return MapViewController(mapType: mapType, center: center, style: StyleURI(rawValue: themeManager.theme.mapStyle)!, annotations: $annotations)
     }
     
     func updateUIViewController(_ uiViewController: MapViewController, context: Context) {
-        uiViewController.updateAnnotations(annotations ?? [])
+        
+        uiViewController.updateAnnotations(annotations)
         uiViewController.updateStyle(StyleURI(rawValue: themeManager.theme.mapStyle)!)
-        if interactable {
+        switch mapType {
+        case .newTrace:
+            uiViewController.centerOnPosition(userLocation)
+        case .fixed:
+            uiViewController.centerOnPosition(fixedLocation ?? defaultLocation)
+        case .interactive:
             uiViewController.centerOnPosition(userLocation)
         }
-        if annotations == [] {
-            uiViewController.centerOnPosition(userLocation, isNewTrace: true)
-        }
-
     }
     
 }
 
 class MapViewController: UIViewController {
     
-    var userLocation: CLLocationCoordinate2D
+    let mapType: MapType
+    let center: CLLocationCoordinate2D
     let style: StyleURI
     let zoom: Double
-    @Binding var annotations: [Trace]?
+    @Binding var annotations: [Trace]
 
-    var interactable: Bool
     internal var mapView: MapView!
     
-    init(userLocation: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 40.83647410051574, longitude: 14.30582273457794),
+    init(
+        mapType: MapType = .fixed,
+        center: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 40.83647410051574, longitude: 14.30582273457794),
          style: StyleURI = StyleURI(rawValue: "mapbox://styles/atxls/cliuqmp8400kv01pw57wxga7l")!,
          zoom: Double = 10,
-         annotations: Binding<[Trace]?>,
-         interactable: Bool = false
+         annotations: Binding<[Trace]>
     ) {
-        self.userLocation = userLocation
+        self.mapType = mapType
+        self.center = center
         self.style = style
         self.zoom = zoom
         self._annotations = annotations
-        self.interactable = interactable
         super.init(nibName: nil, bundle: nil)
         
     }
@@ -114,52 +137,53 @@ class MapViewController: UIViewController {
         super.viewDidLoad()
         
         let resourceOptions = ResourceOptions(accessToken: mapBoxAccessToken)
-        let cameraOptions = CameraOptions(center: userLocation, zoom: interactable ? zoom : 14)
+        let cameraOptions = CameraOptions(center: center, zoom: mapType == .interactive ? zoom : 14)
         let myMapInitOptions = MapInitOptions(resourceOptions: resourceOptions, cameraOptions: cameraOptions, styleURI: style)
         
         mapView = MapView(frame: view.bounds, mapInitOptions: myMapInitOptions)
-        updateAnnotations(annotations ?? [])
+        updateAnnotations(annotations)
         mapView.ornaments.options = ornamentOptions()
         mapView.location.options.puckType = .puck2D()
         
-        if !interactable {
+        mapView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        
+        if mapType != .interactive {
             mapView.gestures.options = disabledGestureOptions
-            mapView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
-
-        } else {
-            mapView.autoresizingMask = [.flexibleTopMargin, .flexibleBottomMargin]
         }
         
         self.view.addSubview(mapView)
     }
     
     func updateAnnotations(_ annotations: [Trace]) {
-
-        for annotation in annotations {
+        switch mapType {
+        case .newTrace, .fixed:
+            let annotationSize = 42
+            let customAnnotation = AnnotationView(frame: CGRect(x: 0, y: 0, width: annotationSize, height: annotationSize))
             let options = ViewAnnotationOptions(
-                geometry: Point(CLLocationCoordinate2D(latitude: annotation.latitude, longitude: annotation.longitude)),
+                geometry: Point(center),
                 allowOverlap: false,
                 anchor: .center
             )
-            let annotationSize = interactable ? 24 : 42
-            let customAnnotation = AnnotationView(frame: CGRect(x: 0, y: 0, width: annotationSize, height: annotationSize))
             try? mapView.viewAnnotations.add(customAnnotation, options: options)
+
+        case .interactive:
+            for annotation in annotations {
+                let annotationSize = 24
+                let customAnnotation = AnnotationView(frame: CGRect(x: 0, y: 0, width: annotationSize, height: annotationSize))
+                let options = ViewAnnotationOptions(
+                    geometry: Point(CLLocationCoordinate2D(latitude: annotation.latitude, longitude: annotation.longitude)),
+                    allowOverlap: false,
+                    anchor: .center
+                )
+                try? mapView.viewAnnotations.add(customAnnotation, options: options)
+            }
+            
         }
     }
     
-    func centerOnPosition(_ position: CLLocationCoordinate2D, isNewTrace: Bool = false) {
-        let recenteredCamera: CameraOptions = CameraOptions(center: position, zoom: 14)
+    func centerOnPosition(_ position: CLLocationCoordinate2D) {
+        let recenteredCamera: CameraOptions = CameraOptions(center: position, zoom: mapType == .interactive ? 12 : 14)
         mapView.mapboxMap.setCamera(to: recenteredCamera)
-        if isNewTrace {
-            let options = ViewAnnotationOptions(
-                geometry: Point(position),
-                allowOverlap: false,
-                anchor: .center
-            )
-            let annotationSize = interactable ? 24 : 42
-            let customAnnotation = AnnotationView(frame: CGRect(x: 0, y: 0, width: annotationSize, height: annotationSize))
-            try? mapView.viewAnnotations.add(customAnnotation, options: options)
-        }
     }
     
     func updateStyle(_ style: StyleURI) {
