@@ -93,7 +93,9 @@ struct MapBoxViewConverter: UIViewControllerRepresentable {
         uiViewController.updateStyle(StyleURI(rawValue: themeManager.theme.mapStyle)!)
         switch mapType {
         case .newTrace:
-            uiViewController.centerOnPosition(userLocation)
+            locationManager.updateUserLocation()
+            let locationSnapshot = locationManager.userLocation
+            uiViewController.centerOnPosition(locationSnapshot)
         case .fixed:
             uiViewController.centerOnPosition(fixedLocation ?? defaultLocation)
         case .interactive:

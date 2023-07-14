@@ -65,7 +65,6 @@ struct NewTracePopup: CentrePopup {
         }
         .onAppear {
             locationManager.updateUserLocation()
-            print("appeared")
         }
     }
 //    private func addEntry(username: String = "New", content: String = "Nothing") {
