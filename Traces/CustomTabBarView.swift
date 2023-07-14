@@ -41,6 +41,7 @@ struct CustomTabBarView: View {
     
     @Binding var currentTab: Tab
     @ObservedObject var themeManager = ThemeManager.shared
+
     
     var body: some View {
         HStack {

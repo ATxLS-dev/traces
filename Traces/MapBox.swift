@@ -8,12 +8,17 @@ import SwiftUI
 import Supabase
 import MapboxMaps
 
+enum MapType {
+    case newTrace, fixed, interactable
+}
+
 struct MapBox: View {
 
-    @State var center: CLLocationCoordinate2D?
-    @State var annotations: [CLLocationCoordinate2D] = []
-    @State var recenter: Bool = false
+//    @State var mapType: MapType
     
+    @State var focalTrace: Trace?
+    @State var annotations: [Trace]?
+
     var interactable: Bool = false
 
     @ObservedObject var supabaseManager: SupabaseManager = SupabaseManager.shared
@@ -24,7 +29,8 @@ struct MapBox: View {
     
     var body: some View {
         MapBoxViewConverter(
-            fixedLocation: center ?? defaultLocation,
+            fixedLocation: CLLocationCoordinate2D(latitude: focalTrace?.latitude ?? locationManager.userLocation.latitude, longitude: focalTrace?.longitude ?? locationManager.userLocation.longitude),
+//            fixedLocation: CLLocationCoordinate2D(latitude: focalTrace?.latitude, longitude: focalTrace?.longitude),
             userLocation: $locationManager.userLocation,
             interactable: interactable,
             style: StyleURI(rawValue: themeManager.theme.mapStyle)!,
@@ -41,32 +47,34 @@ struct MapBox: View {
     
     func getAnnotations() {
         if !interactable {
-            annotations = [center ?? defaultLocation]
+            annotations = focalTrace.map { [$0] }
         } else {
-            annotations = supabaseManager.traces.map { CLLocationCoordinate2D(latitude: $0.latitude, longitude: $0.longitude) }
+            annotations = supabaseManager.traces
         }
     }
 }
 
 struct MapBoxViewConverter: UIViewControllerRepresentable {
     
-    let fixedLocation: CLLocationCoordinate2D
+    var fixedLocation: CLLocationCoordinate2D
     @Binding var userLocation: CLLocationCoordinate2D
     let interactable: Bool
     @State var style: StyleURI
-    @Binding var annotations: [CLLocationCoordinate2D]
+    @Binding var annotations: [Trace]?
     @ObservedObject var themeManager: ThemeManager = ThemeManager.shared
-
     
     func makeUIViewController(context: Context) -> MapViewController {
-        return MapViewController(userLocation: interactable ? userLocation : fixedLocation, style: style, annotations: $annotations, themeManager: themeManager, interactable: interactable)
+        return MapViewController(userLocation: interactable ? userLocation : fixedLocation, style: style, annotations: $annotations, interactable: interactable)
     }
     
     func updateUIViewController(_ uiViewController: MapViewController, context: Context) {
-        uiViewController.updateAnnotations(annotations)
+        uiViewController.updateAnnotations(annotations ?? [])
         uiViewController.updateStyle(StyleURI(rawValue: themeManager.theme.mapStyle)!)
         if interactable {
             uiViewController.centerOnPosition(userLocation)
+        }
+        if annotations == [] {
+            uiViewController.centerOnPosition(userLocation, isNewTrace: true)
         }
 
     }
@@ -75,27 +83,24 @@ struct MapBoxViewConverter: UIViewControllerRepresentable {
 
 class MapViewController: UIViewController {
     
-    let userLocation: CLLocationCoordinate2D
+    var userLocation: CLLocationCoordinate2D
     let style: StyleURI
     let zoom: Double
-    @Binding var annotations: [CLLocationCoordinate2D]
-    
-    let themeManager: ThemeManager
+    @Binding var annotations: [Trace]?
+
     var interactable: Bool
     internal var mapView: MapView!
     
     init(userLocation: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 40.83647410051574, longitude: 14.30582273457794),
          style: StyleURI = StyleURI(rawValue: "mapbox://styles/atxls/cliuqmp8400kv01pw57wxga7l")!,
          zoom: Double = 10,
-         annotations: Binding<[CLLocationCoordinate2D]>,
-         themeManager: ThemeManager,
+         annotations: Binding<[Trace]?>,
          interactable: Bool = false
     ) {
         self.userLocation = userLocation
         self.style = style
         self.zoom = zoom
         self._annotations = annotations
-        self.themeManager = themeManager
         self.interactable = interactable
         super.init(nibName: nil, bundle: nil)
         
@@ -113,7 +118,7 @@ class MapViewController: UIViewController {
         let myMapInitOptions = MapInitOptions(resourceOptions: resourceOptions, cameraOptions: cameraOptions, styleURI: style)
         
         mapView = MapView(frame: view.bounds, mapInitOptions: myMapInitOptions)
-        updateAnnotations(annotations)
+        updateAnnotations(annotations ?? [])
         mapView.ornaments.options = ornamentOptions()
         mapView.location.options.puckType = .puck2D()
         
@@ -128,10 +133,11 @@ class MapViewController: UIViewController {
         self.view.addSubview(mapView)
     }
     
-    func updateAnnotations(_ annotations: [CLLocationCoordinate2D]) {
+    func updateAnnotations(_ annotations: [Trace]) {
+
         for annotation in annotations {
             let options = ViewAnnotationOptions(
-                geometry: Point(annotation),
+                geometry: Point(CLLocationCoordinate2D(latitude: annotation.latitude, longitude: annotation.longitude)),
                 allowOverlap: false,
                 anchor: .center
             )
@@ -141,9 +147,19 @@ class MapViewController: UIViewController {
         }
     }
     
-    func centerOnPosition(_ position: CLLocationCoordinate2D) {
+    func centerOnPosition(_ position: CLLocationCoordinate2D, isNewTrace: Bool = false) {
         let recenteredCamera: CameraOptions = CameraOptions(center: position, zoom: 14)
         mapView.mapboxMap.setCamera(to: recenteredCamera)
+        if isNewTrace {
+            let options = ViewAnnotationOptions(
+                geometry: Point(position),
+                allowOverlap: false,
+                anchor: .center
+            )
+            let annotationSize = interactable ? 24 : 42
+            let customAnnotation = AnnotationView(frame: CGRect(x: 0, y: 0, width: annotationSize, height: annotationSize))
+            try? mapView.viewAnnotations.add(customAnnotation, options: options)
+        }
     }
     
     func updateStyle(_ style: StyleURI) {

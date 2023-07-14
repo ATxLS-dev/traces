@@ -24,6 +24,7 @@ struct NewTracePopup: CentrePopup {
     
     @ObservedObject var themeManager = ThemeManager.shared
     @ObservedObject var supabaseManager = SupabaseManager.shared
+    @ObservedObject var locationManager = LocationManager.shared
 
     func createContent() -> some View {
         ZStack {
@@ -82,7 +83,7 @@ struct NewTracePopup: CentrePopup {
 
 private extension NewTracePopup {
     func createMap() -> some View {
-        MapBox(center: region)
+        MapBox(interactable: false)
             .clipShape(RoundedRectangle(cornerRadius: 29))
             .frame(width: 144, height: 144)
             .padding(4)
@@ -94,6 +95,7 @@ private extension NewTracePopup {
                         .fill(themeManager.theme.background)
                 }
             )
+            .onAppear { locationManager.updateUserLocation() }
     }
     
     func createPrompt() -> some View {

@@ -10,6 +10,7 @@ import SwiftUI
 class AnnotationView: UIView {
     
     @ObservedObject var themeManager = ThemeManager.shared
+    var trace: Trace?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -25,17 +26,15 @@ class AnnotationView: UIView {
     private func setupGestureRecognizer() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(_:)))
         addGestureRecognizer(tapGesture)
+        isUserInteractionEnabled = true
     }
     
     @objc private func handleTapGesture(_ gestureRecognizer: UITapGestureRecognizer) {
         if gestureRecognizer.state == .ended {
-            let hostingController = UIHostingController(rootView: TraceDetailPopup())
-            hostingController.modalPresentationStyle = .automatic
+            guard let trace = trace else { return }
             
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let viewController = windowScene.windows.first?.rootViewController {
-                viewController.present(hostingController, animated: true)
-            }
+            let traceDetailPopup = TraceDetailPopup(trace: trace)
+            traceDetailPopup.showAndStack()
         }
     }
     

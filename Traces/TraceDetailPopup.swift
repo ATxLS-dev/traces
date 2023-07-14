@@ -67,7 +67,7 @@ struct TraceDetailPopup: CentrePopup {
 
 extension TraceDetailPopup {
     func createMap() -> some View {
-        MapBox(center: region)
+        MapBox(interactable: false)
             .clipShape(RoundedRectangle(cornerRadius: 29))
             .frame(width: 144, height: 144)
             .padding(4)
