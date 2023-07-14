@@ -33,7 +33,7 @@ struct BackgroundHelper: UIViewRepresentable {
         }
         return view
     }
-    
+
     func updateUIView(_ uiView: UIView, context: Context) {}
 }
 
@@ -102,7 +102,9 @@ extension CustomTabBarView {
                     .scaleEffect(1.4)
                     .frame(width: 48, height: 48)
                     .foregroundColor(themeManager.theme.text)
-                    .background(RoundedRectangle(cornerRadius: 16).fill(themeManager.theme.button.opacity(0.6)))
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(themeManager.theme.button.opacity(0.6)))
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(themeManager.theme.text, lineWidth: 2)

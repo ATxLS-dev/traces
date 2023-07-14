@@ -6,6 +6,7 @@
 
 import SwiftUI
 import Supabase
+import MapKit
 import MapboxMaps
 
 enum MapType {
@@ -15,7 +16,6 @@ enum MapType {
 struct MapBox: View {
 
     @State var mapType: MapType
-    
     @State var focalTrace: Trace = Trace(
         id: UUID(),
         creationDate: "2023-07-14",
@@ -32,10 +32,7 @@ struct MapBox: View {
     @ObservedObject var supabaseManager: SupabaseManager = SupabaseManager.shared
     @ObservedObject var locationManager: LocationManager = LocationManager.shared
 
-    
-
     var body: some View {
-        
         buildConvertedMap(mapType)
             .task {
                 await supabaseManager.reloadTraces()
@@ -51,7 +48,7 @@ struct MapBox: View {
         case .newTrace:
             return MapBoxViewConverter(mapType: .newTrace, fixedLocation: locationManager.userLocation, userLocation: $locationManager.userLocation, annotations: $annotations)
         case .fixed:
-            return MapBoxViewConverter(mapType: .fixed, fixedLocation: CLLocationCoordinate2D(latitude: focalTrace.latitude , longitude: focalTrace.longitude ), userLocation: $locationManager.userLocation, annotations: $annotations)
+            return MapBoxViewConverter(mapType: .fixed, fixedLocation: CLLocationCoordinate2D(latitude: focalTrace.latitude, longitude: focalTrace.longitude), userLocation: $locationManager.userLocation, annotations: $annotations)
         case .interactive:
             return MapBoxViewConverter(mapType: .interactive, userLocation: $locationManager.userLocation, annotations: $annotations)
         }
@@ -77,7 +74,6 @@ struct MapBoxViewConverter: UIViewControllerRepresentable {
     @Binding var userLocation: CLLocationCoordinate2D
     @Binding var annotations: [Trace]
     
-    @ObservedObject var locationManager: LocationManager = LocationManager.shared
     @ObservedObject var themeManager: ThemeManager = ThemeManager.shared
     
     let defaultLocation = CLLocationCoordinate2D(latitude: 37.789467, longitude: -122.416772)
@@ -88,18 +84,15 @@ struct MapBoxViewConverter: UIViewControllerRepresentable {
     }
     
     func updateUIViewController(_ uiViewController: MapViewController, context: Context) {
-        
         uiViewController.updateAnnotations(annotations)
         uiViewController.updateStyle(StyleURI(rawValue: themeManager.theme.mapStyle)!)
         switch mapType {
         case .newTrace:
-            locationManager.updateUserLocation()
-            let locationSnapshot = locationManager.userLocation
-            uiViewController.centerOnPosition(locationSnapshot)
+            uiViewController.centerOnPosition(userLocation)
         case .fixed:
             uiViewController.centerOnPosition(fixedLocation ?? defaultLocation)
         case .interactive:
-            uiViewController.centerOnPosition(userLocation)
+            break
         }
     }
     
@@ -157,6 +150,7 @@ class MapViewController: UIViewController {
     }
     
     func updateAnnotations(_ annotations: [Trace]) {
+
         switch mapType {
         case .newTrace, .fixed:
             let annotationSize = 42
@@ -170,8 +164,13 @@ class MapViewController: UIViewController {
 
         case .interactive:
             for annotation in annotations {
+                
                 let annotationSize = 24
-                let customAnnotation = AnnotationView(frame: CGRect(x: 0, y: 0, width: annotationSize, height: annotationSize))
+                let customAnnotation = AnnotationView(frame: CGRect(x: 0, y: 0, width: annotationSize, height: annotationSize), trace: annotation)
+                
+                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(annotationTapped(_:)))
+                customAnnotation.addGestureRecognizer(tapGesture)
+                
                 let options = ViewAnnotationOptions(
                     geometry: Point(CLLocationCoordinate2D(latitude: annotation.latitude, longitude: annotation.longitude)),
                     allowOverlap: false,
@@ -180,6 +179,19 @@ class MapViewController: UIViewController {
                 try? mapView.viewAnnotations.add(customAnnotation, options: options)
             }
             
+        }
+    }
+    
+    @objc private func annotationTapped(_ gesture: UITapGestureRecognizer) {
+        guard let annotationView = gesture.view as? AnnotationView else {
+            return
+        }
+        
+        
+        if let selectedAnnotation = annotations.first(where: { $0.id == annotationView.trace?.id }) {
+            print(selectedAnnotation.locationName)
+            let popup = TraceDetailPopup(trace: selectedAnnotation)
+            popup.showAndStack()
         }
     }
     

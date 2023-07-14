@@ -14,28 +14,26 @@ import PopupView
 struct TraceDetailPopup: CentrePopup {
     
     func configurePopup(popup: CentrePopupConfig) -> CentrePopupConfig {
-        popup.horizontalPadding(10);
+        popup.horizontalPadding(10)
+
     }
     
-    @State var trace: Trace?
+    var trace: Trace
     @State var region = CLLocationCoordinate2D(latitude: 37.334722, longitude: -122.008889)
     
     @ObservedObject var themeManager = ThemeManager.shared
     @ObservedObject var supabaseManager = SupabaseManager.shared
 
-    
-    init(trace: Trace? = nil) {
-        if let trace = trace {
-            self.trace = trace
-            self.region = CLLocationCoordinate2D(latitude: trace.latitude, longitude: trace.longitude)
-        }
+    init(trace: Trace) {
+        self.trace = trace
+        self.region = CLLocationCoordinate2D(latitude: trace.latitude, longitude: trace.longitude)
     }
     
     func createContent() -> some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 30)
+            RoundedRectangle(cornerRadius: 24)
                 .fill(themeManager.theme.background)
-            RoundedRectangle(cornerRadius: 28)
+            RoundedRectangle(cornerRadius: 24)
                 .stroke(themeManager.theme.border, lineWidth: 2)
             VStack(spacing: 20) {
                 HStack {
@@ -58,6 +56,9 @@ struct TraceDetailPopup: CentrePopup {
                     cancelButton()
                     submitButton()
                 }
+            }
+            .task {
+                print(trace.locationName)
             }
             .padding()
         }
@@ -82,7 +83,8 @@ extension TraceDetailPopup {
     }
     
     func createTitle() -> some View {
-        Text(trace?.locationName ?? "Location Name")
+//        Text(trace?.locationName ?? "Location Name")
+        Text(trace.locationName)
             .font(.title2)
             .foregroundColor(themeManager.theme.text)
     }
@@ -95,7 +97,8 @@ extension TraceDetailPopup {
     
     func createCategory() -> some View {
         HStack {
-            CategoryTag(category: trace?.category ?? "Category")
+            CategoryTag(category: trace.category)
+//            CategoryTag(category: trace?.category ?? "Category")
         }
 
     }
@@ -119,7 +122,7 @@ extension TraceDetailPopup {
                 RoundedRectangle(cornerRadius: 32)
                     .fill(themeManager.theme.backgroundAccent)
                 VStack {
-                    Text(trace?.content ?? "    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vel risus commodo viverra maecenas accumsan lacus vel facilisis volutpat. Mauris a diam maecenas sed enim ut sem viverra aliquet.")
+                    Text(trace.content)
                         .foregroundColor(themeManager.theme.text)
                     Spacer()
                 }
@@ -130,7 +133,7 @@ extension TraceDetailPopup {
     }
     
     func createUsername() -> some View {
-        Text(trace?.username ?? "@not-logged-in")
+        Text(trace.username)
             .font(.caption)
             .foregroundColor(themeManager.theme.text)
 
@@ -216,8 +219,8 @@ extension TraceDetailPopup {
     }
 }
 
-struct TraceDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        TraceDetailPopup()
-    }
-}
+//struct TraceDetailView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        TraceDetailPopup()
+//    }
+//}

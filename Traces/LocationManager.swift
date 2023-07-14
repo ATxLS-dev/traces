@@ -11,8 +11,9 @@ import Combine
 class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject {
     
     static let shared = LocationManager()
-    
+
     private let locationManager = CLLocationManager()
+    var lastLocation: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.789467, longitude: -122.416772)
     @Published var userLocation: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.789467, longitude: -122.416772)
     
     private override init() {
@@ -53,6 +54,6 @@ class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject {
     
     func updateUserLocation() {
         locationManager.requestLocation()
+        lastLocation = userLocation
     }
-
 }

@@ -21,7 +21,6 @@ struct MapPageView: View {
                 .onAppear {
                     Task {
                         await locationManager.checkLocationAuthorization()
-                        print(locationManager.userLocation)
                     }
                 }
             userLocatorButton()
