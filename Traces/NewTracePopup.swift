@@ -67,18 +67,14 @@ struct NewTracePopup: CentrePopup {
             locationManager.updateUserLocation()
         }
     }
-//    private func addEntry(username: String = "New", content: String = "Nothing") {
-//        withAnimation {
-//            let newTrace: Trace
-//            newTrace.creationDate = Date()
-//            newTrace.id = UUID()
-//            newTrace.username = username
-//            newTrace.content = content
-//            do {
-//                try viewContext.save()
-//            } catch {
-//                print("Save Failed")
-//            }
+    
+//    private func addEntry(title: String, content: String) async {
+//        let newTrace: Trace = Trace(id: UUID(), creationDate: Date(), username: supabaseManager.user?.email, locationName: title, latitude: locationManager.userLocation.latitude, longitude: locationManager.userLocation.longitude, content: content, category: nil, user_id: supabaseManager.user?.id)
+//        
+//        do {
+//            await supabaseManager.addTrace(trace: newTrace)
+//        } catch {
+//            print("Save Failed")
 //        }
 //    }
     
@@ -245,7 +241,7 @@ private extension NewTracePopup {
 
     func submitButton() -> some View {
         Button(action: {
-            
+            //NEW TRACE
         }) {
             Image(systemName: "checkmark.circle")
                 .scaleEffect(1.2)

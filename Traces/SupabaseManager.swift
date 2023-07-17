@@ -21,55 +21,71 @@ enum CreateUserError: Error {
 class SupabaseManager: ObservableObject {
     static let shared = SupabaseManager()
     
-    let supabase: SupabaseClient = SupabaseClient(supabaseURL: Secrets.supabaseURL, supabaseKey: Secrets.supabaseAnonKey)
+    let supabase: SupabaseClient
     
     private var error: Error?
     private(set) var session: Session?
+    private var categoriesSynced: Bool = false
     
     @Published private(set) var traces: [Trace] = []
-    @Published private(set) var categories: [String] = []
+    @Published private(set) var categories: [Category] = []
     @Published private(set) var filters: Set<String> = []
     @Published private(set) var filteredTraces: [Trace] = []
     @Published private(set) var userTraceHistory: [Trace] = []
     @Published var authChangeEvent: AuthChangeEvent?
     @Published var user: User?
-
+    
     init() {
+        supabase = SupabaseClient(supabaseURL: Secrets.supabaseURL, supabaseKey: Secrets.supabaseAnonKey)
         checkLogin()
     }
-
-    private func checkLogin() {
-        self.authChangeEvent = (user != nil) ? .signedIn : .signedOut
-        Task {
-            do {
-                self.session = try await supabase.auth.session
-                self.user = self.session?.user
-                if user != nil {
-                    self.authChangeEvent = .signedIn
-                } else {
-                    self.authChangeEvent = .signedOut
-                }
-            } catch {
-                print(error)
-            }
-        }
-    }
-
+    
     private func loadTraces() async {
         let query = supabase.database.from("traces").select()
         do {
             error = nil
             traces = try await query.execute().value
-            categories = Array(Set(traces.map { $0.category })).sorted { $0 < $1 }
         } catch {
             self.error = error
             print(error)
         }
     }
+    private func syncCategories() async {
+
+            let query = supabase.database.from("categories").select()
+            do {
+                error = nil
+                categories = try await query.execute().value
+                categoriesSynced = true
+            } catch {
+                self.error = error
+                print(error)
+            }
+        
+    }
     
     func reloadTraces() async {
         await loadTraces()
+        if !categoriesSynced {
+            await syncCategories()
+        }
     }
+    
+    func toggleFilter(category: String) {
+        if filters.contains(category) {
+            filters.remove(category)
+        } else {
+            filters.insert(category)
+        }
+        filteredTraces = traces.filter { filters.contains($0.category) }
+    }
+    
+
+}
+
+// USER INTERACTION
+
+extension SupabaseManager {
     
     func loadTracesFromUser() async {
         
@@ -78,9 +94,7 @@ class SupabaseManager: ObservableObject {
                 .from("traces")
                 .select()
                 .match(query: ["user_id": userID])
-            
             checkLogin()
-            
             do {
                 userTraceHistory = try await query.execute().value
             } catch {
@@ -90,7 +104,7 @@ class SupabaseManager: ObservableObject {
         }
     }
     
-    func clearUserTraceHistory() {
+    private func clearUserTraceHistory() {
         userTraceHistory = []
         checkLogin()
     }
@@ -107,13 +121,27 @@ class SupabaseManager: ObservableObject {
         }
     }
     
-    func toggleFilter(category: String) {
-        if filters.contains(category) {
-            filters.remove(category)
-        } else {
-            filters.insert(category)
+}
+    
+// AUTH
+
+extension SupabaseManager {
+    
+    private func checkLogin() {
+        self.authChangeEvent = (user != nil) ? .signedIn : .signedOut
+        Task {
+            do {
+                self.session = try await supabase.auth.session
+                self.user = self.session?.user
+                if user != nil {
+                    self.authChangeEvent = .signedIn
+                } else {
+                    self.authChangeEvent = .signedOut
+                }
+            } catch {
+                print(error)
+            }
         }
-        filteredTraces = traces.filter { filters.contains($0.category) }
     }
 
     func createNewUser(email: String, password: String) async throws {

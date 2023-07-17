@@ -17,19 +17,19 @@ struct FilterDropdown: View {
         ZStack {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
-                    ForEach(supabaseManager.categories, id: \.self) { category in
+                    ForEach(supabaseManager.categories) { category in
                         Button(action: {
                             withAnimation { () -> () in
-                                supabaseManager.toggleFilter(category: category)
+                                supabaseManager.toggleFilter(category: category.category)
                             }
                         }) {
                             HStack {
-                                Text(category)
+                                Text(category.category)
                                     .font(.body)
                                     .foregroundColor(themeManager.theme.text)
                                     .padding(4)
                                 Spacer()
-                                if supabaseManager.filters.contains(category) {
+                                if supabaseManager.filters.contains(category.category) {
                                     Image(systemName: "checkmark")
                                         .foregroundColor(themeManager.theme.accent)
                                         .padding(.trailing, 6)
@@ -56,12 +56,11 @@ struct FilterDropdown: View {
             maxHeight: .infinity,
             alignment: .topLeading
         )
-
     }
 }
 
 
-struct FilterPopup_Previews: PreviewProvider {
+struct FilterDropdown_Previews: PreviewProvider {
     static var previews: some View {
         FilterDropdown()
     }

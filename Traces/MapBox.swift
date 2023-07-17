@@ -107,6 +107,19 @@ class MapViewController: UIViewController {
     @Binding var annotations: [Trace]
 
     internal var mapView: MapView!
+    public var snapshotter: Snapshotter!
+    public var snapshotView: UIImageView!
+    private var snapshotting = false
+    
+    private lazy var stackView: UIStackView = {
+        let stackView = UIStackView(frame: view.safeAreaLayoutGuide.layoutFrame)
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.distribution = .fillEqually
+        stackView.alignment = .fill
+        stackView.spacing = 12.0
+        return stackView
+    }()
     
     init(
         mapType: MapType = .fixed,
@@ -139,14 +152,41 @@ class MapViewController: UIViewController {
         updateAnnotations(annotations)
         mapView.ornaments.options = ornamentOptions()
         mapView.location.options.puckType = .puck2D()
-        
         mapView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         
         if mapType != .interactive {
             mapView.gestures.options = disabledGestureOptions
         }
         
-        self.view.addSubview(mapView)
+        stackView.addArrangedSubview(mapView)
+        
+        snapshotView = UIImageView()
+        snapshotView.translatesAutoresizingMaskIntoConstraints = false
+        
+        if mapType != .interactive {
+            stackView.addSubview(snapshotView)
+            stackView.removeArrangedSubview(mapView)
+            let annotation = AnnotationView(frame: CGRect(x: 36, y: 36, width: 72, height: 72))
+            stackView.addSubview(annotation)
+        }
+        
+    
+        view.addSubview(stackView)
+
+        NSLayoutConstraint.activate([
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+    
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        if snapshotter == nil {
+            initializeSnapshotter()
+        }
     }
     
     func updateAnnotations(_ annotations: [Trace]) {
@@ -212,4 +252,48 @@ class MapViewController: UIViewController {
         let attributionOptions = AttributionButtonOptions(margins: CGPoint(x: 0, y: 106))
         return OrnamentOptions(scaleBar: scaleBarOptions, logo: logoOptions, attributionButton: attributionOptions)
     }
+    
+    private func initializeSnapshotter() {
+        // Configure the snapshotter object with its default access
+        // token, size, map style, and camera.
+        let size = CGSize(
+            width: view.safeAreaLayoutGuide.layoutFrame.width,
+            height: view.safeAreaLayoutGuide.layoutFrame.height)
+        let options = MapSnapshotOptions(
+            size: size,
+            pixelRatio: UIScreen.main.scale,
+            resourceOptions: ResourceOptionsManager.default.resourceOptions,
+            showsLogo: false,
+            showsAttribution: false)
+        
+        snapshotter = Snapshotter(options: options)
+        snapshotter.style.uri = style
+        
+        // Set the camera of the snapshotter
+        
+        mapView.mapboxMap.onEvery(event: .mapIdle) { [weak self] _ in
+            // Allow the previous snapshot to complete before starting a new one.
+            guard let self = self, !self.snapshotting else {
+                return
+            }
+            
+            let snapshotterCameraOptions = CameraOptions(cameraState: self.mapView.cameraState)
+            self.snapshotter.setCamera(to: snapshotterCameraOptions)
+            self.startSnapshot()
+        }
+    }
+    
+    public func startSnapshot() {
+        snapshotting = true
+        snapshotter.start(overlayHandler: nil) { ( result ) in
+            switch result {
+            case .success(let image):
+                self.snapshotView.image = image
+            case .failure(let error):
+                print("Error generating snapshot: \(error)")
+            }
+            self.snapshotting = false
+        }
+    }
+
 }

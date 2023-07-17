@@ -38,3 +38,19 @@ struct Trace: Codable, Identifiable, Equatable {
         }
     }
 }
+
+struct Category: Codable, Identifiable, Equatable {
+    
+    var id: UUID
+    var category: String
+    
+    enum CodingKeys: String, CodingKey {
+        case id = "id"
+        case category = "category"
+        
+        var stringValue: String {
+            return rawValue
+        }
+    }
+    
+}
