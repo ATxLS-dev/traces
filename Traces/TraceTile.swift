@@ -11,6 +11,8 @@ import MapKit
 struct TraceTile: View {
     
     @ObservedObject var themeManager = ThemeManager.shared
+    @ObservedObject var supabaseManager = SupabaseManager.shared
+    @State var username: String = ""
     var trace: Trace
     
     var body: some View {
@@ -33,7 +35,7 @@ struct TraceTile: View {
                     Spacer()
                     VStack(alignment: .trailing, spacing: 2) {
                         Spacer()
-                        Text("@\(trace.username)")
+                        Text("@\(username)")
                             .foregroundColor(themeManager.theme.text.opacity(0.6))
                             .font(.caption)
                         Text(getFormattedDate())
@@ -47,20 +49,17 @@ struct TraceTile: View {
                     .foregroundColor(themeManager.theme.text)
             }
         }
+        .task {
+            username = await supabaseManager.getUsernameFromID(trace.userID)
+        }
         .padding(8)
     }
     
     private func getFormattedDate() -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssxxxxx"
-        
-        guard let date = dateFormatter.date(from: trace.creationDate) else {
-            return "date not found"
-        }
-        
-        dateFormatter.dateFormat = "MM/d/yy, h:mm a"
-
-        let result = dateFormatter.string(from: date)
-        return result
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .short
+        let dateString = dateFormatter.string(from: supabaseManager.convertFromTimestamptzDate(trace.creationDate))
+        return dateString
     }
 }

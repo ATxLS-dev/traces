@@ -21,6 +21,7 @@ struct NewTracePopup: CentrePopup {
     @State var region = CLLocationCoordinate2D(latitude: 37.334722, longitude: -122.008889)
     @State var showFilterDropdown: Bool = false
     @State var showNoteEditor: Bool = false
+    @State var tags: Set<String> = []
     
     @ObservedObject var themeManager = ThemeManager.shared
     @ObservedObject var supabaseManager = SupabaseManager.shared
@@ -40,7 +41,7 @@ struct NewTracePopup: CentrePopup {
                         createPrompt()
                         Spacer()
                     }
-                    filterBar()
+                    categorySelector()
                         .zIndex(1)
                     createField()
                     if showNoteEditor {
@@ -65,19 +66,9 @@ struct NewTracePopup: CentrePopup {
         }
         .onAppear {
             locationManager.updateUserLocation()
+            
         }
     }
-    
-//    private func addEntry(title: String, content: String) async {
-//        let newTrace: Trace = Trace(id: UUID(), creationDate: Date(), username: supabaseManager.user?.email, locationName: title, latitude: locationManager.userLocation.latitude, longitude: locationManager.userLocation.longitude, content: content, category: nil, user_id: supabaseManager.user?.id)
-//        
-//        do {
-//            await supabaseManager.addTrace(trace: newTrace)
-//        } catch {
-//            print("Save Failed")
-//        }
-//    }
-    
 }
 
 private extension NewTracePopup {
@@ -91,7 +82,7 @@ private extension NewTracePopup {
                     RoundedRectangle(cornerRadius: 32)
                         .stroke(themeManager.theme.border, lineWidth: 4)
                     RoundedRectangle(cornerRadius: 32)
-                        .fill(themeManager.theme.background)
+                        .fill(themeManager.theme.backgroundAccent)
                 }
             )
     }
@@ -132,7 +123,32 @@ private extension NewTracePopup {
         Button("add any notes?", action: {showNoteEditor.toggle()})
     }
     
-    func filterBar() -> some View {
+    func buildTagCapsule(_ tag: String) -> some View {
+        Button(action: {
+                tags.remove(tag)
+            }) {
+                HStack(spacing: 12) {
+                    Text(tag)
+                        .font(.caption)
+                    Image(systemName: "x.circle")
+                        .foregroundColor(themeManager.theme.accent.opacity(0.4))
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(
+                    ZStack {
+                        Capsule()
+                            .fill(themeManager.theme.background)
+                        Capsule()
+                            .stroke(themeManager.theme.accent, lineWidth: 1.4)
+                    }
+                )
+                .foregroundColor(themeManager.theme.text)
+            }
+            .padding(2)
+    }
+    
+    func categorySelector() -> some View {
         ZStack {
             Spacer()
                 .background(.ultraThinMaterial)
@@ -140,11 +156,11 @@ private extension NewTracePopup {
                 .animation(.easeInOut(duration: 0.4), value: showFilterDropdown)
             VStack {
                 HStack {
-                    if !supabaseManager.filters.isEmpty {
+                    if !tags.isEmpty {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
-                                ForEach(Array(supabaseManager.filters), id: \.self) { category in
-                                    CategoryTag(category: category)
+                                ForEach(Array(tags), id:\.self) { tag in
+                                    buildTagCapsule(tag)
                                 }
                             }.transition(AnyTransition.scale)
                         }
@@ -175,7 +191,7 @@ private extension NewTracePopup {
             }
             VStack {
                 if showFilterDropdown {
-                    FilterDropdown()
+                    buildTagPicker()
                         .offset(y: -200)
                         .zIndex(1)
                         .transition(.move(edge: self.showFilterDropdown ? .leading : .trailing))
@@ -183,6 +199,51 @@ private extension NewTracePopup {
             }
             .animation(.easeInOut(duration: 0.5), value: self.showFilterDropdown)
         }
+    }
+    
+    func buildTagPicker() -> some View {
+        ZStack {
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 16) {
+                    ForEach(supabaseManager.categories) { tag in
+                        Button(action: {
+                            withAnimation { () -> () in
+                                tags.insert(tag.category)
+                            }
+                        }) {
+                            HStack {
+                                Text(tag.category)
+                                    .font(.body)
+                                    .foregroundColor(themeManager.theme.text)
+                                    .padding(4)
+                                Spacer()
+                                if tags.contains(tag.category) {
+                                    Image(systemName: "checkmark")
+                                        .foregroundColor(themeManager.theme.accent)
+                                        .padding(.trailing, 6)
+                                }
+                            }
+                            .frame(width: 220)
+                        }
+                    }
+                }
+            }
+            .frame(height: 480)
+            .padding(12)
+            .background(
+                ZStack {
+                    RoundedRectangle(cornerRadius: 24).foregroundColor(themeManager.theme.backgroundAccent)
+                    RoundedRectangle(cornerRadius: 24).stroke(themeManager.theme.border, lineWidth: 2)
+                }
+            )
+        }
+        .frame(
+            minWidth: 0,
+            maxWidth: .infinity,
+            minHeight: 0,
+            maxHeight: .infinity,
+            alignment: .topLeading
+        )
     }
     
     func sortButton() -> some View {
@@ -241,7 +302,11 @@ private extension NewTracePopup {
 
     func submitButton() -> some View {
         Button(action: {
-            //NEW TRACE
+            supabaseManager.createNewTrace(
+                locationName: title,
+                content: content,
+                categories: supabaseManager.categories.map( {$0.category} ),
+                location: locationManager.lastLocation)
         }) {
             Image(systemName: "checkmark.circle")
                 .scaleEffect(1.2)

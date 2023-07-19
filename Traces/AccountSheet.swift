@@ -72,6 +72,7 @@ extension AccountSheet {
         HStack {
             Text(info ?? "Not set")
                 .padding()
+                .foregroundColor(themeManager.theme.text)
             Spacer()
         }
         .background(
@@ -86,6 +87,7 @@ extension AccountSheet {
                 isEditMode = true
             }) {
                 Text("Edit Account Info")
+                    .foregroundColor(themeManager.theme.text)
                     .fontWeight(.bold)
                     .padding(16)
             }
@@ -120,12 +122,10 @@ extension AccountSheet {
         HStack {
             Spacer()
             Button(action: {
-                if mode == .signIn {
-                    // Sign in user
-                }
-                withAnimation { mode = (mode == .signIn) ? .signUp : .signIn }
+
             }) {
                 Text("Delete Account")
+                    .foregroundColor(.red)
                     .padding(16)
                     .foregroundColor(themeManager.theme.text)
             }
@@ -133,7 +133,7 @@ extension AccountSheet {
         }
         .background(
             Capsule()
-                .stroke(themeManager.theme.accent, lineWidth: 2))
+                .stroke(themeManager.theme.border, lineWidth: 2))
     }
     
     private func editAccountFields() -> some View {
@@ -160,3 +160,10 @@ extension AccountSheet {
         }
     }
 }
+
+struct AccountSheet_Previews: PreviewProvider {
+    static var previews: some View {
+        AccountSheet(isPresented: .constant(true))
+    }
+}
+

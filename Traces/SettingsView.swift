@@ -21,6 +21,7 @@ struct SettingsView: View {
         ZStack {
             VStack {
                 buildListItem(item: buildLabel(title: "Manage Account", systemImage: "person"))
+                    .opacity(supabase.authChangeEvent == .signedIn ? 1 : 0.6)
                     .onTapGesture {
                         Task {
                             if supabase.authChangeEvent == .signedIn {

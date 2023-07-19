@@ -18,14 +18,13 @@ struct MapBox: View {
     @State var mapType: MapType
     @State var focalTrace: Trace = Trace(
         id: UUID(),
-        creationDate: "2023-07-14",
-        username: "John Doe",
-        locationName: "Sample Location",
+        userID: UUID(),
+        creationDate: Date.currentTimeStamp.formatted(),
         latitude: 37.123456,
         longitude: -122.654321,
+        locationName: "Sample Location",
         content: "Sample content",
-        category: "Sample category",
-        user_id: UUID()
+        categories: ["Sample category"]
     )
     @State var annotations: [Trace] = []
 

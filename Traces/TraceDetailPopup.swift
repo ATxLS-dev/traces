@@ -19,6 +19,7 @@ struct TraceDetailPopup: CentrePopup {
     }
     
     var trace: Trace
+    @State var username: String = ""
     @State var region = CLLocationCoordinate2D(latitude: 37.334722, longitude: -122.008889)
     
     @ObservedObject var themeManager = ThemeManager.shared
@@ -27,6 +28,13 @@ struct TraceDetailPopup: CentrePopup {
     init(trace: Trace) {
         self.trace = trace
         self.region = CLLocationCoordinate2D(latitude: trace.latitude, longitude: trace.longitude)
+        getUsername(trace.userID)
+    }
+    
+    func getUsername(_ id: UUID) {
+        Task {
+            self.username = await supabaseManager.getUsernameFromID(id)
+        }
     }
     
     func createContent() -> some View {
@@ -96,8 +104,12 @@ extension TraceDetailPopup {
     }
     
     func createCategory() -> some View {
-        HStack {
-            CategoryTag(category: trace.category)
+        ScrollView(.horizontal) {
+            ForEach(trace.categories, id: \.self) { category in
+                CategoryTag(category: category)
+                
+            }
+//            CategoryTag(category: trace.categories)
 //            CategoryTag(category: trace?.category ?? "Category")
         }
 
@@ -133,11 +145,14 @@ extension TraceDetailPopup {
     }
     
     func createUsername() -> some View {
-        Text(trace.username)
+        return Text(username)
             .font(.caption)
             .foregroundColor(themeManager.theme.text)
-
+            .task {
+                username = await supabaseManager.getUsernameFromID(trace.userID)
+            }
     }
+    
     
     func submitButton() -> some View {
         Button(action: {

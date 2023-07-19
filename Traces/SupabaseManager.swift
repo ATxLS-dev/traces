@@ -9,6 +9,7 @@
 import Foundation
 import Supabase
 import SwiftUI
+import MapKit
 import MapboxStatic
 import Combine
 import GoTrue
@@ -19,8 +20,8 @@ enum CreateUserError: Error {
 
 @MainActor
 class SupabaseManager: ObservableObject {
-    static let shared = SupabaseManager()
     
+    static let shared = SupabaseManager()
     let supabase: SupabaseClient
     
     private var error: Error?
@@ -28,12 +29,12 @@ class SupabaseManager: ObservableObject {
     private var categoriesSynced: Bool = false
     
     @Published private(set) var traces: [Trace] = []
+    @Published private(set) var filteredTraces: [Trace] = []
     @Published private(set) var categories: [Category] = []
     @Published private(set) var filters: Set<String> = []
-    @Published private(set) var filteredTraces: [Trace] = []
     @Published private(set) var userTraceHistory: [Trace] = []
-    @Published var authChangeEvent: AuthChangeEvent?
-    @Published var user: User?
+    @Published private(set) var authChangeEvent: AuthChangeEvent?
+    @Published private(set) var user: User?
     
     init() {
         supabase = SupabaseClient(supabaseURL: Secrets.supabaseURL, supabaseKey: Secrets.supabaseAnonKey)
@@ -50,17 +51,18 @@ class SupabaseManager: ObservableObject {
             print(error)
         }
     }
+    
     private func syncCategories() async {
-
-            let query = supabase.database.from("categories").select()
-            do {
-                error = nil
-                categories = try await query.execute().value
-                categoriesSynced = true
-            } catch {
-                self.error = error
-                print(error)
-            }
+        
+        let query = supabase.database.from("categories").select()
+        do {
+            error = nil
+            categories = try await query.execute().value
+            categoriesSynced = true
+        } catch {
+            self.error = error
+            print(error)
+        }
         
     }
     
@@ -77,10 +79,16 @@ class SupabaseManager: ObservableObject {
         } else {
             filters.insert(category)
         }
-        filteredTraces = traces.filter { filters.contains($0.category) }
+        filteredTraces = traces.filter { filters.contains($0.categories) }
     }
     
-
+    func convertFromTimestamptzDate(_ rawDate: String) -> Date {
+        let formatter = ISO8601DateFormatter()
+        if let date = formatter.date(from: rawDate) {
+            return date
+        }
+        return Date()
+    }
 }
 
 // USER INTERACTION
@@ -109,18 +117,80 @@ extension SupabaseManager {
         checkLogin()
     }
     
-    func addTrace(trace: Trace) async {
-        let query = supabase.database
-            .from("traces")
-            .insert(values: trace)
+    private func parseJSON(_ json: String) -> String {
+        let jsonString = json
+
+        guard let jsonData = jsonString.data(using: .utf8) else {
+            print("Invalid JSON string")
+            return ""
+        }
+        
         do {
-            try await query.execute()
+            if let jsonArray = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [[String: Any]],
+               let email = jsonArray.first?["email"] as? String {
+                return email
+            } else {
+                print("Invalid JSON format")
+            }
+        } catch {
+            print("Error parsing JSON: \(error)")
+
+        }
+        return ""
+    }
+    
+    func getUsernameFromID(_ id: UUID) async -> String {
+
+        //CHANGE TO USERNAME LATER
+        let query = supabase.database
+            .from("users")
+            .select(columns: "email")
+            .eq(column: "id", value: id)
+        var result: String = ""
+        do {
+            result = try await query.execute().value
         } catch {
             self.error = error
             print(error)
         }
+        return parseJSON(result)
     }
     
+    func createNewTrace(locationName: String, content: String, categories: [String], location: CLLocationCoordinate2D) {
+        if authChangeEvent == .signedIn {
+            let date = Date()
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions = [.withInternetDateTime]
+            let creationDateInTimestamptz = formatter.string(from: date)
+            
+            let newTrace: Trace = Trace(
+                id: UUID(),
+                userID: user!.id,
+                creationDate: creationDateInTimestamptz,
+                latitude: location.latitude,
+                longitude: location.longitude,
+                locationName: locationName,
+                content: content,
+                categories: categories
+            )
+            addTrace(trace: newTrace)
+        }
+    }
+    
+    private func addTrace(trace: Trace) {
+        let query = supabase.database
+            .from("traces")
+            .insert(values: trace)
+        Task {
+            do {
+                print(trace)
+                try await query.execute()
+            } catch {
+                self.error = error
+                print("Error inserting trace: \(error)")
+            }
+        }
+    }
 }
     
 // AUTH
