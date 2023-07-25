@@ -286,7 +286,7 @@ private extension NewTracePopup {
         Button(action: {
             PopupManager.dismiss()
         }) {
-            HalfButton(icon: "xmark.circle")
+            HalfButton(icon: "xmark.circle", isColorless: true)
                 .rotationEffect(.degrees(180))
         }
     }

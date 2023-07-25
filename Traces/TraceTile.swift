@@ -35,18 +35,17 @@ struct TraceTile: View {
                     Spacer()
                     VStack(alignment: .trailing, spacing: 2) {
                         Spacer()
+                        Text(trace.locationName)
+                            .foregroundColor(themeManager.theme.text)
                         Text("@\(username)")
-                            .foregroundColor(themeManager.theme.text.opacity(0.6))
+                            .foregroundColor(themeManager.theme.text.opacity(0.4))
                             .font(.caption)
                         Text(getFormattedDate())
-                            .foregroundColor(themeManager.theme.text.opacity(0.8))
+                            .foregroundColor(themeManager.theme.text.opacity(0.6))
                             .font(.caption2)
                     }
                     .padding(.vertical, 4)
                 }
-                
-                Text(trace.locationName)
-                    .foregroundColor(themeManager.theme.text)
             }
         }
         .task {
@@ -57,8 +56,8 @@ struct TraceTile: View {
     
     private func getFormattedDate() -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .short
+        dateFormatter.dateStyle = .short
+        dateFormatter.timeStyle = .none
         let dateString = dateFormatter.string(from: supabaseManager.convertFromTimestamptzDate(trace.creationDate))
         return dateString
     }

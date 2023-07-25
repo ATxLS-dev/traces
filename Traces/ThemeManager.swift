@@ -35,6 +35,7 @@ let ash: Color = Color(hex: 0xA4B9AA)
 let veridian: Color = Color(hex: 0x4E7E63)
 let licorice: Color = Color(hex: 0x171216)
 let night: Color = Color(hex: 0x121717)
+let eerie: Color = Color(hex: 0x101212)
 
 
 //MAYBE
@@ -44,8 +45,10 @@ let brownSugar: Color = Color(hex: 0xB4654A)
 let wine: Color = Color(hex: 0x6A2E35)
 let poppy: Color = Color(hex: 0xD64045)
 let liver: Color = Color(hex: 0x664E4C)
-let spaceCadet: Color = Color(hex: 0x664E4C)
+let cinereous: Color = Color(hex: 0x6826C6B)
 let chestnut: Color = Color(hex: 0xA53F2B)
+let hooker: Color = Color(hex: 0x467259)
+let grass: Color = Color(hex: 0x8CA694)
 
 
 let rainbowColors: [Color] = [
@@ -112,6 +115,7 @@ protocol ColorTheme {
     var accent: Color { get }
     var text: Color { get }
     var button: Color { get }
+    var shadow: Color { get }
     var mapStyle: String { get }
 }
 
@@ -119,19 +123,21 @@ struct LightTheme: ColorTheme {
     var backgroundAccent: Color = .white
     var border: Color = .black
     var background: Color = snow
-    var accent: Color = veridian
+    var accent: Color = ash
     var text: Color = licorice
-    var button: Color = ash
+    var button: Color = eerie
+    var shadow: Color = .gray.opacity(0.4)
     var mapStyle: String = "mapbox://styles/atxls/cliuqmp8400kv01pw57wxga7l"
 }
 
 struct DarkTheme: ColorTheme {
     var backgroundAccent: Color = .black
-    var border: Color = taupeGray
-    var background: Color = night
-    var accent: Color = veridian
+    var border: Color = cinereous
+    var background: Color = eerie
+    var accent: Color = ash
     var text: Color = snow
-    var button: Color = veridian
+    var button: Color = grass
+    var shadow: Color = .black
     var mapStyle: String = "mapbox://styles/atxls/clj4rozom000401pw7na12c30"
 }
 

@@ -14,11 +14,12 @@ public struct HalfButton: View {
     var icon: String = "line.3.horizontal.decrease.circle"
     var size: CGFloat = 48
     var widthScale: CGFloat = 1.0
+    var isColorless: Bool = false
     
     public var body: some View {
         ZStack {
             Rectangle()
-                .fill(themeManager.theme.button)
+                .fill(isColorless ? themeManager.theme.border : themeManager.theme.button)
                 .cornerRadius(size / 4, corners: [.topLeft, .bottomLeft])
                 .cornerRadius(size / 2, corners: [.topRight, .bottomRight])
             Rectangle()

@@ -62,27 +62,18 @@ struct ProfileView: View {
     
     @ViewBuilder
     func buildProfilePage() -> some View {
-        ZStack {
-            ScrollView {
-                Spacer(minLength: 128)
-                buildTraces()
-                Spacer(minLength: 128)
-            }
-            VStack {
-                buildProfileCard()
-                    .padding(24)
-                Spacer()
-            }
+        ScrollView {
+            buildProfileCard()
+            buildTraces()
+            Spacer(minLength: 128)
         }
     }
     
     func buildTraces() -> some View {
         VStack(spacing: 10) {
             ForEach(supabase.userTraceHistory) { trace in
-                HStack {
-                    Button(action: TraceDetailPopup(trace: trace).showAndStack) {
-                        TraceTile(trace: trace)
-                    }
+                Button(action: TraceDetailPopup(trace: trace).showAndStack) {
+                    TraceTile(trace: trace)
                 }
                 .padding(.horizontal)
             }
@@ -91,11 +82,6 @@ struct ProfileView: View {
     
     func buildProfileCard() -> some View {
         HStack {
-            Image(systemName: "person.fill")
-                .padding(12)
-                .foregroundColor(themeManager.theme.background)
-                .background(Circle().fill(themeManager.theme.text.opacity(0.6)))
-                .scaleEffect(1.4)
             Spacer()
             VStack(alignment: .trailing) {
                 Text("@\(username)")
@@ -107,11 +93,13 @@ struct ProfileView: View {
             }
             .padding(.trailing)
         }
-        .padding(18)
-        .background( BorderedCapsule() )
+        .padding(24)
         .task {
-            username = await supabase.getUsernameFromID(supabase.user!.id)
+            if supabase.user != nil {
+                username = await supabase.getUsernameFromID(supabase.user!.id)
+            }
         }
+        .edgesIgnoringSafeArea(.top)
     }
 }
 

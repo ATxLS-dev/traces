@@ -53,32 +53,16 @@ extension HomeView {
                     sortButton()
                 }
                 .padding(4)
-                .padding(.leading)
+                .padding(.leading, 4)
                 .background(
-                    ZStack {
-                        Capsule().fill(themeManager.theme.backgroundAccent)
-                        Capsule().stroke(themeManager.theme.border, lineWidth: 2)
-                    }
+                    BorderedCapsule()
+                        .shadow(color: themeManager.theme.shadow, radius: 6, x: 4, y: 4)
                 )
                 .onTapGesture {
                     showFilterDropdown.toggle()
                 }
-                Text("Filters")
-                    .foregroundColor(themeManager.theme.text)
-                    .font(.subheadline)
-                    .padding(.horizontal)
-                    .padding(.vertical, 4)
-                    .background(
-                        Capsule()
-                            .fill(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [themeManager.theme.background, themeManager.theme.backgroundAccent]),
-                                    startPoint: UnitPoint(x: 0, y: 0.4),
-                                    endPoint: UnitPoint(x: 0, y: 0.6)
-                                )
-                            )
-                        )
-                    .offset(x: -100, y: -78)
+                FieldLabel(fieldLabel: "Filters")
+                    .offset(x: -100, y: -72)
                 Spacer()
             }
             .padding()
@@ -114,10 +98,8 @@ extension HomeView {
                     supabaseManager.filteredTraces.isEmpty ?
                     supabaseManager.traces : supabaseManager.filteredTraces
                 ) { trace in
-                    HStack {
-                        Button(action: TraceDetailPopup(trace: trace).showAndStack) {
-                            TraceTile(trace: trace)
-                        }
+                    Button(action: TraceDetailPopup(trace: trace).showAndStack) {
+                        TraceTile(trace: trace)
                     }
                     .padding(.horizontal)
                 }

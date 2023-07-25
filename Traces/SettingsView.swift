@@ -77,7 +77,7 @@ extension SettingsView {
                 .padding(.vertical, 16)
         } icon: {
             Circle()
-                .fill(themeManager.theme.button)
+                .fill(themeManager.theme.accent)
                 .frame(width: 36, height: 36)
                 .overlay(
                     Image(systemName: systemImage)

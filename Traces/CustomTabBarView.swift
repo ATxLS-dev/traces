@@ -56,9 +56,8 @@ struct CustomTabBarView: View {
                 .onTapGesture {
                     currentTab = .map
                 }
-            
-            buildNewTraceButton()
 
+            buildNewTraceButton()
             
             TabBarButton(imageName: Tab.profile.rawValue)
                 .frame(width: buttonDimen, height: buttonDimen)
@@ -74,18 +73,11 @@ struct CustomTabBarView: View {
             
         }
         .padding(.horizontal, 12)
-        .background(
-            ZStack {
-                Capsule(style: .circular)
-                    .fill(themeManager.theme.backgroundAccent)
-                Capsule(style: .circular)
-                    .stroke(themeManager.theme.border, lineWidth: 2)
-            }
-        )
+        .background( BorderedCapsule() )
         .overlay {
             SelectedTabCircleView(currentTab: $currentTab)
         }
-//        .shadow(color: themeManager.theme.text.opacity(0.4), radius: 6, x: 0, y: 6)
+        .shadow(color: themeManager.theme.shadow, radius: 6, x: 4, y: 4)
         .animation(
             .interactiveSpring(
                 response: 0.34, dampingFraction: 0.69, blendDuration: 0.69),
@@ -103,11 +95,12 @@ extension CustomTabBarView {
                     .frame(width: 48, height: 48)
                     .foregroundColor(themeManager.theme.text)
                     .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(themeManager.theme.button.opacity(0.6)))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(themeManager.theme.text, lineWidth: 2)
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(themeManager.theme.background)
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(themeManager.theme.button, lineWidth: 2)
+                        }
                     )
             }
         }
@@ -150,10 +143,10 @@ struct SelectedTabCircleView: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(themeManager.theme.button)
+                .fill(themeManager.theme.background)
                 .frame(width: buttonDimen , height: buttonDimen)
             Circle()
-                .stroke(themeManager.theme.text, lineWidth: 2)
+                .stroke(themeManager.theme.button, lineWidth: 2)
                 .frame(width: buttonDimen , height: buttonDimen)
             TabBarButton(imageName: "\(currentTab.rawValue).fill")
                 .foregroundColor(themeManager.theme.text)
