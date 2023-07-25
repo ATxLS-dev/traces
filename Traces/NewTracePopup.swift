@@ -49,7 +49,7 @@ struct NewTracePopup: CentrePopup {
                     } else {
                         addDescription()
                     }
-                    HStack(spacing: 24) {
+                    HStack(spacing: 4) {
                         Spacer()
                         cancelButton()
                         submitButton()
@@ -97,6 +97,7 @@ private extension NewTracePopup {
         ZStack {
             TextField("", text: $title)
                 .textFieldStyle(.plain)
+                .foregroundColor(themeManager.theme.text)
                 .padding(20)
                 .background(
                     ZStack {
@@ -250,38 +251,7 @@ private extension NewTracePopup {
         Button(action: {
             showFilterDropdown.toggle()
         }) {
-            Image(systemName: "line.3.horizontal.decrease.circle")
-                .scaleEffect(1.2)
-                .foregroundColor(themeManager.theme.text)
-                .padding()
-                .background(
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(themeManager.theme.button)
-                            .clipShape(
-                                Rectangle()
-                                    .scale(1.8)
-                                    .trim(from: 0, to: 0.5)
-                                    .rotation(Angle(degrees: -135))
-                            )
-                        Circle()
-                            .trim(from: 0.0, to: 0.5)
-                            .rotation(Angle(degrees: -90))
-                            .fill(themeManager.theme.button)
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(themeManager.theme.border, lineWidth: 2)
-                            .clipShape(
-                                Rectangle()
-                                    .scale(1.1)
-                                    .trim(from: 0.125, to: 0.625)
-                                    .rotation(Angle(degrees: 180))
-                            )
-                        Circle()
-                            .trim(from: 0.0, to: 0.5)
-                            .rotation(Angle(degrees: -90))
-                            .stroke(themeManager.theme.border, lineWidth: 2)
-                    }
-                )
+            HalfButton()
         }
     }
 
@@ -305,81 +275,19 @@ private extension NewTracePopup {
             supabaseManager.createNewTrace(
                 locationName: title,
                 content: content,
-                categories: supabaseManager.categories.map( {$0.category} ),
+                categories: Array(tags),
                 location: locationManager.lastLocation)
+            PopupManager.dismiss()
         }) {
-            Image(systemName: "checkmark.circle")
-                .scaleEffect(1.2)
-                .foregroundColor(themeManager.theme.text)
-                .padding()
-                .background(
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(themeManager.theme.button)
-                            .clipShape(
-                                Rectangle()
-                                    .scale(2)
-                                    .trim(from: 0, to: 0.5)
-                                    .rotation(Angle(degrees: -120))
-                            )
-                            .frame(width: 90)
-                        Circle()
-                            .trim(from: 0.0, to: 0.5)
-                            .rotation(Angle(degrees: -90))
-                            .fill(themeManager.theme.button)
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(themeManager.theme.border, lineWidth: 2)
-                            .clipShape(
-                                Rectangle()
-                                    .scale(2)
-                                    .trim(from: 0, to: 0.5)
-                                    .rotation(Angle(degrees: -120))
-                            )
-                        Circle()
-                            .trim(from: 0.0, to: 0.5)
-                            .rotation(Angle(degrees: -90))
-                            .stroke(themeManager.theme.border, lineWidth: 2)
-                        
-                }
-            )
+            HalfButton(icon: "checkmark.circle")
         }
     }
     func cancelButton() -> some View {
         Button(action: {
             PopupManager.dismiss()
         }) {
-            Image(systemName: "xmark.circle")
-                .scaleEffect(1.2)
-                .foregroundColor(themeManager.theme.text)
-                .padding()
-                .background(
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(themeManager.theme.backgroundAccent)
-                            .clipShape(
-                                Rectangle()
-                                    .scale(1.1)
-                                    .trim(from: 0.125, to: 0.625)
-                                    .rotation(Angle(degrees: 0))
-                            )
-                        Circle()
-                            .trim(from: 0.0, to: 0.5)
-                            .rotation(Angle(degrees: 90))
-                            .fill(themeManager.theme.backgroundAccent)
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(themeManager.theme.border, lineWidth: 2)
-                            .clipShape(
-                                Rectangle()
-                                    .scale(1.1)
-                                    .trim(from: 0.125, to: 0.625)
-                                    .rotation(Angle(degrees: 0))
-                            )
-                        Circle()
-                            .trim(from: 0.0, to: 0.5)
-                            .rotation(Angle(degrees: 90))
-                            .stroke(themeManager.theme.border, lineWidth: 2)
-                    }
-                )
+            HalfButton(icon: "xmark.circle")
+                .rotationEffect(.degrees(180))
         }
     }
 }

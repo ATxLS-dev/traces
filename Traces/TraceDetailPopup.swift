@@ -62,7 +62,7 @@ struct TraceDetailPopup: CentrePopup {
                 HStack(spacing: 24) {
                     Spacer()
                     cancelButton()
-                    submitButton()
+                    shareButton()
                 }
             }
             .task {
@@ -91,7 +91,6 @@ extension TraceDetailPopup {
     }
     
     func createTitle() -> some View {
-//        Text(trace?.locationName ?? "Location Name")
         Text(trace.locationName)
             .font(.title2)
             .foregroundColor(themeManager.theme.text)
@@ -104,15 +103,27 @@ extension TraceDetailPopup {
     }
     
     func createCategory() -> some View {
-        ScrollView(.horizontal) {
-            ForEach(trace.categories, id: \.self) { category in
-                CategoryTag(category: category)
-                
-            }
-//            CategoryTag(category: trace.categories)
-//            CategoryTag(category: trace?.category ?? "Category")
-        }
 
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack {
+                ForEach(trace.categories, id: \.self) { tag in
+                    Text(tag)
+                        .font(.caption)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(
+                            ZStack {
+                                Capsule()
+                                    .fill(themeManager.theme.background)
+                                Capsule()
+                                    .stroke(themeManager.theme.accent, lineWidth: 1.4)
+                            }
+                        )
+                        .padding(2)
+                        .foregroundColor(themeManager.theme.text)
+                }
+            }
+        }
     }
     
     func createDescription() -> some View {
@@ -154,88 +165,19 @@ extension TraceDetailPopup {
     }
     
     
-    func submitButton() -> some View {
+    func shareButton() -> some View {
         Button(action: {
-            
+            PopupManager.dismiss()
         }) {
-            Image(systemName: "xmark.circle")
-                .scaleEffect(1.2)
-                .foregroundColor(themeManager.theme.text)
-                .padding()
-                .background(
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(themeManager.theme.button)
-                            .clipShape(
-                                Rectangle()
-                                    .scale(2)
-                                    .trim(from: 0, to: 0.5)
-                                    .rotation(Angle(degrees: -120))
-                            )
-                            .frame(width: 90)
-                        Circle()
-                            .trim(from: 0.0, to: 0.5)
-                            .rotation(Angle(degrees: -90))
-                            .fill(themeManager.theme.button)
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(themeManager.theme.border, lineWidth: 2)
-                            .clipShape(
-                                Rectangle()
-                                    .scale(2)
-                                    .trim(from: 0, to: 0.5)
-                                    .rotation(Angle(degrees: -120))
-                            )
-                        Circle()
-                            .trim(from: 0.0, to: 0.5)
-                            .rotation(Angle(degrees: -90))
-                            .stroke(themeManager.theme.border, lineWidth: 2)
-                        
-                    }
-                )
+            HalfButton(icon: "square.and.arrow.up.circle")
         }
     }
     func cancelButton() -> some View {
         Button(action: {
             PopupManager.dismiss()
         }) {
-            Image(systemName: "pencil.circle")
-                .scaleEffect(1.2)
-                .foregroundColor(themeManager.theme.text)
-                .padding()
-                .background(
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(themeManager.theme.backgroundAccent)
-                            .clipShape(
-                                Rectangle()
-                                    .scale(1.1)
-                                    .trim(from: 0.125, to: 0.625)
-                                    .rotation(Angle(degrees: 0))
-                            )
-                        Circle()
-                            .trim(from: 0.0, to: 0.5)
-                            .rotation(Angle(degrees: 90))
-                            .fill(themeManager.theme.backgroundAccent)
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(themeManager.theme.border, lineWidth: 2)
-                            .clipShape(
-                                Rectangle()
-                                    .scale(1.1)
-                                    .trim(from: 0.125, to: 0.625)
-                                    .rotation(Angle(degrees: 0))
-                            )
-                        Circle()
-                            .trim(from: 0.0, to: 0.5)
-                            .rotation(Angle(degrees: 90))
-                            .stroke(themeManager.theme.border, lineWidth: 2)
-                    }
-                )
+            HalfButton(icon: "xmark.circle")
+                .rotationEffect(.degrees(180))
         }
     }
 }
-
-//struct TraceDetailView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        TraceDetailPopup()
-//    }
-//}

@@ -253,8 +253,6 @@ class MapViewController: UIViewController {
     }
     
     private func initializeSnapshotter() {
-        // Configure the snapshotter object with its default access
-        // token, size, map style, and camera.
         let size = CGSize(
             width: view.safeAreaLayoutGuide.layoutFrame.width,
             height: view.safeAreaLayoutGuide.layoutFrame.height)
@@ -268,10 +266,7 @@ class MapViewController: UIViewController {
         snapshotter = Snapshotter(options: options)
         snapshotter.style.uri = style
         
-        // Set the camera of the snapshotter
-        
         mapView.mapboxMap.onEvery(event: .mapIdle) { [weak self] _ in
-            // Allow the previous snapshot to complete before starting a new one.
             guard let self = self, !self.snapshotting else {
                 return
             }

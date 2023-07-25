@@ -100,38 +100,7 @@ extension HomeView {
         Button(action: {
             showFilterDropdown.toggle()
         }) {
-            Image(systemName: "line.3.horizontal.decrease.circle")
-                .scaleEffect(1.2)
-                .foregroundColor(themeManager.theme.text)
-                .padding()
-                .background(
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(themeManager.theme.button)
-                            .clipShape(
-                                Rectangle()
-                                    .scale(2)
-                                    .trim(from: 0, to: 0.502)
-                                    .rotation(Angle(degrees: -135))
-                            )
-                        Circle()
-                            .trim(from: 0.0, to: 0.5)
-                            .rotation(Angle(degrees: -90))
-                            .fill(themeManager.theme.button)
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(themeManager.theme.text, lineWidth: 2)
-                            .clipShape(
-                                Rectangle()
-                                    .scale(1.1)
-                                    .trim(from: 0.125, to: 0.625)
-                                    .rotation(Angle(degrees: 180))
-                            )
-                        Circle()
-                            .trim(from: 0.0, to: 0.5)
-                            .rotation(Angle(degrees: -90))
-                            .stroke(themeManager.theme.text, lineWidth: 2)
-                    }
-                )
+            HalfButton()
         }
     }
 }
@@ -153,6 +122,11 @@ extension HomeView {
                     .padding(.horizontal)
                 }
                 Spacer(minLength: 72)
+            }
+        }
+        .refreshable {
+            Task {
+                await supabaseManager.reloadTraces()
             }
         }
     }

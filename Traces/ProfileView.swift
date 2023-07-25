@@ -16,6 +16,7 @@ struct ProfileView: View {
     @ObservedObject var supabase = SupabaseManager.shared
     @ObservedObject var themeManager = ThemeManager.shared
     @State var shouldPresentSheet: Bool = false
+    @State var username: String = ""
     
     var body: some View {
         ZStack {
@@ -38,9 +39,7 @@ struct ProfileView: View {
     }
     
     func loadUserProfile() {
-        guard supabase.user != nil else {
-            return
-        }
+        guard supabase.user != nil else { return }
         Task {
             await supabase.loadTracesFromUser()
         }
@@ -53,46 +52,65 @@ struct ProfileView: View {
                 .foregroundColor(themeManager.theme.text)
                 .onTapGesture { shouldPresentSheet.toggle() }
                 .padding()
+                .background( BorderedCapsule() )
                 .sheet(isPresented: $shouldPresentSheet) {
                     AuthView(isPresented: $shouldPresentSheet)
                 }
+
         }
     }
     
     @ViewBuilder
     func buildProfilePage() -> some View {
-        ScrollView {
-            HStack {
-                Image(systemName: "person.fill")
-                    .padding(10)
-                    .background(Circle().fill(themeManager.theme.text))
-                    .foregroundColor(themeManager.theme.background)
-                    .scaleEffect(2)
-                Spacer()
-                Text(supabase.session?.user.email ?? "---")
-                    .foregroundColor(themeManager.theme.text)
-                    .font(.body)
+        ZStack {
+            ScrollView {
+                Spacer(minLength: 128)
+                buildTraces()
+                Spacer(minLength: 128)
             }
-            .padding(64)
-            Spacer()
-            buildProfileTraces()
+            VStack {
+                buildProfileCard()
+                    .padding(24)
+                Spacer()
+            }
         }
     }
     
-    @ViewBuilder
-    func buildProfileTraces() -> some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            VStack(spacing: 10) {
-                ForEach(supabase.userTraceHistory) { trace in
-                    HStack {
-                        Button(action: TraceDetailPopup(trace: trace).showAndStack) {
-                            TraceTile(trace: trace)
-                        }
+    func buildTraces() -> some View {
+        VStack(spacing: 10) {
+            ForEach(supabase.userTraceHistory) { trace in
+                HStack {
+                    Button(action: TraceDetailPopup(trace: trace).showAndStack) {
+                        TraceTile(trace: trace)
                     }
-                    .padding(.horizontal)
                 }
-                Spacer(minLength: 72)
+                .padding(.horizontal)
             }
+        }
+    }
+    
+    func buildProfileCard() -> some View {
+        HStack {
+            Image(systemName: "person.fill")
+                .padding(12)
+                .foregroundColor(themeManager.theme.background)
+                .background(Circle().fill(themeManager.theme.text.opacity(0.6)))
+                .scaleEffect(1.4)
+            Spacer()
+            VStack(alignment: .trailing) {
+                Text("@\(username)")
+                    .font(.body)
+                    .foregroundColor(themeManager.theme.text)
+                Text(supabase.session?.user.email ?? "---")
+                    .font(.caption)
+                    .foregroundColor(themeManager.theme.text.opacity(0.6))
+            }
+            .padding(.trailing)
+        }
+        .padding(18)
+        .background( BorderedCapsule() )
+        .task {
+            username = await supabase.getUsernameFromID(supabase.user!.id)
         }
     }
 }

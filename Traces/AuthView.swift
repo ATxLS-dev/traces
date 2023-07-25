@@ -56,7 +56,7 @@ extension AuthView {
                 .background(
                     Capsule()
                         .stroke(themeManager.theme.border, lineWidth: 2))
-            if mode == .signUp {
+//            if mode == .signUp {
                 SecureField("Confirm Password", text: $password)
                     .foregroundColor(themeManager.theme.text)
                     .textContentType(.password)
@@ -66,7 +66,9 @@ extension AuthView {
                     .background(
                         Capsule()
                             .stroke(themeManager.theme.border, lineWidth: 2))
-            }
+                    .opacity(mode == .signUp ? 1.0 : 0.0)
+                    .animation(.easeInOut, value: mode)
+//            }
             buildButtons()
             Spacer()
             Text(errorMessage ?? "")
@@ -118,6 +120,7 @@ extension AuthView {
                 Text(mode == .signIn ? "Sign In".uppercased() : "Sign Up".uppercased())
                     .fontWeight(.bold)
                     .padding(16)
+                    .foregroundColor(themeManager.theme.text)
             }
             Spacer()
         }

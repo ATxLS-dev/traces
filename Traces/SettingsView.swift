@@ -30,7 +30,7 @@ struct SettingsView: View {
                         }
                     }
                     .sheet(isPresented: $shouldPresentAccountSheet) {
-                        AccountSheet(isPresented: $shouldPresentAccountSheet)
+                        AccountDetailView(isPresented: $shouldPresentAccountSheet)
                     }
                 buildListItem(item: buildLabel(title: "FAQ", systemImage: "questionmark"))
                     .onTapGesture {
@@ -81,8 +81,8 @@ extension SettingsView {
                 .frame(width: 36, height: 36)
                 .overlay(
                     Image(systemName: systemImage)
-                    .foregroundColor(themeManager.theme.text)
                 )
+                .foregroundColor(themeManager.theme.text)
         }
     }
     
@@ -92,14 +92,7 @@ extension SettingsView {
             Spacer()
         }
         .padding(.horizontal, 10)
-        .background(
-            ZStack {
-                Capsule()
-                    .fill(themeManager.theme.backgroundAccent)
-                Capsule()
-                    .stroke(themeManager.theme.border, lineWidth: 2)
-            }
-        )
+        .background( BorderedCapsule() )
         .padding(.horizontal)
     }
 }

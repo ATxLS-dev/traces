@@ -22,7 +22,7 @@ enum CreateUserError: Error {
 class SupabaseManager: ObservableObject {
     
     static let shared = SupabaseManager()
-    let supabase: SupabaseClient
+    let supabase: SupabaseClient = SupabaseClient(supabaseURL: Secrets.supabaseURL, supabaseKey: Secrets.supabaseAnonKey)
     
     private var error: Error?
     private(set) var session: Session?
@@ -35,10 +35,10 @@ class SupabaseManager: ObservableObject {
     @Published private(set) var userTraceHistory: [Trace] = []
     @Published private(set) var authChangeEvent: AuthChangeEvent?
     @Published private(set) var user: User?
+    @Published private(set) var username: String?
     
     init() {
-        supabase = SupabaseClient(supabaseURL: Secrets.supabaseURL, supabaseKey: Secrets.supabaseAnonKey)
-        checkLogin()
+        checkAuthStatus()
     }
     
     private func loadTraces() async {
@@ -102,7 +102,7 @@ extension SupabaseManager {
                 .from("traces")
                 .select()
                 .match(query: ["user_id": userID])
-            checkLogin()
+            checkAuthStatus()
             do {
                 userTraceHistory = try await query.execute().value
             } catch {
@@ -114,37 +114,33 @@ extension SupabaseManager {
     
     private func clearUserTraceHistory() {
         userTraceHistory = []
-        checkLogin()
+        checkAuthStatus()
     }
     
     private func parseJSON(_ json: String) -> String {
-        let jsonString = json
 
-        guard let jsonData = jsonString.data(using: .utf8) else {
-            print("Invalid JSON string")
-            return ""
+        guard let jsonData = json.data(using: .utf8) else {
+            return "Invalid JSON string"
         }
         
         do {
             if let jsonArray = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [[String: Any]],
-               let email = jsonArray.first?["email"] as? String {
-                return email
+               let username = jsonArray.first?["username"] as? String {
+                return username
             } else {
-                print("Invalid JSON format")
+                print("JSON format invalid")
             }
         } catch {
             print("Error parsing JSON: \(error)")
-
         }
-        return ""
+        return "Username not set"
     }
     
     func getUsernameFromID(_ id: UUID) async -> String {
 
-        //CHANGE TO USERNAME LATER
         let query = supabase.database
             .from("users")
-            .select(columns: "email")
+            .select(columns: "username")
             .eq(column: "id", value: id)
         var result: String = ""
         do {
@@ -173,21 +169,16 @@ extension SupabaseManager {
                 content: content,
                 categories: categories
             )
-            addTrace(trace: newTrace)
-        }
-    }
-    
-    private func addTrace(trace: Trace) {
-        let query = supabase.database
-            .from("traces")
-            .insert(values: trace)
-        Task {
-            do {
-                print(trace)
-                try await query.execute()
-            } catch {
-                self.error = error
-                print("Error inserting trace: \(error)")
+            let query = supabase.database
+                .from("traces")
+                .insert(values: newTrace)
+            Task {
+                do {
+                    try await query.execute()
+                } catch {
+                    self.error = error
+                    print("Error inserting trace: \(error)")
+                }
             }
         }
     }
@@ -197,7 +188,7 @@ extension SupabaseManager {
 
 extension SupabaseManager {
     
-    private func checkLogin() {
+    private func checkAuthStatus() {
         self.authChangeEvent = (user != nil) ? .signedIn : .signedOut
         Task {
             do {
@@ -222,6 +213,25 @@ extension SupabaseManager {
         }
     }
     
+    func setUsername(_ username: String) {
+        
+        let updateData: [String: String] = ["username" : username]
+        
+        let query = supabase.database.from("users")
+            .update(values: updateData)
+            .eq(column: "id", value: user!.id)
+        
+        //ALSO SET UPDATE DATE TO DATE CHANGED
+        
+        Task {
+            do {
+                try await query.execute()
+            } catch {
+                print(error)
+            }
+        }
+    }
+    
     func login(email: String, password: String) async throws {
         do {
             try await supabase.auth.signIn(email: email, password: password)
@@ -242,6 +252,25 @@ extension SupabaseManager {
             clearUserTraceHistory()
         } catch {
             print(error)
+        }
+    }
+    
+    func deleteAccount() {
+        
+        if authChangeEvent == .signedOut { return }
+        
+        let userID = self.user!.id
+        let query = supabase.database.from("users")
+            .delete()
+            .eq(column: "id", value: userID)
+        
+        Task {
+            do {
+                try await query.execute()
+                await logout()
+            } catch {
+                print(error)
+            }
         }
     }
 }
