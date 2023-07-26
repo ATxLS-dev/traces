@@ -85,11 +85,11 @@ struct ProfileView: View {
             Spacer()
             VStack(alignment: .trailing) {
                 Text("@\(username)")
-                    .font(.body)
+                    .font(.title2)
                     .foregroundColor(themeManager.theme.text)
-                Text(supabase.session?.user.email ?? "---")
-                    .font(.caption)
-                    .foregroundColor(themeManager.theme.text.opacity(0.6))
+//                Text(supabase.session?.user.email ?? "---")
+//                    .font(.caption)
+//                    .foregroundColor(themeManager.theme.text.opacity(0.6))
             }
             .padding(.trailing)
         }

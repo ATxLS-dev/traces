@@ -96,10 +96,10 @@ extension CustomTabBarView {
                     .foregroundColor(themeManager.theme.text)
                     .background(
                         ZStack {
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(themeManager.theme.background)
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(themeManager.theme.button, lineWidth: 2)
+                            RoundedRectangle(cornerRadius: 18)
+                                .fill(themeManager.theme.buttonBackground.opacity(0.6))
+                            RoundedRectangle(cornerRadius: 18)
+                                .stroke(themeManager.theme.buttonBorder, lineWidth: 2)
                         }
                     )
             }
@@ -143,10 +143,10 @@ struct SelectedTabCircleView: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(themeManager.theme.background)
+                .fill(themeManager.theme.buttonBackground)
                 .frame(width: buttonDimen , height: buttonDimen)
             Circle()
-                .stroke(themeManager.theme.button, lineWidth: 2)
+                .stroke(themeManager.theme.buttonBorder, lineWidth: 2)
                 .frame(width: buttonDimen , height: buttonDimen)
             TabBarButton(imageName: "\(currentTab.rawValue).fill")
                 .foregroundColor(themeManager.theme.text)

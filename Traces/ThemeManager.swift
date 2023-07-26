@@ -90,8 +90,15 @@ extension Color {
 class ThemeManager: ObservableObject {
     
     static let shared = ThemeManager()
+    let light: ColorTheme = LightTheme()
+    let dark: ColorTheme = DarkTheme()
     
-    @Published var theme: ColorTheme
+    @Published var theme: ColorTheme {
+        willSet {
+            objectWillChange.send()
+        }
+    }
+    
     
     var isDarkMode: Bool = UserDefaults.standard.bool(forKey: "darkMode")
     
@@ -106,8 +113,7 @@ class ThemeManager: ObservableObject {
     }
 }
 
-let light: ColorTheme = LightTheme()
-let dark: ColorTheme = DarkTheme()
+
 
 protocol ColorTheme {
     var backgroundAccent: Color { get }
@@ -116,6 +122,8 @@ protocol ColorTheme {
     var accent: Color { get }
     var text: Color { get }
     var button: Color { get }
+    var buttonBorder: Color { get }
+    var buttonBackground: Color { get }
     var shadow: Color { get }
     var mapStyle: StyleURI { get }
 }
@@ -127,6 +135,8 @@ struct LightTheme: ColorTheme {
     var accent: Color = ash
     var text: Color = licorice
     var button: Color = eerie
+    var buttonBorder: Color = eerie
+    var buttonBackground: Color = ash
     var shadow: Color = .gray.opacity(0.4)
     var mapStyle: StyleURI = StyleURI(rawValue: "mapbox://styles/atxls/cliuqmp8400kv01pw57wxga7l")!
 }
@@ -138,6 +148,8 @@ struct DarkTheme: ColorTheme {
     var accent: Color = ash
     var text: Color = snow
     var button: Color = grass
+    var buttonBorder: Color = grass
+    var buttonBackground: Color = eerie
     var shadow: Color = .black
     var mapStyle: StyleURI = StyleURI(rawValue: "mapbox://styles/atxls/clj4rozom000401pw7na12c30")!
 }

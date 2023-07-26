@@ -276,8 +276,10 @@ class MiniMapViewController: UIViewController {
     
     func updateStyle(_ style: StyleURI) {
         mapView.mapboxMap.loadStyleURI(style)
-        snapshotter = nil
-        initializeSnapshotter(style)
+        
+        if snapshotter != nil {
+            snapshotter.style.uri = style
+        }
     }
     
     private func initializeSnapshotter(_ style: StyleURI) {
