@@ -49,7 +49,7 @@ struct MapBox: View {
         case .fixed:
             return MapBoxViewConverter(mapType: .fixed, fixedLocation: CLLocationCoordinate2D(latitude: focalTrace.latitude, longitude: focalTrace.longitude), userLocation: $locationManager.userLocation, annotations: $annotations)
         case .interactive:
-            return MapBoxViewConverter(mapType: .interactive, userLocation: $locationManager.userLocation, annotations: $annotations)
+            return MapBoxViewConverter(mapType: .interactive, userLocation: $locationManager.lastLocation, annotations: $annotations)
         }
     }
 
@@ -204,7 +204,7 @@ class MapViewController: UIViewController {
         case .interactive:
             for annotation in annotations {
                 
-                let annotationSize = 24
+                let annotationSize = 42
                 let customAnnotation = AnnotationView(frame: CGRect(x: 0, y: 0, width: annotationSize, height: annotationSize), trace: annotation)
                 
                 let tapGesture = UITapGestureRecognizer(target: self, action: #selector(annotationTapped(_:)))

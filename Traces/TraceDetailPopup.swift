@@ -76,18 +76,11 @@ struct TraceDetailPopup: CentrePopup {
 
 extension TraceDetailPopup {
     func createMap() -> some View {
-        MapBox(mapType: .fixed)
+        MapBox(mapType: .fixed, focalTrace: trace)
             .clipShape(RoundedRectangle(cornerRadius: 29))
             .frame(width: 144, height: 144)
             .padding(4)
-            .background(
-                ZStack {
-                    RoundedRectangle(cornerRadius: 32)
-                        .stroke(themeManager.theme.border, lineWidth: 4)
-                    RoundedRectangle(cornerRadius: 32)
-                        .fill(themeManager.theme.background)
-                }
-            )
+            .background( BorderedRectangle() )
     }
     
     func createTitle() -> some View {
@@ -111,15 +104,9 @@ extension TraceDetailPopup {
                         .font(.caption)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 10)
-                        .background(
-                            ZStack {
-                                Capsule()
-                                    .fill(themeManager.theme.background)
-                                Capsule()
-                                    .stroke(themeManager.theme.accent, lineWidth: 1.4)
-                            }
-                        )
+                        .background( BorderedCapsule() )
                         .padding(2)
+                    
                         .foregroundColor(themeManager.theme.text)
                 }
             }

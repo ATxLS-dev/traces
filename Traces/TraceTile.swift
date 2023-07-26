@@ -21,14 +21,7 @@ struct TraceTile: View {
                 .clipShape(RoundedRectangle(cornerRadius: 29))
                 .frame(width: 144, height: 144)
                 .padding(4)
-                .background(
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 32)
-                            .stroke(themeManager.theme.border, lineWidth: 4)
-                        RoundedRectangle(cornerRadius: 32)
-                            .fill(themeManager.theme.backgroundAccent)
-                    }
-                )
+                .background( BorderedRectangle() )
             Spacer()
             ZStack {
                 HStack {
