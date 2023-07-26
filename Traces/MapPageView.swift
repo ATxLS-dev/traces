@@ -17,12 +17,7 @@ struct MapPageView: View {
     
     var body: some View {
         ZStack {
-            MapBox(mapType: .interactive)
-                .onAppear {
-                    Task {
-                        await locationManager.checkLocationAuthorization()
-                    }
-                }
+            MapBox(isInteractive: true)
             userLocatorButton()
         }
         .edgesIgnoringSafeArea(.all)
@@ -32,15 +27,16 @@ struct MapPageView: View {
         VStack {
             Spacer()
             HStack {
+                Spacer()
                 Button(action: {
-                    locationManager.updateUserLocation()
+                    locationManager.snapshotLocation()
                 }) {
                     ZStack {
                         Circle()
                             .fill(themeManager.theme.backgroundAccent)
                             .frame(width: buttonDimen, height: buttonDimen)
                         Circle()
-                            .stroke(themeManager.theme.border, lineWidth: 2)
+                            .stroke(themeManager.theme.accent, lineWidth: 2)
                             .frame(width: buttonDimen, height: buttonDimen)
                         Image(systemName: "location")
                             .foregroundColor(themeManager.theme.text)
@@ -48,10 +44,9 @@ struct MapPageView: View {
                     }
                     .padding()
                 }
-                Spacer()
             }
         }
-        .padding(.bottom, 100)
+        .padding(.bottom, 120)
     }
 }
 

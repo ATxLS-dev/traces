@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/supabase-community/gotrue-swift",
       "state" : {
-        "revision" : "a972c99bf0ed745047ec7bc6231460f6738d004e",
-        "version" : "1.1.1"
+        "revision" : "4bf132d73d322ee5d6d648f02deb9f2bc19cc659",
+        "version" : "1.2.1"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Mijick/PopupView.git",
       "state" : {
-        "revision" : "0d76d670512c3db07ab04017245dbf9af8dde976",
-        "version" : "1.7.0"
+        "revision" : "f5d0b32267be84e763b430679e91758d727a219b",
+        "version" : "1.9.0"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/supabase-community/postgrest-swift",
       "state" : {
-        "revision" : "a3c2d6a2ede94d2529edf063b056b1a66fd9cdc2",
-        "version" : "1.0.0"
+        "revision" : "fb91f56ffcfe829c0cba2bfc180b1e669a8dd2e4",
+        "version" : "1.0.1"
       }
     },
     {
@@ -131,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/supabase/supabase-swift.git",
       "state" : {
-        "revision" : "c5d5e3eb7b8db485494949ecdfa9eef126cfa947",
-        "version" : "0.2.1"
+        "revision" : "7088b85247c8e56317f0b22b9d60655e8f762fec",
+        "version" : "0.3.0"
       }
     },
     {

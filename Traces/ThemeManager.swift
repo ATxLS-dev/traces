@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import MapboxMaps
 
 let warmGray: Color = Color(hex: 0x494947)
 
@@ -85,7 +86,7 @@ extension Color {
     }
 }
 
-
+@MainActor
 class ThemeManager: ObservableObject {
     
     static let shared = ThemeManager()
@@ -116,7 +117,7 @@ protocol ColorTheme {
     var text: Color { get }
     var button: Color { get }
     var shadow: Color { get }
-    var mapStyle: String { get }
+    var mapStyle: StyleURI { get }
 }
 
 struct LightTheme: ColorTheme {
@@ -127,7 +128,7 @@ struct LightTheme: ColorTheme {
     var text: Color = licorice
     var button: Color = eerie
     var shadow: Color = .gray.opacity(0.4)
-    var mapStyle: String = "mapbox://styles/atxls/cliuqmp8400kv01pw57wxga7l"
+    var mapStyle: StyleURI = StyleURI(rawValue: "mapbox://styles/atxls/cliuqmp8400kv01pw57wxga7l")!
 }
 
 struct DarkTheme: ColorTheme {
@@ -138,7 +139,7 @@ struct DarkTheme: ColorTheme {
     var text: Color = snow
     var button: Color = grass
     var shadow: Color = .black
-    var mapStyle: String = "mapbox://styles/atxls/clj4rozom000401pw7na12c30"
+    var mapStyle: StyleURI = StyleURI(rawValue: "mapbox://styles/atxls/clj4rozom000401pw7na12c30")!
 }
 
 struct ClearBackgroundView: UIViewRepresentable {

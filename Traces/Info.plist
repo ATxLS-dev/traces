@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This allows the app to mark spots you visit</string>
 	<key>MBXAccessToken</key>
 	<string>pk.eyJ1IjoiYXR4bHMiLCJhIjoiY2xpdW52ejY4MDBmODNmbndiOWY1amh4YSJ9.1YZMwNysUWitq566Njfe2A</string>
 </dict>

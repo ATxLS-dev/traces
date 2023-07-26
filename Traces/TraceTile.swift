@@ -17,7 +17,7 @@ struct TraceTile: View {
     
     var body: some View {
         HStack {
-            MapBox(mapType: .fixed, focalTrace: trace)
+            MapBox(focalTrace: trace)
                 .clipShape(RoundedRectangle(cornerRadius: 29))
                 .frame(width: 144, height: 144)
                 .padding(4)

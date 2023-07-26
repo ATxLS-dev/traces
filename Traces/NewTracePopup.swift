@@ -65,7 +65,7 @@ struct NewTracePopup: CentrePopup {
             }
         }
         .onAppear {
-            locationManager.updateUserLocation()
+            locationManager.snapshotLocation()
             
         }
     }
@@ -73,7 +73,7 @@ struct NewTracePopup: CentrePopup {
 
 private extension NewTracePopup {
     func createMap() -> some View {
-        MapBox(mapType: .newTrace)
+        MapBox()
             .clipShape(RoundedRectangle(cornerRadius: 29))
             .frame(width: 144, height: 144)
             .padding(4)

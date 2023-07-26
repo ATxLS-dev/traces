@@ -9,102 +9,195 @@ import Supabase
 import MapKit
 import MapboxMaps
 
-enum MapType {
-    case newTrace, fixed, interactive
-}
-
 struct MapBox: View {
 
-    @State var mapType: MapType
-    @State var focalTrace: Trace = Trace(
-        id: UUID(),
-        userID: UUID(),
-        creationDate: Date.currentTimeStamp.formatted(),
-        latitude: 37.123456,
-        longitude: -122.654321,
-        locationName: "Sample Location",
-        content: "Sample content",
-        categories: ["Sample category"]
-    )
+    var isInteractive: Bool = false
+    var focalTrace: Trace?
     @State var annotations: [Trace] = []
 
     @ObservedObject var supabaseManager: SupabaseManager = SupabaseManager.shared
     @ObservedObject var locationManager: LocationManager = LocationManager.shared
+    @ObservedObject var themeManager: ThemeManager = ThemeManager.shared
 
     var body: some View {
-        buildConvertedMap(mapType)
+        if isInteractive {
+            buildInteractiveMap()
+        } else {
+            buildMiniMap()
+        }
+    }
+    
+    func buildMiniMap() -> some View {
+        if focalTrace != nil {
+            return MiniMapViewConverter(center: CLLocationCoordinate2D(latitude: focalTrace!.latitude, longitude: focalTrace!.longitude))
+        } else {
+            return MiniMapViewConverter(center: locationManager.lastLocation)
+        }
+        
+    }
+    
+    func buildInteractiveMap() -> some View {
+        InteractiveMapViewConverter()
             .task {
                 await supabaseManager.reloadTraces()
                 await locationManager.checkLocationAuthorization()
             }
             .onAppear {
-                getAnnotations()
+                annotations = supabaseManager.traces
             }
     }
-    
-    func buildConvertedMap(_ mapType: MapType) -> some View {
-        switch mapType {
-        case .newTrace:
-            return MapBoxViewConverter(mapType: .newTrace, fixedLocation: locationManager.userLocation, userLocation: $locationManager.userLocation, annotations: $annotations)
-        case .fixed:
-            return MapBoxViewConverter(mapType: .fixed, fixedLocation: CLLocationCoordinate2D(latitude: focalTrace.latitude, longitude: focalTrace.longitude), userLocation: $locationManager.userLocation, annotations: $annotations)
-        case .interactive:
-            return MapBoxViewConverter(mapType: .interactive, userLocation: $locationManager.lastLocation, annotations: $annotations)
-        }
-    }
-
-    func getAnnotations() {
-        switch mapType {
-        case .newTrace:
-            annotations = []
-        case .fixed:
-            annotations = [focalTrace]
-        case .interactive:
-            annotations = supabaseManager.traces
-        }
-    }
 }
     
-struct MapBoxViewConverter: UIViewControllerRepresentable {
-    
-    var mapType: MapType
-    var fixedLocation: CLLocationCoordinate2D?
+struct InteractiveMapViewConverter: UIViewControllerRepresentable {
 
-    @Binding var userLocation: CLLocationCoordinate2D
-    @Binding var annotations: [Trace]
-    
     @ObservedObject var themeManager: ThemeManager = ThemeManager.shared
+    @ObservedObject var locationManager: LocationManager = LocationManager.shared
+    @ObservedObject var supabaseManager: SupabaseManager = SupabaseManager.shared
     
-    let defaultLocation = CLLocationCoordinate2D(latitude: 37.789467, longitude: -122.416772)
-    
-    func makeUIViewController(context: Context) -> MapViewController {
-        let center: CLLocationCoordinate2D = fixedLocation ?? userLocation
-        return MapViewController(mapType: mapType, center: center, style: StyleURI(rawValue: themeManager.theme.mapStyle)!, annotations: $annotations)
+    func makeUIViewController(context: Context) -> InteractiveMapViewController {
+        locationManager.snapshotLocation()
+        print(locationManager.userLocation)
+        return InteractiveMapViewController(center: locationManager.lastLocation, style: themeManager.theme.mapStyle, annotations: supabaseManager.traces)
     }
     
-    func updateUIViewController(_ uiViewController: MapViewController, context: Context) {
-        uiViewController.updateAnnotations(annotations)
-        uiViewController.updateStyle(StyleURI(rawValue: themeManager.theme.mapStyle)!)
-        switch mapType {
-        case .newTrace:
-            uiViewController.centerOnPosition(userLocation)
-        case .fixed:
-            uiViewController.centerOnPosition(fixedLocation ?? defaultLocation)
-        case .interactive:
-            break
-        }
+    func updateUIViewController(_ uiViewController: InteractiveMapViewController, context: Context) {
+        uiViewController.centerOnPosition(locationManager.userLocation)
+        uiViewController.updateAnnotations(supabaseManager.traces)
+        uiViewController.updateStyle(themeManager.theme.mapStyle)
     }
-    
 }
 
-class MapViewController: UIViewController {
+class InteractiveMapViewController: UIViewController {
     
-    let mapType: MapType
     let center: CLLocationCoordinate2D
     let style: StyleURI
     let zoom: Double
-    @Binding var annotations: [Trace]
+    var annotations: [Trace]
+    
+    internal var mapView: MapView!
+    
+    private lazy var stackView: UIStackView = {
+        let stackView = UIStackView(frame: view.safeAreaLayoutGuide.layoutFrame)
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.distribution = .fillEqually
+        stackView.alignment = .fill
+        stackView.spacing = 12.0
+        return stackView
+    }()
+    
+    init(
+        center: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 40.83647410051574, longitude: 14.30582273457794),
+        style: StyleURI = StyleURI(rawValue: "mapbox://styles/atxls/cliuqmp8400kv01pw57wxga7l")!,
+        zoom: Double = 10,
+        annotations: [Trace]
+    ) {
+        self.center = center
+        self.style = style
+        self.zoom = zoom
+        self.annotations = annotations
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override public func viewDidLoad() {
+        super.viewDidLoad()
+        
+        let resourceOptions = ResourceOptions(accessToken: mapBoxAccessToken)
+        let cameraOptions = CameraOptions(center: center, zoom: zoom)
+        let myMapInitOptions = MapInitOptions(resourceOptions: resourceOptions, cameraOptions: cameraOptions, styleURI: style)
+        
+        mapView = MapView(frame: view.bounds, mapInitOptions: myMapInitOptions)
+        updateAnnotations(annotations)
+        mapView.ornaments.options = ornamentOptions()
+        mapView.location.options.puckType = .puck2D()
+        mapView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        
+        stackView.addArrangedSubview(mapView)
+        
+        view.addSubview(stackView)
+        
+        NSLayoutConstraint.activate([
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+    
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+    }
+    
+    func updateAnnotations(_ annotations: [Trace]) {
+        for annotation in annotations {
+            let annotationSize = 42
+            let customAnnotation = AnnotationView(frame: CGRect(x: 0, y: 0, width: annotationSize, height: annotationSize), trace: annotation)
+            
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(annotationTapped(_:)))
+            customAnnotation.addGestureRecognizer(tapGesture)
+            
+            let options = ViewAnnotationOptions(
+                geometry: Point(CLLocationCoordinate2D(latitude: annotation.latitude, longitude: annotation.longitude)),
+                allowOverlap: false,
+                anchor: .center
+            )
+            try? mapView.viewAnnotations.add(customAnnotation, options: options)
+        }
+    }
+    
+    @objc private func annotationTapped(_ gesture: UITapGestureRecognizer) {
+        guard let annotationView = gesture.view as? AnnotationView else {
+            return
+        }
+        
+        if let selectedAnnotation = annotations.first(where: { $0.id == annotationView.trace?.id }) {
+            let popup = TraceDetailPopup(trace: selectedAnnotation)
+            popup.showAndStack()
+        }
+    }
+    
+    func centerOnPosition(_ position: CLLocationCoordinate2D) {
+        let recenteredCamera: CameraOptions = CameraOptions(center: position, zoom: 12)
+        mapView.mapboxMap.setCamera(to: recenteredCamera)
+    }
+    
+    func updateStyle(_ style: StyleURI) {
+        mapView.mapboxMap.loadStyleURI(style)
+    }
+    
+    private let ornamentOptions = {
+        let scaleBarOptions = ScaleBarViewOptions(visibility: .hidden)
+        let logoOptions = LogoViewOptions(position: .topRight, margins: CGPoint(x: 40, y: 40))
+        let attributionOptions = AttributionButtonOptions(position: .topRight, margins: CGPoint(x: 0, y: 20))
+        return OrnamentOptions(scaleBar: scaleBarOptions, logo: logoOptions, attributionButton: attributionOptions)
+    }
+}
 
+struct MiniMapViewConverter: UIViewControllerRepresentable {
+
+    var center: CLLocationCoordinate2D?
+
+    @ObservedObject var locationManager: LocationManager = LocationManager.shared
+    @ObservedObject var themeManager: ThemeManager = ThemeManager.shared
+    
+    func makeUIViewController(context: Context) -> MiniMapViewController {
+        MiniMapViewController(center: center ?? locationManager.lastLocation, style: themeManager.theme.mapStyle)
+    }
+    
+    func updateUIViewController(_ uiViewController: MiniMapViewController, context: Context) {
+        uiViewController.updateStyle(themeManager.theme.mapStyle)
+    }
+}
+
+class MiniMapViewController: UIViewController {
+    
+    let center: CLLocationCoordinate2D
+    let style: StyleURI
+    
     internal var mapView: MapView!
     public var snapshotter: Snapshotter!
     public var snapshotView: UIImageView!
@@ -121,19 +214,12 @@ class MapViewController: UIViewController {
     }()
     
     init(
-        mapType: MapType = .fixed,
-        center: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 40.83647410051574, longitude: 14.30582273457794),
-         style: StyleURI = StyleURI(rawValue: "mapbox://styles/atxls/cliuqmp8400kv01pw57wxga7l")!,
-         zoom: Double = 10,
-         annotations: Binding<[Trace]>
+        center: CLLocationCoordinate2D,
+        style: StyleURI = StyleURI(rawValue: "mapbox://styles/atxls/cliuqmp8400kv01pw57wxga7l")!
     ) {
-        self.mapType = mapType
         self.center = center
         self.style = style
-        self.zoom = zoom
-        self._annotations = annotations
         super.init(nibName: nil, bundle: nil)
-        
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -144,34 +230,29 @@ class MapViewController: UIViewController {
         super.viewDidLoad()
         
         let resourceOptions = ResourceOptions(accessToken: mapBoxAccessToken)
-        let cameraOptions = CameraOptions(center: center, zoom: mapType == .interactive ? zoom : 14)
+        let cameraOptions = CameraOptions(center: center, zoom: 14)
         let myMapInitOptions = MapInitOptions(resourceOptions: resourceOptions, cameraOptions: cameraOptions, styleURI: style)
         
         mapView = MapView(frame: view.bounds, mapInitOptions: myMapInitOptions)
-        updateAnnotations(annotations)
         mapView.ornaments.options = ornamentOptions()
         mapView.location.options.puckType = .puck2D()
         mapView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         
-        if mapType != .interactive {
-            mapView.gestures.options = disabledGestureOptions
-        }
+        mapView.gestures.options = disabledGestureOptions
         
         stackView.addArrangedSubview(mapView)
         
         snapshotView = UIImageView()
         snapshotView.translatesAutoresizingMaskIntoConstraints = false
         
-        if mapType != .interactive {
-            stackView.addSubview(snapshotView)
-            stackView.removeArrangedSubview(mapView)
-            let annotation = AnnotationView(frame: CGRect(x: 36, y: 36, width: 72, height: 72))
-            stackView.addSubview(annotation)
-        }
-        
-    
-        view.addSubview(stackView)
 
+        stackView.addSubview(snapshotView)
+        stackView.removeArrangedSubview(mapView)
+        let annotation = AnnotationView(frame: CGRect(x: 36, y: 36, width: 72, height: 72))
+        stackView.addSubview(annotation)
+
+        view.addSubview(stackView)
+        
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -184,75 +265,22 @@ class MapViewController: UIViewController {
         super.viewDidLayoutSubviews()
         
         if snapshotter == nil {
-            initializeSnapshotter()
-        }
-    }
-    
-    func updateAnnotations(_ annotations: [Trace]) {
-
-        switch mapType {
-        case .newTrace, .fixed:
-            let annotationSize = 42
-            let customAnnotation = AnnotationView(frame: CGRect(x: 0, y: 0, width: annotationSize, height: annotationSize))
-            let options = ViewAnnotationOptions(
-                geometry: Point(center),
-                allowOverlap: false,
-                anchor: .center
-            )
-            try? mapView.viewAnnotations.add(customAnnotation, options: options)
-
-        case .interactive:
-            for annotation in annotations {
-                
-                let annotationSize = 42
-                let customAnnotation = AnnotationView(frame: CGRect(x: 0, y: 0, width: annotationSize, height: annotationSize), trace: annotation)
-                
-                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(annotationTapped(_:)))
-                customAnnotation.addGestureRecognizer(tapGesture)
-                
-                let options = ViewAnnotationOptions(
-                    geometry: Point(CLLocationCoordinate2D(latitude: annotation.latitude, longitude: annotation.longitude)),
-                    allowOverlap: false,
-                    anchor: .center
-                )
-                try? mapView.viewAnnotations.add(customAnnotation, options: options)
-            }
-            
-        }
-    }
-    
-    @objc private func annotationTapped(_ gesture: UITapGestureRecognizer) {
-        guard let annotationView = gesture.view as? AnnotationView else {
-            return
-        }
-        
-        
-        if let selectedAnnotation = annotations.first(where: { $0.id == annotationView.trace?.id }) {
-            print(selectedAnnotation.locationName)
-            let popup = TraceDetailPopup(trace: selectedAnnotation)
-            popup.showAndStack()
+            initializeSnapshotter(self.style)
         }
     }
     
     func centerOnPosition(_ position: CLLocationCoordinate2D) {
-        let recenteredCamera: CameraOptions = CameraOptions(center: position, zoom: mapType == .interactive ? 12 : 14)
+        let recenteredCamera: CameraOptions = CameraOptions(center: position, zoom: 14)
         mapView.mapboxMap.setCamera(to: recenteredCamera)
     }
     
     func updateStyle(_ style: StyleURI) {
         mapView.mapboxMap.loadStyleURI(style)
+        snapshotter = nil
+        initializeSnapshotter(style)
     }
     
-    private let disabledGestureOptions = GestureOptions(panEnabled: false, pinchEnabled: false, rotateEnabled: false, simultaneousRotateAndPinchZoomEnabled: false, pinchZoomEnabled: false, pinchPanEnabled: false, pitchEnabled: false, doubleTapToZoomInEnabled: false, doubleTouchToZoomOutEnabled: false, quickZoomEnabled: false)
-    
-    private let ornamentOptions = {
-        let scaleBarOptions = ScaleBarViewOptions(margins: CGPoint(x: 10, y: 60), visibility: .hidden)
-        let logoOptions = LogoViewOptions(margins: CGPoint(x: 10, y: 110))
-        let attributionOptions = AttributionButtonOptions(margins: CGPoint(x: 0, y: 106))
-        return OrnamentOptions(scaleBar: scaleBarOptions, logo: logoOptions, attributionButton: attributionOptions)
-    }
-    
-    private func initializeSnapshotter() {
+    private func initializeSnapshotter(_ style: StyleURI) {
         let size = CGSize(
             width: view.safeAreaLayoutGuide.layoutFrame.width,
             height: view.safeAreaLayoutGuide.layoutFrame.height)
@@ -289,5 +317,13 @@ class MapViewController: UIViewController {
             self.snapshotting = false
         }
     }
-
+    
+    private let disabledGestureOptions = GestureOptions(panEnabled: false, pinchEnabled: false, rotateEnabled: false, simultaneousRotateAndPinchZoomEnabled: false, pinchZoomEnabled: false, pinchPanEnabled: false, pitchEnabled: false, doubleTapToZoomInEnabled: false, doubleTouchToZoomOutEnabled: false, quickZoomEnabled: false)
+    
+    private let ornamentOptions = {
+        let scaleBarOptions = ScaleBarViewOptions(margins: CGPoint(x: 10, y: 60), visibility: .hidden)
+        let logoOptions = LogoViewOptions(margins: CGPoint(x: 10, y: 110))
+        let attributionOptions = AttributionButtonOptions(margins: CGPoint(x: 0, y: 106))
+        return OrnamentOptions(scaleBar: scaleBarOptions, logo: logoOptions, attributionButton: attributionOptions)
+    }
 }
