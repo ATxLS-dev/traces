@@ -41,6 +41,7 @@
 		02952D742A1E88D100793283 /* NewTracePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02952D732A1E88D100793283 /* NewTracePopup.swift */; };
 		02956F292A4B50BE00E8537C /* MapboxStatic in Frameworks */ = {isa = PBXBuildFile; productRef = 02956F282A4B50BE00E8537C /* MapboxStatic */; };
 		02956F2B2A4B56AB00E8537C /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02956F2A2A4B56AB00E8537C /* AuthView.swift */; };
+		029A00872A72C68200D78D32 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029A00862A72C68200D78D32 /* AuthManager.swift */; };
 		02EE1B182A6CABA000DCB69D /* HalfButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EE1B172A6CABA000DCB69D /* HalfButton.swift */; };
 		02EE1B1A2A71909E00DCB69D /* BorderedRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EE1B192A71909E00DCB69D /* BorderedRectangle.swift */; };
 /* End PBXBuildFile section */
@@ -97,6 +98,7 @@
 		028FF0C82A184F090058EB57 /* TracesUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracesUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		02952D732A1E88D100793283 /* NewTracePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTracePopup.swift; sourceTree = "<group>"; };
 		02956F2A2A4B56AB00E8537C /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
+		029A00862A72C68200D78D32 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
 		02EE1B172A6CABA000DCB69D /* HalfButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HalfButton.swift; sourceTree = "<group>"; };
 		02EE1B192A71909E00DCB69D /* BorderedRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedRectangle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -171,11 +173,12 @@
 				021D2C1F2A23F4CF001BCA8D /* TraceTile.swift */,
 				028250A92A39017B00B281DA /* MapBox.swift */,
 				0214A98D2A5635E300A3AF7E /* AnnotationView.swift */,
-				0243FC632A324180007D097D /* SupabaseManager.swift */,
 				0256E4BC2A6C857D000EA684 /* BorderedCapsule.swift */,
 				02EE1B192A71909E00DCB69D /* BorderedRectangle.swift */,
 				0256E4BE2A6C8715000EA684 /* FieldLabel.swift */,
 				020D9C412A4E3A3200958A6D /* AccountDetailView.swift */,
+				0243FC632A324180007D097D /* SupabaseManager.swift */,
+				029A00862A72C68200D78D32 /* AuthManager.swift */,
 				02376E0C2A3E0B7200257B5D /* LocationManager.swift */,
 				02376E0F2A3F70C700257B5D /* ThemeManager.swift */,
 				0219261E2A2FD90100B1B314 /* Trace.swift */,
@@ -355,6 +358,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				028635002A18533700BCDF35 /* SettingsView.swift in Sources */,
+				029A00872A72C68200D78D32 /* AuthManager.swift in Sources */,
 				0243FC642A324180007D097D /* SupabaseManager.swift in Sources */,
 				02EE1B1A2A71909E00DCB69D /* BorderedRectangle.swift in Sources */,
 				0243FC682A327463007D097D /* _Secrets.swift in Sources */,
@@ -545,11 +549,11 @@
 				INFOPLIST_FILE = Traces/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Traces;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Enabling location when in use lets you create traces conveniently and sort traces by proximity.  You can adjust your preferences at any time.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This allows the app to mark spots you visit";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -577,11 +581,11 @@
 				INFOPLIST_FILE = Traces/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Traces;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Enabling location when in use lets you create traces conveniently and sort traces by proximity.  You can adjust your preferences at any time.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This allows the app to mark spots you visit";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

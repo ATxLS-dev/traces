@@ -29,6 +29,17 @@ struct NewTracePopup: CentrePopup {
 
     func createContent() -> some View {
         ZStack {
+            if supabaseManager.authChangeEvent != .signedIn {
+                createNotLoggedInView()
+            } else {
+                createBody()
+            }
+        }
+
+    }
+    
+    func createBody() -> some View {
+        ZStack {
             ZStack {
                 RoundedRectangle(cornerRadius: 30)
                     .fill(themeManager.theme.background)
@@ -67,6 +78,27 @@ struct NewTracePopup: CentrePopup {
         .onAppear {
             locationManager.snapshotLocation()
             
+        }
+    }
+    
+    func createNotLoggedInView() -> some View {
+        ZStack {
+            VStack() {
+                HStack {
+                    Spacer()
+                    Image(systemName: "xmark")
+                        .scaleEffect(1.4)
+                        .padding(36)
+                }
+                Spacer()
+            }
+            Text("You'll need an account to leave traces.")
+        }
+        .frame(height: 480)
+        .background(BorderedRectangle())
+        .padding()
+        .onTapGesture {
+            PopupManager.dismiss()
         }
     }
 }

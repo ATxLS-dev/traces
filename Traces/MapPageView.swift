@@ -33,10 +33,10 @@ struct MapPageView: View {
                 }) {
                     ZStack {
                         Circle()
-                            .fill(themeManager.theme.backgroundAccent)
+                            .fill(themeManager.theme.background)
                             .frame(width: buttonDimen, height: buttonDimen)
                         Circle()
-                            .stroke(themeManager.theme.accent, lineWidth: 2)
+                            .stroke(themeManager.theme.buttonBorder, lineWidth: 2)
                             .frame(width: buttonDimen, height: buttonDimen)
                         Image(systemName: "location")
                             .foregroundColor(themeManager.theme.text)

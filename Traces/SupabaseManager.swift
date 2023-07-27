@@ -14,9 +14,6 @@ import MapboxStatic
 import Combine
 import GoTrue
 
-enum CreateUserError: Error {
-    case signUpFailed(String)
-}
 
 @MainActor
 class SupabaseManager: ObservableObject {
