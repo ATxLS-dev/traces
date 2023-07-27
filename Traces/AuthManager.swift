@@ -24,26 +24,18 @@ class AuthManager: ObservableObject {
     let supabase: SupabaseClient = SupabaseClient(supabaseURL: Secrets.supabaseURL, supabaseKey: Secrets.supabaseAnonKey)
     
     private var error: Error?
-    private(set) var session: Session?
-    
+    @Published private(set) var session: Session?
     @Published private(set) var authChangeEvent: AuthChangeEvent?
-    @Published private(set) var user: User?
     
     init() {
-        checkAuthStatus()
+        startSession()
     }
     
-    private func checkAuthStatus() {
-        self.authChangeEvent = (user != nil) ? .signedIn : .signedOut
+    private func startSession() {
         Task {
             do {
                 self.session = try await supabase.auth.session
-                self.user = self.session?.user
-                if user != nil {
-                    self.authChangeEvent = .signedIn
-                } else {
-                    self.authChangeEvent = .signedOut
-                }
+                self.authChangeEvent = (session != nil) ? .signedIn : .signedOut
             } catch {
                 print(error)
             }
@@ -54,55 +46,24 @@ class AuthManager: ObservableObject {
         do {
             try await supabase.auth.signIn(email: email, password: password)
             self.session = try await supabase.auth.session
-            self.user = session?.user
             self.authChangeEvent = .signedIn
         } catch {
             throw CreateUserError.signUpFailed(error.localizedDescription)
         }
     }
     
-    func logout() async {
-        do {
-            try await supabase.auth.signOut()
-            self.authChangeEvent = .signedOut
-            self.user = nil
-        } catch {
-            print(error)
-        }
-    }
-    
-    func createNewTrace(locationName: String, content: String, categories: [String], location: CLLocationCoordinate2D) {
-        if authChangeEvent == .signedIn {
-            let date = Date()
-            let formatter = ISO8601DateFormatter()
-            formatter.formatOptions = [.withInternetDateTime]
-            let creationDateInTimestamptz = formatter.string(from: date)
-            
-            let newTrace: Trace = Trace(
-                id: UUID(),
-                userID: user!.id,
-                creationDate: creationDateInTimestamptz,
-                latitude: location.latitude,
-                longitude: location.longitude,
-                locationName: locationName,
-                content: content,
-                categories: categories
-            )
-            let query = supabase.database
-                .from("traces")
-                .insert(values: newTrace)
-            Task {
-                do {
-                    try await query.execute()
-                } catch {
-                    self.error = error
-                    print("Error inserting trace: \(error)")
-                }
+    func logout() {
+        if authChangeEvent == .signedOut { return }
+        Task {
+            do {
+                try await supabase.auth.signOut()
+                self.authChangeEvent = .signedOut
+                self.session = nil
+            } catch {
+                print(error)
             }
         }
     }
-
-
     
     func createNewUser(email: String, password: String) async throws {
         do {
@@ -114,11 +75,13 @@ class AuthManager: ObservableObject {
     
     func setUsername(_ username: String) {
         
+        if authChangeEvent == .signedOut { return }
+        
         let updateData: [String: String] = ["username" : username]
         
         let query = supabase.database.from("users")
             .update(values: updateData)
-            .eq(column: "id", value: user!.id)
+            .eq(column: "id", value: session!.user.id)
         
         //ALSO SET UPDATE DATE TO DATE CHANGED
         
@@ -131,13 +94,11 @@ class AuthManager: ObservableObject {
         }
     }
     
-
-    
     func deleteAccount() {
         
         if authChangeEvent == .signedOut { return }
         
-        let userID = self.user!.id
+        let userID = session!.user.id
         let query = supabase.database.from("users")
             .delete()
             .eq(column: "id", value: userID)
@@ -145,7 +106,7 @@ class AuthManager: ObservableObject {
         Task {
             do {
                 try await query.execute()
-                await logout()
+                logout()
             } catch {
                 print(error)
             }

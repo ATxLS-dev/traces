@@ -15,6 +15,7 @@ struct ContentView: View {
     
     @State private var selectedTab: Tab = Tab.home
     @ObservedObject var locationManager: LocationManager = LocationManager.shared
+    @ObservedObject var authManager: AuthManager = AuthManager.shared
     
     var body: some View {
         buildNavigation()
