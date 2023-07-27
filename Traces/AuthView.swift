@@ -18,6 +18,7 @@ struct AuthView: View {
     @Binding var isPresented: Bool
     @ObservedObject var themeManager = ThemeManager.shared
     @ObservedObject var supabase = SupabaseManager.shared
+    @ObservedObject var auth = AuthManager.shared
 
     enum Mode {
         case signIn, signUp
@@ -56,19 +57,17 @@ extension AuthView {
                 .background(
                     Capsule()
                         .stroke(themeManager.theme.border, lineWidth: 2))
-//            if mode == .signUp {
-                SecureField("Confirm Password", text: $password)
-                    .foregroundColor(themeManager.theme.text)
-                    .textContentType(.password)
-                    .autocorrectionDisabled()
-                    .textInputAutocapitalization(.never)
-                    .padding()
-                    .background(
-                        Capsule()
-                            .stroke(themeManager.theme.border, lineWidth: 2))
-                    .opacity(mode == .signUp ? 1.0 : 0.0)
-                    .animation(.easeInOut, value: mode)
-//            }
+            SecureField("Confirm Password", text: $password)
+                .foregroundColor(themeManager.theme.text)
+                .textContentType(.password)
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+                .padding()
+                .background(
+                    Capsule()
+                        .stroke(themeManager.theme.border, lineWidth: 2))
+                .opacity(mode == .signUp ? 1.0 : 0.0)
+                .animation(.easeInOut, value: mode)
             buildButtons()
             Spacer()
             Text(errorMessage ?? "")
@@ -95,8 +94,8 @@ extension AuthView {
                 if mode == .signUp {
                     Task {
                         do {
-                            try await supabase.createNewUser(email: email, password: password)
-                            try await supabase.login(email: email, password: password)
+                            try await auth.createNewUser(email: email, password: password)
+                            try await auth.login(email: email, password: password)
                             self.isPresented = false
                         } catch CreateUserError.signUpFailed(let errorMessage) {
                             self.errorMessage = errorMessage
@@ -109,7 +108,7 @@ extension AuthView {
                 if mode == .signIn {
                     Task {
                         do {
-                            try await supabase.login(email: email, password: password)
+                            try await auth.login(email: email, password: password)
                             self.isPresented = false
                         } catch {
                             self.errorMessage = "S"

@@ -26,10 +26,11 @@ struct NewTracePopup: CentrePopup {
     @ObservedObject var themeManager = ThemeManager.shared
     @ObservedObject var supabaseManager = SupabaseManager.shared
     @ObservedObject var locationManager = LocationManager.shared
+    @ObservedObject var auth = AuthManager.shared
 
     func createContent() -> some View {
         ZStack {
-            if supabaseManager.authChangeEvent != .signedIn {
+            if auth.authChangeEvent != .signedIn {
                 createNotLoggedInView()
             } else {
                 createBody()

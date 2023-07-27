@@ -132,7 +132,7 @@ struct LightTheme: ColorTheme {
     var backgroundAccent: Color = .white
     var border: Color = .black
     var background: Color = snow
-    var accent: Color = ash
+    var accent: Color = eerie
     var text: Color = licorice
     var button: Color = eerie
     var buttonBorder: Color = eerie

@@ -17,6 +17,7 @@ struct AccountDetailView: View {
     @Binding var isPresented: Bool
     @ObservedObject var themeManager = ThemeManager.shared
     @ObservedObject var supabase = SupabaseManager.shared
+    @ObservedObject var auth = AuthManager.shared
     
     enum Mode {
         case signIn, signUp
@@ -24,11 +25,20 @@ struct AccountDetailView: View {
     
     var body: some View {
         createBody()
+            .padding()
+            .background(themeManager.theme.background)
+            .task {
+                do {
+                    guard let userId = auth.session?.user.id else {
+                        throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey : "Session is nil"])
+                    }
+                    username = await supabase.getUsernameFromID(userId)
+                } catch {
+                    print(error)
+                }
+            }
     }
-}
 
-extension AccountDetailView {
-    
     func createBody() -> some View {
         VStack(spacing: 20) {
             Spacer()
@@ -39,18 +49,13 @@ extension AccountDetailView {
                 .padding(.bottom)
             
             buildField("Username", content: username, editable: true)
-            buildField("Email", content: supabase.user?.email)
-            buildField("User ID", content: supabase.user?.id.uuidString)
-            buildField("Creation Date", content: supabase.user?.createdAt.formatted())
+            buildField("Email", content: auth.session?.user.email)
+            buildField("User ID", content: auth.session?.user.id.uuidString)
+            buildField("Creation Date", content: auth.session?.user.createdAt.formatted())
  
             buildButtons()
             Spacer()
         }
-        .task {
-            username = await supabase.getUsernameFromID(supabase.user!.id)
-        }
-        .padding()
-        .background(themeManager.theme.background)
     }
 
     func buildField(_ fieldLabel: String, content: String? = "", editable: Bool = false) -> some View {
@@ -75,10 +80,6 @@ extension AccountDetailView {
                 .offset(x: 84, y: -30)
         }
     }
-}
-
-
-extension AccountDetailView {
     
     func buildButtons() -> some View {
         VStack {
@@ -95,7 +96,7 @@ extension AccountDetailView {
                 if !inEditMode {
                     inEditMode.toggle()
                 } else {
-                    supabase.setUsername(newUsername)
+                    auth.setUsername(newUsername)
                     username = newUsername
                     inEditMode.toggle()
                     isPresented.toggle()
@@ -109,7 +110,8 @@ extension AccountDetailView {
             Spacer()
         }
         .background(
-            BorderedCapsule(hasColoredBorder: true)
+            BorderedCapsule(hasColoredBorder: false)
+                .shadow(color: themeManager.theme.shadow, radius: 6, x: 4, y: 4)
         )
     }
     
@@ -118,7 +120,7 @@ extension AccountDetailView {
             Spacer()
             Button(action: {
                 if confirmed {
-                    supabase.deleteAccount()
+                    auth.deleteAccount()
                 } else {
                     confirmed.toggle()
                 }

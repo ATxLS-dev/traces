@@ -13,18 +13,19 @@ struct SettingsView: View {
     
     @ObservedObject var themeManager = ThemeManager.shared
     @ObservedObject var supabase = SupabaseManager.shared
+    @ObservedObject var auth = AuthManager.shared
     @State var shouldPresentAuthSheet: Bool = false
     @State var shouldPresentAccountSheet: Bool = false
     @State var shouldPresentFAQSheet: Bool = false
     
     var body: some View {
         ZStack {
-            VStack {
+            VStack(spacing: 16) {
                 buildListItem(item: buildLabel(title: "Manage Account", systemImage: "person"))
-                    .opacity(supabase.authChangeEvent == .signedIn ? 1 : 0.6)
+                    .opacity(auth.authChangeEvent == .signedIn ? 1 : 0.6)
                     .onTapGesture {
                         Task {
-                            if supabase.authChangeEvent == .signedIn {
+                            if auth.authChangeEvent == .signedIn {
                                 shouldPresentAccountSheet.toggle()
                             }
                         }
@@ -45,14 +46,12 @@ struct SettingsView: View {
                     .onTapGesture {
                         themeManager.toggleTheme()
                     }
-                buildListItem(item: buildLabel(title: supabase.authChangeEvent == .signedIn ? "Log Out" : "Log in / Sign up", systemImage: "hand.wave"))
+                buildListItem(item: buildLabel(title: auth.authChangeEvent == .signedIn ? "Log Out" : "Log in / Sign up", systemImage: "hand.wave"))
                     .onTapGesture {
-                        Task {
-                            if supabase.authChangeEvent == .signedIn {
-                                await supabase.logout()
-                            } else {
-                                shouldPresentAuthSheet.toggle()
-                            }
+                        if auth.authChangeEvent == .signedIn {
+                            auth.logout()
+                        } else {
+                            shouldPresentAuthSheet.toggle()
                         }
                     }
                     .sheet(isPresented: $shouldPresentAuthSheet) {
@@ -76,13 +75,17 @@ extension SettingsView {
                 .padding(.horizontal, 6)
                 .padding(.vertical, 16)
         } icon: {
-            Circle()
-                .fill(themeManager.theme.accent)
-                .frame(width: 36, height: 36)
-                .overlay(
-                    Image(systemName: systemImage)
-                )
-                .foregroundColor(themeManager.theme.text)
+            ZStack {
+                Circle()
+                    .fill(themeManager.theme.buttonBackground)
+                Circle()
+                    .stroke(themeManager.theme.buttonBorder, lineWidth: 1.4)
+            }
+            .frame(width: 36, height: 36)
+            .overlay(
+                Image(systemName: systemImage)
+            )
+            .foregroundColor(themeManager.theme.text)
         }
     }
     

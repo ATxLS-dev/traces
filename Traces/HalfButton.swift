@@ -23,7 +23,7 @@ public struct HalfButton: View {
                 .cornerRadius(size / 4, corners: [.topLeft, .bottomLeft])
                 .cornerRadius(size / 2, corners: [.topRight, .bottomRight])
             Rectangle()
-                .fill(themeManager.theme.background)
+                .fill(themeManager.theme.buttonBackground)
                 .cornerRadius(size / 4 - 1, corners: [.topLeft, .bottomLeft])
                 .cornerRadius(size / 2, corners: [.topRight, .bottomRight])
                 .scaleEffect(0.92)

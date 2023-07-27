@@ -15,6 +15,9 @@ struct ProfileView: View {
     
     @ObservedObject var supabase = SupabaseManager.shared
     @ObservedObject var themeManager = ThemeManager.shared
+    @ObservedObject var auth = AuthManager.shared
+    
+    @State var userTraces: [Trace] = []
     @State var shouldPresentSheet: Bool = false
     @State var username: String = ""
     
@@ -24,14 +27,14 @@ struct ProfileView: View {
                 .background(themeManager.theme.background)
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                 .edgesIgnoringSafeArea(.all)
-            if supabase.authChangeEvent == .signedOut {
+            if auth.authChangeEvent != .signedIn {
                 buildSignInButton()
             } else {
                 buildProfilePage()
                     .onAppear {
                         loadUserProfile()
                     }
-                    .onChange(of: supabase.authChangeEvent) { _ in
+                    .onChange(of: auth.authChangeEvent) { _ in
                         loadUserProfile()
                     }
             }
@@ -39,9 +42,9 @@ struct ProfileView: View {
     }
     
     func loadUserProfile() {
-        guard supabase.user != nil else { return }
+        guard auth.session?.user != nil else { return }
         Task {
-            await supabase.loadTracesFromUser()
+            userTraces = await supabase.loadTracesFromUser()
         }
     }
 
@@ -71,7 +74,7 @@ struct ProfileView: View {
     
     func buildTraces() -> some View {
         VStack(spacing: 10) {
-            ForEach(supabase.userTraceHistory) { trace in
+            ForEach(userTraces) { trace in
                 Button(action: TraceDetailPopup(trace: trace).showAndStack) {
                     TraceTile(trace: trace)
                 }
@@ -87,7 +90,7 @@ struct ProfileView: View {
                 Text("@\(username)")
                     .font(.title2)
                     .foregroundColor(themeManager.theme.text)
-//                Text(supabase.session?.user.email ?? "---")
+//                Text(auth.session?.user.email ?? "---")
 //                    .font(.caption)
 //                    .foregroundColor(themeManager.theme.text.opacity(0.6))
             }
@@ -95,9 +98,7 @@ struct ProfileView: View {
         }
         .padding(24)
         .task {
-            if supabase.user != nil {
-                username = await supabase.getUsernameFromID(supabase.user!.id)
-            }
+            username = await auth.getCurrentUsername()
         }
         .edgesIgnoringSafeArea(.top)
     }

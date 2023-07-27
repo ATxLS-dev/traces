@@ -73,6 +73,43 @@ class AuthManager: ObservableObject {
         }
     }
     
+    func getCurrentUsername() async -> String {
+        if authChangeEvent == .signedOut { return "" }
+        
+        let query = supabase.database.from("users")
+            .select(columns: "username")
+            .eq(column: "id", value: session!.user.id)
+        
+        var result: String = ""
+
+        do {
+            result = try await query.execute().value
+        } catch {
+            print(error)
+        }
+        return parseJSON(result)
+        
+    }
+    
+    private func parseJSON(_ json: String) -> String {
+        
+        guard let jsonData = json.data(using: .utf8) else {
+            return "Invalid JSON string"
+        }
+        
+        do {
+            if let jsonArray = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [[String: Any]],
+               let username = jsonArray.first?["username"] as? String {
+                return username
+            } else {
+                print("JSON format invalid")
+            }
+        } catch {
+            print("Error parsing JSON: \(error)")
+        }
+        return "Username not set"
+    }
+    
     func setUsername(_ username: String) {
         
         if authChangeEvent == .signedOut { return }
