@@ -284,7 +284,7 @@ private extension NewTracePopup {
         Button(action: {
             showFilterDropdown.toggle()
         }) {
-            HalfButton()
+            BorderedHalfButton()
         }
     }
 
@@ -312,14 +312,14 @@ private extension NewTracePopup {
                 location: locationManager.lastLocation)
             PopupManager.dismiss()
         }) {
-            HalfButton(icon: "checkmark.circle")
+            BorderedHalfButton(icon: "checkmark.circle")
         }
     }
     func cancelButton() -> some View {
         Button(action: {
             PopupManager.dismiss()
         }) {
-            HalfButton(icon: "xmark.circle", isColorless: true)
+            BorderedHalfButton(icon: "xmark.circle", noBorderColor: true)
                 .rotationEffect(.degrees(180))
         }
     }

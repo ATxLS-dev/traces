@@ -84,7 +84,7 @@ extension HomeView {
         Button(action: {
             showFilterDropdown.toggle()
         }) {
-            HalfButton()
+            BorderedHalfButton()
         }
     }
 }

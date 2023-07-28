@@ -58,8 +58,8 @@ struct TraceDetailPopup: CentrePopup {
                 }
                 createCategory()
                 createDescription()
-                Divider()
-                HStack(spacing: 24) {
+                Spacer()
+                HStack() {
                     Spacer()
                     cancelButton()
                     shareButton()
@@ -104,33 +104,25 @@ extension TraceDetailPopup {
                         .font(.caption)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 10)
-                        .background( BorderedCapsule() )
+                        .background(
+                            BorderedCapsule(hasThinBorder: true)
+                                .shadow(color: themeManager.theme.shadow, radius: 4, x: 2, y: 2)
+                        )
                         .padding(2)
-                    
                         .foregroundColor(themeManager.theme.text)
                 }
+                .padding(.vertical, 8)
             }
         }
     }
     
     func createDescription() -> some View {
         VStack {
-            Text("Notes")
-                .foregroundColor(themeManager.theme.text)
-                .font(.subheadline)
-                .padding(.horizontal)
-                .padding(.vertical, 4)
-                .background(
-                    Capsule()
-                        .fill(Gradient(colors: [themeManager.theme.background, themeManager.theme.backgroundAccent]))
-                )
+            FieldLabel(fieldLabel: "Notes")
                 .offset(x: -100, y: 20)
                 .zIndex(1)
             ZStack {
-                RoundedRectangle(cornerRadius: 32)
-                    .stroke(themeManager.theme.border, lineWidth: 2)
-                RoundedRectangle(cornerRadius: 32)
-                    .fill(themeManager.theme.backgroundAccent)
+                BorderedRectangle(cornerRadius: 24)
                 VStack {
                     Text(trace.content)
                         .foregroundColor(themeManager.theme.text)
@@ -156,14 +148,15 @@ extension TraceDetailPopup {
         Button(action: {
             PopupManager.dismiss()
         }) {
-            HalfButton(icon: "square.and.arrow.up.circle")
+            BorderedHalfButton(icon: "square.and.arrow.up.circle")
         }
     }
+    
     func cancelButton() -> some View {
         Button(action: {
             PopupManager.dismiss()
         }) {
-            HalfButton(icon: "xmark.circle")
+            BorderedHalfButton(icon: "xmark.circle", noBackgroundColor: true)
                 .rotationEffect(.degrees(180))
         }
     }

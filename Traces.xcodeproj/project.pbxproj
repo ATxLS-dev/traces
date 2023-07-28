@@ -42,7 +42,7 @@
 		02956F292A4B50BE00E8537C /* MapboxStatic in Frameworks */ = {isa = PBXBuildFile; productRef = 02956F282A4B50BE00E8537C /* MapboxStatic */; };
 		02956F2B2A4B56AB00E8537C /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02956F2A2A4B56AB00E8537C /* AuthView.swift */; };
 		029A00872A72C68200D78D32 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029A00862A72C68200D78D32 /* AuthManager.swift */; };
-		02EE1B182A6CABA000DCB69D /* HalfButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EE1B172A6CABA000DCB69D /* HalfButton.swift */; };
+		02EE1B182A6CABA000DCB69D /* BorderedHalfButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EE1B172A6CABA000DCB69D /* BorderedHalfButton.swift */; };
 		02EE1B1A2A71909E00DCB69D /* BorderedRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EE1B192A71909E00DCB69D /* BorderedRectangle.swift */; };
 /* End PBXBuildFile section */
 
@@ -99,7 +99,7 @@
 		02952D732A1E88D100793283 /* NewTracePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTracePopup.swift; sourceTree = "<group>"; };
 		02956F2A2A4B56AB00E8537C /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
 		029A00862A72C68200D78D32 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
-		02EE1B172A6CABA000DCB69D /* HalfButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HalfButton.swift; sourceTree = "<group>"; };
+		02EE1B172A6CABA000DCB69D /* BorderedHalfButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedHalfButton.swift; sourceTree = "<group>"; };
 		02EE1B192A71909E00DCB69D /* BorderedRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedRectangle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -172,7 +172,7 @@
 				021D2C1F2A23F4CF001BCA8D /* TraceTile.swift */,
 				028250A92A39017B00B281DA /* MapBox.swift */,
 				0214A98D2A5635E300A3AF7E /* AnnotationView.swift */,
-				02EE1B172A6CABA000DCB69D /* HalfButton.swift */,
+				02EE1B172A6CABA000DCB69D /* BorderedHalfButton.swift */,
 				0256E4BC2A6C857D000EA684 /* BorderedCapsule.swift */,
 				02EE1B192A71909E00DCB69D /* BorderedRectangle.swift */,
 				0256E4BE2A6C8715000EA684 /* FieldLabel.swift */,
@@ -377,7 +377,7 @@
 				028BA33E2A377C44000BD0C0 /* CustomTabBarView.swift in Sources */,
 				026BB7702A3BA144000B765E /* CategoryTag.swift in Sources */,
 				0243FC742A328E9B007D097D /* ProfileView.swift in Sources */,
-				02EE1B182A6CABA000DCB69D /* HalfButton.swift in Sources */,
+				02EE1B182A6CABA000DCB69D /* BorderedHalfButton.swift in Sources */,
 				02376E102A3F70C700257B5D /* ThemeManager.swift in Sources */,
 				028FF0A92A184F080058EB57 /* ContentView.swift in Sources */,
 				02712F582A5BA22B009B4722 /* FAQSheet.swift in Sources */,

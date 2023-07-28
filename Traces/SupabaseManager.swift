@@ -64,7 +64,11 @@ class SupabaseManager: ObservableObject {
         } else {
             filters.insert(category)
         }
-        filteredTraces = traces.filter { filters.contains($0.categories) }
+        if filters == [] {
+            filteredTraces = []
+        } else {
+            filteredTraces = traces.filter { filters.contains($0.categories) }
+        }
     }
     
     func convertFromTimestamptzDate(_ rawDate: String) -> Date {

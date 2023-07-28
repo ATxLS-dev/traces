@@ -12,13 +12,14 @@ struct BorderedCapsule: View {
     @ObservedObject var themeManager: ThemeManager = ThemeManager.shared
     
     var hasColoredBorder: Bool = false
+    var hasThinBorder: Bool = false
     
     var body: some View {
         ZStack {
             Capsule()
                 .fill(themeManager.theme.backgroundAccent)
             Capsule()
-                .stroke(hasColoredBorder ? themeManager.theme.accent : themeManager.theme.border, lineWidth: 2)
+                .stroke(hasColoredBorder ? themeManager.theme.accent : themeManager.theme.border, lineWidth: hasThinBorder ? 1.4 : 2)
         }
     }
 }
