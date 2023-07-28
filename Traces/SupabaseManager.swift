@@ -47,6 +47,11 @@ class SupabaseManager: ObservableObject {
         }
     }
     
+    func countCategoryOccurances(_ category: Category) -> Int {
+        let occurrences = traces.flatMap { $0.categories }.filter { $0 == category.name }.count
+        return occurrences
+    }
+    
     func reloadTraces() async {
         let query = supabase.database.from("traces").select()
         do {
@@ -68,6 +73,7 @@ class SupabaseManager: ObservableObject {
             filteredTraces = []
         } else {
             filteredTraces = traces.filter { filters.contains($0.categories) }
+                .filter { $0.categories != [] }
         }
     }
     

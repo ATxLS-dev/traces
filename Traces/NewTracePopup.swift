@@ -242,16 +242,16 @@ private extension NewTracePopup {
                     ForEach(supabaseManager.categories) { tag in
                         Button(action: {
                             withAnimation { () -> () in
-                                tags.insert(tag.category)
+                                tags.insert(tag.name)
                             }
                         }) {
                             HStack {
-                                Text(tag.category)
+                                Text(tag.name)
                                     .font(.body)
                                     .foregroundColor(themeManager.theme.text)
                                     .padding(4)
                                 Spacer()
-                                if tags.contains(tag.category) {
+                                if tags.contains(tag.name) {
                                     Image(systemName: "checkmark")
                                         .foregroundColor(themeManager.theme.accent)
                                         .padding(.trailing, 6)

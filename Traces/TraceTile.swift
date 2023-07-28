@@ -13,9 +13,29 @@ struct TraceTile: View {
     @ObservedObject var themeManager = ThemeManager.shared
     @ObservedObject var supabaseManager = SupabaseManager.shared
     @State var username: String = ""
+    @State var shouldPresentOptions: Bool = false
+    @State var userHasOwnership: Bool = false
     var trace: Trace
     
     var body: some View {
+        VStack {
+            buildTileBody()
+                .frame(height: 180)
+                .padding(.horizontal)
+            if shouldPresentOptions {
+                buildOptions()
+                    .transition(.move(edge: self.shouldPresentOptions ? .trailing : .leading))
+                    .frame(height: 160)
+            }
+        }
+        .frame(height: self.shouldPresentOptions ? 340 : 180)
+        .background(themeManager.theme.background)
+        .animation(
+            .interactiveSpring(response: 0.45, dampingFraction: 0.8, blendDuration: 0.69), value: self.shouldPresentOptions)
+
+    }
+    
+    private func buildTileBody() -> some View {
         HStack {
             MapBox(focalTrace: trace)
                 .clipShape(RoundedRectangle(cornerRadius: 29))
@@ -27,6 +47,12 @@ struct TraceTile: View {
                 HStack {
                     Spacer()
                     VStack(alignment: .trailing, spacing: 2) {
+                        Button(action: {shouldPresentOptions.toggle()}) {
+                            Image(systemName: "ellipsis")
+                                .foregroundColor(themeManager.theme.text.opacity(0.6))
+                                .padding(6)
+                                .frame(width: 24, height: 24)
+                        }
                         Spacer()
                         Text(trace.locationName)
                             .foregroundColor(themeManager.theme.text)
@@ -45,6 +71,37 @@ struct TraceTile: View {
             username = await supabaseManager.getUsernameFromID(trace.userID)
         }
         .padding(8)
+    }
+    
+    private func buildOptions() -> some View {
+        HStack {
+            Spacer()
+            VStack(spacing: 16) {
+                settingsItem(title: "Share", icon: "square.and.arrow.up")
+                userHasOwnership ?
+                settingsItem(title: "Edit", icon: "pencil") :
+                settingsItem(title: "Save", icon: "square.and.arrow.down")
+                settingsItem(title: "Report", icon: "exclamationmark.bubble")
+            }
+        }
+    }
+    
+    private func settingsItem(title: String, icon: String) -> some View {
+        Button(action: {shouldPresentOptions.toggle()}) {
+            HStack {
+                Text(title)
+                    .font(.body)
+                Spacer()
+                Circle()
+                    .fill(.clear)
+                    .overlay(
+                        Image(systemName: icon)
+                    )
+            }
+            .foregroundColor(themeManager.theme.text.opacity(0.8))
+        }
+        .frame(width: 180)
+        .padding(.trailing, 24)
     }
     
     private func getFormattedDate() -> String {

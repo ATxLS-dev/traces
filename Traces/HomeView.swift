@@ -74,7 +74,8 @@ extension HomeView {
                 }
             }
             .padding(16)
-            .animation(.easeInOut(duration: 0.5), value: self.showFilterDropdown)
+            .animation(
+                .interactiveSpring(response: 0.45, dampingFraction: 0.69, blendDuration: 0.69), value: self.showFilterDropdown)
         }
     }
 }
@@ -93,7 +94,7 @@ extension HomeView {
     func verticalScrollView() -> some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 10) {
-                Spacer(minLength: 72)
+                Spacer(minLength: 96)
                 ForEach(
                     supabaseManager.filteredTraces.isEmpty ?
                     supabaseManager.traces : supabaseManager.filteredTraces
@@ -101,11 +102,11 @@ extension HomeView {
                     Button(action: TraceDetailPopup(trace: trace).showAndStack) {
                         TraceTile(trace: trace)
                     }
-                    .padding(.horizontal)
                 }
-                Spacer(minLength: 72)
+                Spacer(minLength: 96)
             }
         }
+        
         .refreshable {
             Task {
                 await supabaseManager.reloadTraces()

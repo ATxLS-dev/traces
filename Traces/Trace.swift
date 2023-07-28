@@ -40,17 +40,16 @@ struct Trace: Codable, Identifiable, Equatable {
 struct Category: Codable, Identifiable, Equatable {
     
     var id: UUID
-    var category: String
+    var name: String
     
     enum CodingKeys: String, CodingKey {
         case id = "id"
-        case category = "category"
+        case name = "name"
         
         var stringValue: String {
             return rawValue
         }
     }
-    
 }
 
 extension Date {
