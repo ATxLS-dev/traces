@@ -12,6 +12,7 @@ struct TraceTile: View {
     
     @ObservedObject var themeManager = ThemeManager.shared
     @ObservedObject var supabaseManager = SupabaseManager.shared
+    @ObservedObject var notificationManager = NotificationManager.shared
     @State var username: String = ""
     @State var shouldPresentOptions: Bool = false
     @State var userHasOwnership: Bool = false
@@ -87,7 +88,11 @@ struct TraceTile: View {
     }
     
     private func settingsItem(title: String, icon: String) -> some View {
-        Button(action: {shouldPresentOptions.toggle()}) {
+        Button(action: {
+            notificationManager.sendNotification(.traceSaved)
+            shouldPresentOptions.toggle()
+        
+        }) {
             HStack {
                 Text(title)
                     .font(.body)

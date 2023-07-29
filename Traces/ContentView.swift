@@ -16,6 +16,8 @@ struct ContentView: View {
     @State private var selectedTab: Tab = Tab.home
     @ObservedObject var locationManager: LocationManager = LocationManager.shared
     @ObservedObject var authManager: AuthManager = AuthManager.shared
+    @ObservedObject var notificationManager: NotificationManager = NotificationManager.shared
+    @State var shouldPresentNotification: Bool = false
     
     var body: some View {
         buildNavigation()
@@ -45,7 +47,16 @@ extension ContentView {
             CustomTabBarView(currentTab: $selectedTab)
                 .padding(.bottom, 28)
         }
+        .onTapGesture {
+            shouldPresentNotification = notificationManager.shouldPresent
+        }
         .ignoresSafeArea()
+        .overlay {
+            NotificationView(notification: notificationManager.notification ?? .signedIn, isPresented: $shouldPresentNotification)
+                .transition(.move(edge: self.shouldPresentNotification ? .trailing : .leading))
+                .animation(
+                    .interactiveSpring(response: 0.3, dampingFraction: 0.69, blendDuration: 0.69), value: self.shouldPresentNotification)
+        }
     }
 }
 

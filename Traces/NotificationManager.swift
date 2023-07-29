@@ -7,24 +7,21 @@
 
 import Foundation
 
-enum Notification : String {
-    case signedIn = "Signed in"
-    case signedOut = "Signed out"
-    case accountCreated = "Account created"
-    case traceSaved = "Trace saved"
-    case traceReported = "Trace reported"
-    case linkCopied = "Link copied to clipboard"
-}
-
 class NotificationManager: ObservableObject {
     
-    static let shared = NotificationManager()
+    static var shared = NotificationManager()
     
-    @Published var notification: Notification? = nil
+    @Published var notification: Notification?
+    @Published var shouldPresent: Bool = false
     
-    func sendNotification(_ notification: Notification) {
-        self.notification = notification
+    func sendNotification(_ notificaiton: Notification) {
+        self.notification = notificaiton
+        self.shouldPresent = true
     }
     
+    func endNotificaiton() {
+        self.notification = nil
+        self.shouldPresent = false
+    }
     
 }
