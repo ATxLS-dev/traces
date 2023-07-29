@@ -78,7 +78,6 @@ struct ProfileView: View {
                 Button(action: TraceDetailPopup(trace: trace).showAndStack) {
                     TraceTile(trace: trace)
                 }
-                .padding(.horizontal)
             }
         }
     }

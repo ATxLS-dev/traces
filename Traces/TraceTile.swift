@@ -78,33 +78,49 @@ struct TraceTile: View {
         HStack {
             Spacer()
             VStack(spacing: 16) {
-                settingsItem(title: "Share", icon: "square.and.arrow.up")
-                userHasOwnership ?
-                settingsItem(title: "Edit", icon: "pencil") :
-                settingsItem(title: "Save", icon: "square.and.arrow.down")
-                settingsItem(title: "Report", icon: "exclamationmark.bubble")
+                Button(action: {
+                    notificationManager.sendNotification(.linkCopied)
+                    shouldPresentOptions.toggle()
+                }) {
+                    settingsItem(title: "Share", icon: "square.and.arrow.up")
+                }
+                if userHasOwnership {
+                    Button(action: {
+                        notificationManager.sendNotification(.traceSaved)
+                        shouldPresentOptions.toggle()
+                    }) {
+                        settingsItem(title: "Edit", icon: "pencil")
+                    }
+                } else {
+                    Button(action: {
+                        notificationManager.sendNotification(.traceSaved)
+                        shouldPresentOptions.toggle()
+                    }) {
+                        settingsItem(title: "Save", icon: "square.and.arrow.down")
+                    }
+                }
+                Button(action: {
+                    notificationManager.sendNotification(.traceReported)
+                    shouldPresentOptions.toggle()
+                }) {
+                    settingsItem(title: "Report", icon: "exclamationmark.bubble")
+                }
             }
         }
     }
     
     private func settingsItem(title: String, icon: String) -> some View {
-        Button(action: {
-            notificationManager.sendNotification(.traceSaved)
-            shouldPresentOptions.toggle()
-        
-        }) {
-            HStack {
-                Text(title)
-                    .font(.body)
-                Spacer()
-                Circle()
-                    .fill(.clear)
-                    .overlay(
-                        Image(systemName: icon)
-                    )
-            }
-            .foregroundColor(themeManager.theme.text.opacity(0.8))
+        HStack {
+            Text(title)
+                .font(.body)
+            Spacer()
+            Circle()
+                .fill(.clear)
+                .overlay(
+                    Image(systemName: icon)
+                )
         }
+        .foregroundColor(themeManager.theme.text.opacity(0.8))
         .frame(width: 180)
         .padding(.trailing, 24)
     }

@@ -20,16 +20,14 @@ struct NotificationView: View {
     @ObservedObject var themeManager = ThemeManager.shared
     @ObservedObject var notificationManager = NotificationManager.shared
     
-    var notification: Notification
-    @Binding var isPresented: Bool
+    var notification: Notification?
     
     var body: some View {
-        if isPresented {
+        if notificationManager.notification != nil {
             buildNotification()
                 .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                        isPresented = false
-                        notificationManager.endNotificaiton()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) {
+                        notificationManager.endNotification()
                     }
                 }
         }
@@ -41,7 +39,7 @@ struct NotificationView: View {
             Spacer()
             HStack {
                 Spacer()
-                Text(notification.rawValue)
+                Text(notification?.rawValue ?? "No notification")
                     .foregroundColor(themeManager.theme.text)
                     .padding()
                 Image(systemName: "checkmark")
@@ -57,6 +55,6 @@ struct NotificationView: View {
 
 struct NotificationView_Previews: PreviewProvider {
     static var previews: some View {
-        NotificationView(notification: .accountCreated, isPresented: .constant(true))
+        NotificationView(notification: .accountCreated)
     }
 }

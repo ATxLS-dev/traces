@@ -26,6 +26,7 @@ struct ContentView: View {
                     await locationManager.checkLocationAuthorization()
                 }
             }
+        
     }
 }
 
@@ -48,15 +49,16 @@ extension ContentView {
                 .padding(.bottom, 28)
         }
         .onTapGesture {
-            shouldPresentNotification = notificationManager.shouldPresent
+            shouldPresentNotification = notificationManager.notification != nil
         }
         .ignoresSafeArea()
         .overlay {
-            NotificationView(notification: notificationManager.notification ?? .signedIn, isPresented: $shouldPresentNotification)
-                .transition(.move(edge: self.shouldPresentNotification ? .trailing : .leading))
-                .animation(
-                    .interactiveSpring(response: 0.3, dampingFraction: 0.69, blendDuration: 0.69), value: self.shouldPresentNotification)
+            NotificationView(notification: notificationManager.notification)
+                .zIndex(2.0)
+                .opacity(notificationManager.notification != nil ? 1.0 : 0.0)
+                .animation(.interactiveSpring(response: 0.45, dampingFraction: 0.8, blendDuration: 0.69), value: notificationManager.notification)
         }
+
     }
 }
 

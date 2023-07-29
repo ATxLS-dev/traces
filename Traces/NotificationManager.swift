@@ -12,16 +12,13 @@ class NotificationManager: ObservableObject {
     static var shared = NotificationManager()
     
     @Published var notification: Notification?
-    @Published var shouldPresent: Bool = false
     
-    func sendNotification(_ notificaiton: Notification) {
-        self.notification = notificaiton
-        self.shouldPresent = true
+    func sendNotification(_ notification: Notification) {
+        self.notification = notification
     }
     
-    func endNotificaiton() {
+    func endNotification() {
         self.notification = nil
-        self.shouldPresent = false
     }
     
 }
