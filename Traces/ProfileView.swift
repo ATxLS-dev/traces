@@ -37,6 +37,9 @@ struct ProfileView: View {
                     .onChange(of: auth.authChangeEvent) { _ in
                         loadUserProfile()
                     }
+                    .onChange(of: supabase.userTraceHistory) { _ in
+                        loadUserProfile()
+                    }
             }
         }
     }
@@ -44,7 +47,8 @@ struct ProfileView: View {
     func loadUserProfile() {
         guard auth.session?.user != nil else { return }
         Task {
-            userTraces = await supabase.loadTracesFromUser()
+            await supabase.loadTracesFromUser(auth.session?.user.id)
+            userTraces = supabase.userTraceHistory
         }
     }
 
@@ -76,7 +80,7 @@ struct ProfileView: View {
         VStack(spacing: 10) {
             ForEach(userTraces) { trace in
                 Button(action: TraceDetailPopup(trace: trace).showAndStack) {
-                    TraceTile(trace: trace)
+                    TraceTile(userHasOwnership: true, trace: trace)
                 }
             }
         }

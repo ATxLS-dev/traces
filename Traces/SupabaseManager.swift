@@ -30,6 +30,8 @@ class SupabaseManager: ObservableObject {
     @Published private(set) var categories: [Category] = []
     @Published private(set) var filters: Set<String> = []
     
+    @Published private(set) var userTraceHistory: [Trace] = []
+    
     init() {
         syncCategories()
     }
@@ -48,7 +50,10 @@ class SupabaseManager: ObservableObject {
     }
     
     func countCategoryOccurances(_ category: Category) -> Int {
-        let occurrences = traces.flatMap { $0.categories }.filter { $0 == category.name }.count
+        let occurrences = traces
+            .flatMap { $0.categories }
+            .filter { $0 == category.name }
+            .count
         return occurrences
     }
     
@@ -85,10 +90,7 @@ class SupabaseManager: ObservableObject {
         return Date()
     }
 
-    func loadTracesFromUser(_ id: UUID? = nil) async -> [Trace] {
-        
-        var userTraceHistory: [Trace] = []
-        
+    func loadTracesFromUser(_ id: UUID? = nil) async {
         if let userID = id ?? auth.session?.user.id {
             let query = supabase.database
                 .from("traces")
@@ -102,7 +104,6 @@ class SupabaseManager: ObservableObject {
                 print(error)
             }
         }
-        return userTraceHistory
     }
     
     private func parseJSON(_ json: String) -> String {
@@ -171,5 +172,39 @@ class SupabaseManager: ObservableObject {
         } else {
             print("Cannot create trace without signing in")
         }
+    }
+    
+    func updateTrace(_ newTrace: Trace) {
+        let query = supabase.database
+            .from("traces")
+            .update(values: newTrace)
+            .eq(column: "trace_id", value: newTrace.id)
+        Task {
+            do {
+                try await query.execute()
+                await self.loadTracesFromUser(newTrace.userID)
+            } catch {
+                self.error = error
+                print("Error editing trace: \(error)")
+            }
+        }
+    }
+    
+    func deleteTrace(_ trace: Trace) {
+        
+        let query = supabase.database
+            .from("traces")
+            .delete()
+            .eq(column: "trace_id", value: trace.id)
+        Task {
+            do {
+                try await query.execute()
+                await self.loadTracesFromUser(trace.userID)
+            } catch {
+                self.error = error
+                print("Error editing trace: \(error)")
+            }
+        }
+        
     }
 }

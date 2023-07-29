@@ -1,3 +1,4 @@
+
 //
 //  TracePopup.swift
 //  Traces
@@ -10,23 +11,22 @@ import CoreData
 import MapKit
 import PopupView
 
-struct NewTracePopup: CentrePopup {
+struct TraceEditPopup: CentrePopup {
     
     func configurePopup(popup: CentrePopupConfig) -> CentrePopupConfig {
         popup.horizontalPadding(10)
     }
     
-    @State private var title: String = ""
-    @State private var content: String = ""
-    @State var region = CLLocationCoordinate2D(latitude: 37.334722, longitude: -122.008889)
+    @State var trace: Trace
     @State var showFilterDropdown: Bool = false
     @State var showNoteEditor: Bool = false
-    @State var tags: Set<String> = []
-    
+    @State var newCategories: [Category] = []
+
     @ObservedObject var themeManager = ThemeManager.shared
     @ObservedObject var supabaseManager = SupabaseManager.shared
     @ObservedObject var locationManager = LocationManager.shared
     @ObservedObject var auth = AuthManager.shared
+    @ObservedObject var notificationManager = NotificationManager.shared
     
     func createContent() -> some View {
         ZStack {
@@ -101,7 +101,7 @@ struct NewTracePopup: CentrePopup {
     }
 }
 
-private extension NewTracePopup {
+private extension TraceEditPopup {
     func createMap() -> some View {
         MapBox()
             .clipShape(RoundedRectangle(cornerRadius: 29))
@@ -118,7 +118,7 @@ private extension NewTracePopup {
     
     func createField() -> some View {
         ZStack {
-            TextField("", text: $title)
+            TextField(trace.locationName, text: $trace.locationName)
                 .textFieldStyle(.plain)
                 .foregroundColor(themeManager.theme.text)
                 .padding(20)
@@ -134,7 +134,7 @@ private extension NewTracePopup {
     
     func buildTagCapsule(_ tag: String) -> some View {
         Button(action: {
-            tags.remove(tag)
+            trace.categories.removeAll { $0 == tag }
         }) {
             HStack(spacing: 12) {
                 Text(tag)
@@ -145,12 +145,7 @@ private extension NewTracePopup {
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
             .background(
-                ZStack {
-                    Capsule()
-                        .fill(themeManager.theme.background)
-                    Capsule()
-                        .stroke(themeManager.theme.accent, lineWidth: 1.4)
-                }
+                BorderedCapsule(hasThinBorder: true)
             )
             .foregroundColor(themeManager.theme.text)
         }
@@ -165,10 +160,10 @@ private extension NewTracePopup {
                 .animation(.easeInOut(duration: 0.4), value: showFilterDropdown)
             VStack {
                 HStack {
-                    if !tags.isEmpty {
+                    if !trace.categories.isEmpty {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
-                                ForEach(Array(tags), id:\.self) { tag in
+                                ForEach(Array(trace.categories), id:\.self) { tag in
                                     buildTagCapsule(tag)
                                 }
                             }.transition(AnyTransition.scale)
@@ -209,7 +204,7 @@ private extension NewTracePopup {
                     ForEach(supabaseManager.categories) { tag in
                         Button(action: {
                             withAnimation { () -> () in
-                                tags.insert(tag.name)
+                                trace.categories.append(tag.name)
                             }
                         }) {
                             HStack {
@@ -218,7 +213,7 @@ private extension NewTracePopup {
                                     .foregroundColor(themeManager.theme.text)
                                     .padding(4)
                                 Spacer()
-                                if tags.contains(tag.name) {
+                                if trace.categories.contains(tag.name) {
                                     Image(systemName: "checkmark")
                                         .foregroundColor(themeManager.theme.accent)
                                         .padding(.trailing, 6)
@@ -257,7 +252,7 @@ private extension NewTracePopup {
     
     
     func createEditor() -> some View {
-        TextEditor(text: $content)
+        TextEditor(text: $trace.content)
             .scrollContentBackground(.hidden)
             .background(
                 BorderedRectangle()
@@ -267,11 +262,8 @@ private extension NewTracePopup {
     
     func submitButton() -> some View {
         Button(action: {
-            supabaseManager.createNewTrace(
-                locationName: title,
-                content: content,
-                categories: Array(tags),
-                location: locationManager.lastLocation)
+            supabaseManager.updateTrace(trace)
+            notificationManager.sendNotification(.traceUpdated)
             PopupManager.dismiss()
         }) {
             BorderedHalfButton(icon: "checkmark.circle")
@@ -287,8 +279,8 @@ private extension NewTracePopup {
     }
 }
 
-struct NewTracePopup_Previews: PreviewProvider {
-    static var previews: some View {
-        NewTracePopup()
-    }
-}
+//struct TraceEditPopup_Previews: PreviewProvider {
+//    static var previews: some View {
+//        TraceEditPopup()
+//    }
+//}

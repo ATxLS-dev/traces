@@ -7,6 +7,17 @@
 
 import Foundation
 
+enum Notification : String {
+    case signedIn = "Signed in"
+    case signedOut = "Signed out"
+    case accountCreated = "Account created"
+    case traceSaved = "Trace saved"
+    case traceUpdated = "Trace updated"
+    case traceReported = "Trace reported"
+    case traceDeleted = "Trace deleted"
+    case linkCopied = "Link copied to clipboard"
+}
+
 class NotificationManager: ObservableObject {
     
     static var shared = NotificationManager()

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import MapKit
+import PopupView
 
 struct TraceTile: View {
     
@@ -15,7 +16,9 @@ struct TraceTile: View {
     @ObservedObject var notificationManager = NotificationManager.shared
     @State var username: String = ""
     @State var shouldPresentOptions: Bool = false
+    @State var shouldPresentEditSheet: Bool = false
     @State var userHasOwnership: Bool = false
+    @State var deleteConfirmed: Bool = false
     var trace: Trace
     
     var body: some View {
@@ -26,10 +29,10 @@ struct TraceTile: View {
             if shouldPresentOptions {
                 buildOptions()
                     .transition(.move(edge: self.shouldPresentOptions ? .trailing : .leading))
-                    .frame(height: 160)
+                    .frame(height: 120)
             }
         }
-        .frame(height: self.shouldPresentOptions ? 340 : 180)
+        .frame(height: self.shouldPresentOptions ? 300 : 180)
         .background(themeManager.theme.background)
         .animation(
             .interactiveSpring(response: 0.45, dampingFraction: 0.8, blendDuration: 0.69), value: self.shouldPresentOptions)
@@ -48,7 +51,10 @@ struct TraceTile: View {
                 HStack {
                     Spacer()
                     VStack(alignment: .trailing, spacing: 2) {
-                        Button(action: {shouldPresentOptions.toggle()}) {
+                        Button(action: {
+                            shouldPresentOptions.toggle()
+                            deleteConfirmed = false
+                        }) {
                             Image(systemName: "ellipsis")
                                 .foregroundColor(themeManager.theme.text.opacity(0.6))
                                 .padding(6)
@@ -57,9 +63,11 @@ struct TraceTile: View {
                         Spacer()
                         Text(trace.locationName)
                             .foregroundColor(themeManager.theme.text)
-                        Text("@\(username)")
-                            .foregroundColor(themeManager.theme.text.opacity(0.4))
-                            .font(.caption)
+                        if !userHasOwnership {
+                            Text("@\(username)")
+                                .foregroundColor(themeManager.theme.text.opacity(0.4))
+                                .font(.caption)
+                        }
                         Text(getFormattedDate())
                             .foregroundColor(themeManager.theme.text.opacity(0.6))
                             .font(.caption2)
@@ -77,20 +85,36 @@ struct TraceTile: View {
     private func buildOptions() -> some View {
         HStack {
             Spacer()
-            VStack(spacing: 16) {
+            VStack() {
                 Button(action: {
                     notificationManager.sendNotification(.linkCopied)
                     shouldPresentOptions.toggle()
                 }) {
                     settingsItem(title: "Share", icon: "square.and.arrow.up")
                 }
+                
                 if userHasOwnership {
                     Button(action: {
-                        notificationManager.sendNotification(.traceSaved)
                         shouldPresentOptions.toggle()
+                        TraceEditPopup(trace: trace).showAndStack()
                     }) {
                         settingsItem(title: "Edit", icon: "pencil")
                     }
+                    Button(action: {
+                        print(deleteConfirmed)
+                        if !deleteConfirmed {
+                            deleteConfirmed = true
+                        } else {
+                            notificationManager.sendNotification(.traceDeleted)
+                            supabaseManager.deleteTrace(trace)
+                            shouldPresentOptions.toggle()
+                            deleteConfirmed = false
+                        }
+                    }) {
+                        settingsItem(title: deleteConfirmed ? "Are you sure?" : "Delete", icon: deleteConfirmed ? "trash" : "questionmark", isCritical: true)
+                            .animation(.easeInOut, value: deleteConfirmed)
+                    }
+
                 } else {
                     Button(action: {
                         notificationManager.sendNotification(.traceSaved)
@@ -98,18 +122,19 @@ struct TraceTile: View {
                     }) {
                         settingsItem(title: "Save", icon: "square.and.arrow.down")
                     }
+                    Button(action: {
+                        notificationManager.sendNotification(.traceReported)
+                        shouldPresentOptions.toggle()
+                    }) {
+                        settingsItem(title: "Report", icon: "exclamationmark.bubble", isCritical: true)
+                    }
                 }
-                Button(action: {
-                    notificationManager.sendNotification(.traceReported)
-                    shouldPresentOptions.toggle()
-                }) {
-                    settingsItem(title: "Report", icon: "exclamationmark.bubble")
-                }
+
             }
         }
     }
     
-    private func settingsItem(title: String, icon: String) -> some View {
+    private func settingsItem(title: String, icon: String, isCritical: Bool = false) -> some View {
         HStack {
             Text(title)
                 .font(.body)
@@ -120,7 +145,7 @@ struct TraceTile: View {
                     Image(systemName: icon)
                 )
         }
-        .foregroundColor(themeManager.theme.text.opacity(0.8))
+        .foregroundColor(isCritical ? .red.opacity(0.8) : themeManager.theme.text.opacity(0.8))
         .frame(width: 180)
         .padding(.trailing, 24)
     }

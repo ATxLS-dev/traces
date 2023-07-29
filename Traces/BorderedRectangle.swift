@@ -16,7 +16,7 @@ struct BorderedRectangle: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: cornerRadius)
-                .fill(themeManager.theme.backgroundAccent)
+                .fill(themeManager.theme.background)
             RoundedRectangle(cornerRadius: cornerRadius)
                 .stroke(hasColoredBorder ? themeManager.theme.accent : themeManager.theme.border, lineWidth: 2)
         }

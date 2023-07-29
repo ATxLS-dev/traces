@@ -12,6 +12,7 @@
 		0219261D2A2FD7BC00B1B314 /* TraceDetailPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0219261C2A2FD7BC00B1B314 /* TraceDetailPopup.swift */; };
 		0219261F2A2FD90100B1B314 /* Trace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0219261E2A2FD90100B1B314 /* Trace.swift */; };
 		021D2C202A23F4CF001BCA8D /* TraceTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021D2C1F2A23F4CF001BCA8D /* TraceTile.swift */; };
+		022A30CE2A759F5500F3674F /* TraceEditPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022A30CD2A759F5500F3674F /* TraceEditPopup.swift */; };
 		02376E0D2A3E0B7200257B5D /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02376E0C2A3E0B7200257B5D /* LocationManager.swift */; };
 		02376E102A3F70C700257B5D /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02376E0F2A3F70C700257B5D /* ThemeManager.swift */; };
 		02439F7A2A74856F009F70D1 /* NotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02439F792A74856F009F70D1 /* NotificationView.swift */; };
@@ -71,6 +72,7 @@
 		0219261C2A2FD7BC00B1B314 /* TraceDetailPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraceDetailPopup.swift; sourceTree = "<group>"; };
 		0219261E2A2FD90100B1B314 /* Trace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trace.swift; sourceTree = "<group>"; };
 		021D2C1F2A23F4CF001BCA8D /* TraceTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraceTile.swift; sourceTree = "<group>"; };
+		022A30CD2A759F5500F3674F /* TraceEditPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraceEditPopup.swift; sourceTree = "<group>"; };
 		02376E0C2A3E0B7200257B5D /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		02376E0F2A3F70C700257B5D /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		02439F792A74856F009F70D1 /* NotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationView.swift; sourceTree = "<group>"; };
@@ -161,7 +163,6 @@
 			children = (
 				028FF0A62A184F080058EB57 /* TracesApp.swift */,
 				028FF0A82A184F080058EB57 /* ContentView.swift */,
-				02439F7B2A749771009F70D1 /* NotificationManager.swift */,
 				0286350F2A18566600BCDF35 /* HomeView.swift */,
 				028635072A18544800BCDF35 /* MapPageView.swift */,
 				0243FC732A328E9B007D097D /* ProfileView.swift */,
@@ -184,6 +185,8 @@
 				020D9C412A4E3A3200958A6D /* AccountDetailView.swift */,
 				02439F792A74856F009F70D1 /* NotificationView.swift */,
 				0243FC632A324180007D097D /* SupabaseManager.swift */,
+				022A30CD2A759F5500F3674F /* TraceEditPopup.swift */,
+				02439F7B2A749771009F70D1 /* NotificationManager.swift */,
 				029A00862A72C68200D78D32 /* AuthManager.swift */,
 				02376E0C2A3E0B7200257B5D /* LocationManager.swift */,
 				02376E0F2A3F70C700257B5D /* ThemeManager.swift */,
@@ -370,6 +373,7 @@
 				0243FC682A327463007D097D /* _Secrets.swift in Sources */,
 				020D9C422A4E3A3200958A6D /* AccountDetailView.swift in Sources */,
 				0219261D2A2FD7BC00B1B314 /* TraceDetailPopup.swift in Sources */,
+				022A30CE2A759F5500F3674F /* TraceEditPopup.swift in Sources */,
 				0256E4BF2A6C8715000EA684 /* FieldLabel.swift in Sources */,
 				0219261F2A2FD90100B1B314 /* Trace.swift in Sources */,
 				021D2C202A23F4CF001BCA8D /* TraceTile.swift in Sources */,
