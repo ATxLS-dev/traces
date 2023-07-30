@@ -252,12 +252,21 @@ private extension TraceEditPopup {
     
     
     func createEditor() -> some View {
-        TextEditor(text: $trace.content)
-            .scrollContentBackground(.hidden)
-            .background(
-                BorderedRectangle()
-            )
-            .frame(height: 120)
+        ZStack {
+            TextField("", text: $trace.content)
+                .textFieldStyle(.plain)
+                .foregroundColor(themeManager.theme.text)
+                .padding(20)
+                .background( BorderedCapsule() )
+            FieldLabel(fieldLabel: "Notes")
+                .offset(x: -100, y: -30)
+        }
+//        TextEditor(text: $trace.content)
+//            .scrollContentBackground(.hidden)
+//            .background(
+//                BorderedRectangle()
+//            )
+//            .frame(height: 120)
     }
     
     func submitButton() -> some View {

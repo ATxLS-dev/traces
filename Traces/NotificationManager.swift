@@ -18,6 +18,7 @@ enum Notification : String {
     case traceDeleted = "Trace deleted"
     case traceCreated = "Trace created"
     case linkCopied = "Details copied to clipboard"
+    case coordinatesCopied = "Coordinates copied to clipboard"
 }
 
 class NotificationManager: ObservableObject {

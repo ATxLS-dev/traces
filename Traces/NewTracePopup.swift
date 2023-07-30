@@ -111,7 +111,7 @@ private extension NewTracePopup {
     }
     
     func createPrompt() -> some View {
-        Text("Make changes?")
+        Text("Leave a trace?")
             .foregroundColor(themeManager.theme.text)
             .font(.title3)
     }
@@ -129,7 +129,7 @@ private extension NewTracePopup {
     }
     
     func addDescription() -> some View {
-        Button("View notes?", action: {showNoteEditor.toggle()})
+        Button("Add any notes", action: {showNoteEditor.toggle()})
     }
     
     func buildTagCapsule(_ tag: String) -> some View {
@@ -257,12 +257,15 @@ private extension NewTracePopup {
     
     
     func createEditor() -> some View {
-        TextEditor(text: $content)
-            .scrollContentBackground(.hidden)
-            .background(
-                BorderedRectangle()
-            )
-            .frame(height: 120)
+        ZStack {
+            TextField("", text: $content)
+                .textFieldStyle(.plain)
+                .foregroundColor(themeManager.theme.text)
+                .padding(20)
+                .background( BorderedCapsule() )
+            FieldLabel(fieldLabel: "Any other notes?")
+                .offset(x: -60, y: -30)
+        }
     }
     
     func submitButton() -> some View {
@@ -271,7 +274,7 @@ private extension NewTracePopup {
                 locationName: title,
                 content: content,
                 categories: Array(tags),
-                location: locationManager.lastLocation)
+                location: locationManager.userLocation)
             PopupManager.dismiss()
             notificationManager.sendNotification(.traceCreated)
         }) {

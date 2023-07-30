@@ -46,8 +46,6 @@ struct ContentView: View {
                 .padding(.bottom, 28)
             NotificationView()
                 .zIndex(1.0)
-//                .transition(.move(edge: notificationManager.notification != nil ? .trailing : .leading))
-//                .animation(.easeInOut, value: notificationManager.notification != nil)
         }
         .ignoresSafeArea()
     }

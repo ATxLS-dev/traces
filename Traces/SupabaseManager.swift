@@ -13,6 +13,7 @@ import MapKit
 import MapboxStatic
 import Combine
 import GoTrue
+import CoreLocation
 
 
 @MainActor
@@ -21,6 +22,7 @@ class SupabaseManager: ObservableObject {
     static let shared = SupabaseManager()
     let supabase: SupabaseClient = SupabaseClient(supabaseURL: Secrets.supabaseURL, supabaseKey: Secrets.supabaseAnonKey)
     @ObservedObject var auth = AuthManager.shared
+    @ObservedObject var locationManager = LocationManager.shared
     
     private var error: Error?
     
@@ -31,6 +33,7 @@ class SupabaseManager: ObservableObject {
     @Published private(set) var filters: Set<String> = []
     
     @Published private(set) var userTraceHistory: [Trace] = []
+    @Published var feed: [Trace] = []
     
     init() {
         syncCategories()
@@ -62,10 +65,12 @@ class SupabaseManager: ObservableObject {
         do {
             error = nil
             traces = try await query.execute().value
+            syncFeedOrderedByProximity()
         } catch {
             self.error = error
             print(error)
         }
+
     }
     
     func toggleFilter(category: String) {
@@ -77,8 +82,10 @@ class SupabaseManager: ObservableObject {
         if filters == [] {
             filteredTraces = []
         } else {
-            filteredTraces = traces.filter { filters.contains($0.categories) }
-                .filter { $0.categories != [] }
+            filteredTraces = traces.filter { trace in
+                let commonCategories = Set(trace.categories).intersection(Set(filters))
+                return !commonCategories.isEmpty
+            }
         }
     }
     
@@ -206,5 +213,16 @@ class SupabaseManager: ObservableObject {
             }
         }
         
+    }
+    
+    func syncFeedOrderedByProximity() {
+        let lastUserLocation = locationManager.userLocation
+        feed = traces.sorted { (trace1, trace2) -> Bool in
+            let location1 = CLLocation(latitude: trace1.latitude, longitude: trace1.longitude)
+            let location2 = CLLocation(latitude: trace2.latitude, longitude: trace2.longitude)
+            let distance1 = location1.distance(from: CLLocation(latitude: lastUserLocation.latitude, longitude: lastUserLocation.longitude))
+            let distance2 = location2.distance(from: CLLocation(latitude: lastUserLocation.latitude, longitude: lastUserLocation.longitude))
+            return distance1 < distance2
+        }
     }
 }

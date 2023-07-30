@@ -71,7 +71,7 @@ struct TraceDetailPopup: CentrePopup {
             }
             .padding()
         }
-        .frame(height: 600)
+        .frame(height: 480)
     }
 }
 
@@ -123,8 +123,8 @@ extension TraceDetailPopup {
                 .offset(x: -100, y: 20)
                 .zIndex(1)
             ZStack {
-                BorderedRectangle(cornerRadius: 24)
-                VStack {
+                BorderedRectangle(cornerRadius: 24, accented: true)
+                HStack {
                     Text(trace.content)
                         .foregroundColor(themeManager.theme.text)
                     Spacer()

@@ -97,15 +97,14 @@ extension HomeView {
                 Spacer(minLength: 96)
                 ForEach(
                     supabaseManager.filteredTraces.isEmpty ?
-                    supabaseManager.traces : supabaseManager.filteredTraces
+                    supabaseManager.feed : supabaseManager.filteredTraces
                 ) { trace in
-                    Button(action: TraceDetailPopup(trace: trace).showAndStack) {
-                        TraceTile(trace: trace)
-                    }
+                    TraceTile(trace: trace)
                 }
                 Spacer(minLength: 96)
             }
         }
+
         
         .refreshable {
             Task {

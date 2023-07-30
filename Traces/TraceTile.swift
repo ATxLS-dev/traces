@@ -22,20 +22,22 @@ struct TraceTile: View {
     var trace: Trace
     
     var body: some View {
-        VStack {
-            buildTileBody()
-                .frame(height: 180)
-                .padding(.horizontal)
-            if shouldPresentOptions {
-                buildOptions()
-                    .transition(.move(edge: self.shouldPresentOptions ? .trailing : .leading))
-                    .frame(height: 120)
+        Button(action: TraceDetailPopup(trace: trace).showAndStack ) {
+            VStack {
+                buildTileBody()
+                    .frame(height: 180)
+                    .padding(.horizontal)
+                if shouldPresentOptions {
+                    buildOptions()
+                        .transition(.move(edge: self.shouldPresentOptions ? .trailing : .leading))
+                        .frame(height: 120)
+                }
             }
-        }
-        .frame(height: self.shouldPresentOptions ? 300 : 180)
-        .background(themeManager.theme.background)
-        .animation(
+            .frame(height: self.shouldPresentOptions ? 300 : 180)
+            .background(themeManager.theme.background)
+            .animation(
             .interactiveSpring(response: 0.45, dampingFraction: 0.8, blendDuration: 0.69), value: self.shouldPresentOptions)
+        }
 
     }
     
@@ -119,10 +121,12 @@ struct TraceTile: View {
 
                 } else {
                     Button(action: {
-                        TraceDetailPopup(trace: trace).showAndStack()
+                        let pasteboard = UIPasteboard.general
+                        pasteboard.string = String("\(trace.latitude), \(trace.longitude)")
+                        notificationManager.sendNotification(.coordinatesCopied)
                         shouldPresentOptions.toggle()
                     }) {
-                        settingsItem(title: "Details", icon: "eye")
+                        settingsItem(title: "Copy Coordinates", icon: "scope")
                     }
                     Button(action: {
                         notificationManager.sendNotification(.traceReported)

@@ -31,7 +31,7 @@ struct MapBox: View {
         if focalTrace != nil {
             return MiniMapViewConverter(center: CLLocationCoordinate2D(latitude: focalTrace!.latitude, longitude: focalTrace!.longitude))
         } else {
-            return MiniMapViewConverter(center: locationManager.lastLocation)
+            return MiniMapViewConverter(center: locationManager.userLocation)
         }
         
     }
