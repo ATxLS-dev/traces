@@ -87,6 +87,8 @@ struct TraceTile: View {
             Spacer()
             VStack() {
                 Button(action: {
+                    let pasteboard = UIPasteboard.general
+                    pasteboard.string = String("\(trace.locationName), \(trace.latitude), \(trace.longitude)")
                     notificationManager.sendNotification(.linkCopied)
                     shouldPresentOptions.toggle()
                 }) {
@@ -117,10 +119,10 @@ struct TraceTile: View {
 
                 } else {
                     Button(action: {
-                        notificationManager.sendNotification(.traceSaved)
+                        TraceDetailPopup(trace: trace).showAndStack()
                         shouldPresentOptions.toggle()
                     }) {
-                        settingsItem(title: "Save", icon: "square.and.arrow.down")
+                        settingsItem(title: "Details", icon: "eye")
                     }
                     Button(action: {
                         notificationManager.sendNotification(.traceReported)

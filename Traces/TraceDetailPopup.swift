@@ -24,6 +24,7 @@ struct TraceDetailPopup: CentrePopup {
     
     @ObservedObject var themeManager = ThemeManager.shared
     @ObservedObject var supabaseManager = SupabaseManager.shared
+    @ObservedObject var notificationManager = NotificationManager.shared
 
     init(trace: Trace) {
         self.trace = trace
@@ -146,7 +147,9 @@ extension TraceDetailPopup {
     
     func shareButton() -> some View {
         Button(action: {
+            notificationManager.sendNotification(.linkCopied)
             PopupManager.dismiss()
+            
         }) {
             BorderedHalfButton(icon: "square.and.arrow.up.circle")
         }

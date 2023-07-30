@@ -27,6 +27,7 @@ struct NewTracePopup: CentrePopup {
     @ObservedObject var supabaseManager = SupabaseManager.shared
     @ObservedObject var locationManager = LocationManager.shared
     @ObservedObject var auth = AuthManager.shared
+    @ObservedObject var notificationManager = NotificationManager.shared
     
     func createContent() -> some View {
         ZStack {
@@ -36,7 +37,6 @@ struct NewTracePopup: CentrePopup {
                 createBody()
             }
         }
-        
     }
     
     func createBody() -> some View {
@@ -273,6 +273,7 @@ private extension NewTracePopup {
                 categories: Array(tags),
                 location: locationManager.lastLocation)
             PopupManager.dismiss()
+            notificationManager.sendNotification(.traceCreated)
         }) {
             BorderedHalfButton(icon: "checkmark.circle")
         }

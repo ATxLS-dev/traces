@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum Notification : String {
     case signedIn = "Signed in"
@@ -15,7 +16,8 @@ enum Notification : String {
     case traceUpdated = "Trace updated"
     case traceReported = "Trace reported"
     case traceDeleted = "Trace deleted"
-    case linkCopied = "Link copied to clipboard"
+    case traceCreated = "Trace created"
+    case linkCopied = "Details copied to clipboard"
 }
 
 class NotificationManager: ObservableObject {
@@ -26,6 +28,11 @@ class NotificationManager: ObservableObject {
     
     func sendNotification(_ notification: Notification) {
         self.notification = notification
+        Task {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) {
+                self.endNotification()
+            }
+        }
     }
     
     func endNotification() {

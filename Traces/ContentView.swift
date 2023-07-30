@@ -28,10 +28,7 @@ struct ContentView: View {
             }
         
     }
-}
 
-extension ContentView {
-    
     func buildNavigation() -> some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
@@ -47,18 +44,12 @@ extension ContentView {
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             CustomTabBarView(currentTab: $selectedTab)
                 .padding(.bottom, 28)
-        }
-        .onTapGesture {
-            shouldPresentNotification = notificationManager.notification != nil
+            NotificationView()
+                .zIndex(1.0)
+//                .transition(.move(edge: notificationManager.notification != nil ? .trailing : .leading))
+//                .animation(.easeInOut, value: notificationManager.notification != nil)
         }
         .ignoresSafeArea()
-        .overlay {
-            NotificationView(notification: notificationManager.notification)
-                .zIndex(2.0)
-                .opacity(notificationManager.notification != nil ? 1.0 : 0.0)
-                .animation(.interactiveSpring(response: 0.45, dampingFraction: 0.8, blendDuration: 0.69), value: notificationManager.notification)
-        }
-
     }
 }
 
