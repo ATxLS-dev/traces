@@ -34,18 +34,14 @@ struct SettingsView: View {
                         AccountDetailView(isPresented: $shouldPresentAccountSheet)
                     }
                 buildListItem(item: buildLabel(title: "FAQ", systemImage: "questionmark"))
-                    .onTapGesture {
-                        shouldPresentFAQSheet.toggle()
-                    }
+                    .onTapGesture { shouldPresentFAQSheet.toggle() }
                     .sheet(isPresented: $shouldPresentFAQSheet) {
                         FAQSheet(isPresented: $shouldPresentFAQSheet)
                     }
                 buildListItem(item: themeManager.isDarkMode ?
                               buildLabel(title: "Dark Mode", systemImage: "moon")
                               : buildLabel(title: "Light Mode", systemImage: "sun.max"))
-                    .onTapGesture {
-                        themeManager.toggleTheme()
-                    }
+                    .onTapGesture { themeManager.toggleTheme() }
                 buildListItem(item: buildLabel(title: auth.authChangeEvent == .signedIn ? "Log Out" : "Log in / Sign up", systemImage: "hand.wave"))
                     .onTapGesture {
                         if auth.authChangeEvent == .signedIn {

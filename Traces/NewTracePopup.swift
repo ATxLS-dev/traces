@@ -85,16 +85,18 @@ struct NewTracePopup: CentrePopup {
                 HStack {
                     Spacer()
                     Image(systemName: "xmark")
+                        .foregroundColor(themeManager.theme.text)
                         .scaleEffect(1.4)
                         .padding(36)
                 }
                 Spacer()
             }
             Text("You'll need an account to leave traces.")
+                .foregroundColor(themeManager.theme.text)
         }
         .frame(height: 480)
-        .background(BorderedRectangle())
         .padding()
+        .background(BorderedRectangle(cornerRadius: 24))
         .onTapGesture {
             PopupManager.dismiss()
         }
@@ -285,7 +287,7 @@ private extension NewTracePopup {
         Button(action: {
             PopupManager.dismiss()
         }) {
-            BorderedHalfButton(icon: "xmark.circle", noBorderColor: true)
+            BorderedHalfButton(icon: "xmark.circle", noBorderColor: true, noBackgroundColor: true)
                 .rotationEffect(.degrees(180))
         }
     }

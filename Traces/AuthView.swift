@@ -31,49 +31,68 @@ struct AuthView: View {
 
 extension AuthView {
     func createBody() -> some View {
-        VStack {
-            Spacer()
-            Text("Welcome to Traces")
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(themeManager.theme.text)
-                .padding(.bottom)
-            TextField("Email", text: $email)
-                .foregroundColor(themeManager.theme.text)
-                .keyboardType(.emailAddress)
-                .textContentType(.emailAddress)
-                .autocorrectionDisabled()
-                .textInputAutocapitalization(.never)
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 24)
-                        .stroke(themeManager.theme.border, lineWidth: 2))
-            SecureField("Password", text: $password)
-                .foregroundColor(themeManager.theme.text)
-                .textContentType(.password)
-                .autocorrectionDisabled()
-                .textInputAutocapitalization(.never)
-                .padding()
-                .background(
-                    Capsule()
-                        .stroke(themeManager.theme.border, lineWidth: 2))
-            SecureField("Confirm Password", text: $password)
-                .foregroundColor(themeManager.theme.text)
-                .textContentType(.password)
-                .autocorrectionDisabled()
-                .textInputAutocapitalization(.never)
-                .padding()
-                .background(
-                    Capsule()
-                        .stroke(themeManager.theme.border, lineWidth: 2))
-                .opacity(mode == .signUp ? 1.0 : 0.0)
-                .animation(.easeInOut, value: mode)
-            buildButtons()
-            Spacer()
-            Text(errorMessage ?? "")
-        }
-        .padding()
+        ZStack {
+            VStack (spacing: 16){
+                HStack {
+                    Spacer()
+                    Button(action: {isPresented = false} ) {
+                        Image(systemName: "xmark")
+                            .foregroundColor(themeManager.theme.text)
+                            .padding()
+                            .background(BorderedCapsule(hasColoredBorder: true, hasThinBorder: true))
+                            .shadow(color: themeManager.theme.shadow, radius: 4, x: 2, y: 2)
+                    }
+                }
+                Text("Welcome to Traces")
+                    .font(.title2)
+                    .foregroundColor(themeManager.theme.text)
+                    .padding(.bottom)
+                TextField("", text: $email)
+                    .foregroundColor(themeManager.theme.text)
+                    .keyboardType(.emailAddress)
+                    .textContentType(.emailAddress)
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.never)
+                    .padding()
+                    .background(
+                        ZStack {
+                            BorderedCapsule()
+                            FieldLabel(fieldLabel: "Email")
+                                .offset(x: -100, y: -26)
+                    })
+                SecureField("",text: $password)
+                    .foregroundColor(themeManager.theme.text)
+                    .textContentType(.password)
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.never)
+                    .padding()
+                    .background(
+                        ZStack {
+                            BorderedCapsule()
+                            FieldLabel(fieldLabel: "Password")
+                                .offset(x: -88, y: -26)
+                    })
+                SecureField("", text: $password)
+                    .foregroundColor(themeManager.theme.text)
+                    .textContentType(.password)
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.never)
+                    .padding()
+                    .background(
+                        ZStack {
+                            BorderedCapsule()
+                            FieldLabel(fieldLabel: "Confirm Password")
+                                .offset(x: -60, y: -26)
+                    })
+                    .opacity(mode == .signUp ? 1.0 : 0.0)
+                    .animation(.easeInOut, value: mode)
+                buildButtons()
+                Spacer()
+                Text(errorMessage ?? "")
+            }
+            .padding()
         .background(themeManager.theme.background)
+        }
     }
 }
 
@@ -111,21 +130,21 @@ extension AuthView {
                             try await auth.login(email: email, password: password)
                             self.isPresented = false
                         } catch {
-                            self.errorMessage = "S"
+                            self.errorMessage = "Invalid Login Credentials"
                         }
                     }
                 }
             }) {
-                Text(mode == .signIn ? "Sign In".uppercased() : "Sign Up".uppercased())
-                    .fontWeight(.bold)
+                Text(mode == .signIn ? "Log In" : "Sign Up")
+                    .bold()
                     .padding(16)
                     .foregroundColor(themeManager.theme.text)
             }
             Spacer()
         }
         .background(
-            Capsule()
-                .fill(themeManager.theme.accent)
+            BorderedCapsule(hasColoredBorder: true)
+                .shadow(color: themeManager.theme.shadow, radius: 4, x: 2, y: 2)
         )
     }
 
@@ -133,12 +152,9 @@ extension AuthView {
         HStack {
             Spacer()
             Button(action: {
-                if mode == .signIn {
-                    //Sign in user
-                }
                 withAnimation{ mode = (mode == .signIn) ? .signUp : .signIn}
             }) {
-                Text(mode == .signUp ? "Sign in instead".uppercased() : "sign up instead".uppercased())
+                Text(mode == .signUp ? "Log in instead" : "Sign up instead")
                     .padding(16)
                     .foregroundColor(themeManager.theme.text)
             }
@@ -146,7 +162,9 @@ extension AuthView {
         }
         .background(
             Capsule()
-                .stroke(themeManager.theme.accent, lineWidth: 2))
+                .stroke(themeManager.theme.accent, lineWidth: 2)
+                .shadow(color: themeManager.theme.shadow, radius: 4, x: 2, y: 2))
+        
         
     }
 

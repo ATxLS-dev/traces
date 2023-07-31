@@ -282,7 +282,7 @@ private extension TraceEditPopup {
         Button(action: {
             PopupManager.dismiss()
         }) {
-            BorderedHalfButton(icon: "xmark.circle", noBorderColor: true)
+            BorderedHalfButton(icon: "xmark.circle", noBorderColor: true, noBackgroundColor: true)
                 .rotationEffect(.degrees(180))
         }
     }

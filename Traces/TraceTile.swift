@@ -115,7 +115,7 @@ struct TraceTile: View {
                             deleteConfirmed = false
                         }
                     }) {
-                        settingsItem(title: deleteConfirmed ? "Are you sure?" : "Delete", icon: deleteConfirmed ? "trash" : "questionmark", isCritical: true)
+                        settingsItem(title: deleteConfirmed ? "Are you sure?" : "Delete", icon: "trash", isCritical: true)
                             .animation(.easeInOut, value: deleteConfirmed)
                     }
 

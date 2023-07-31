@@ -159,7 +159,7 @@ extension TraceDetailPopup {
         Button(action: {
             PopupManager.dismiss()
         }) {
-            BorderedHalfButton(icon: "xmark.circle", noBackgroundColor: true)
+            BorderedHalfButton(icon: "xmark.circle", noBorderColor: true, noBackgroundColor: true)
                 .rotationEffect(.degrees(180))
         }
     }

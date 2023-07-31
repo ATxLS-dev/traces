@@ -142,8 +142,8 @@ class AuthManager: ObservableObject {
         
         Task {
             do {
-                try await query.execute()
                 logout()
+                try await query.execute()
             } catch {
                 print(error)
             }

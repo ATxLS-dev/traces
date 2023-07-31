@@ -121,6 +121,7 @@ struct AccountDetailView: View {
             Button(action: {
                 if confirmed {
                     auth.deleteAccount()
+                    isPresented.toggle()
                 } else {
                     confirmed.toggle()
                 }

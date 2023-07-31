@@ -35,6 +35,8 @@ class SupabaseManager: ObservableObject {
     @Published private(set) var userTraceHistory: [Trace] = []
     @Published var feed: [Trace] = []
     
+    private var feedMaxDistanceInMiles: Int = 15
+    
     init() {
         syncCategories()
     }
@@ -65,7 +67,7 @@ class SupabaseManager: ObservableObject {
         do {
             error = nil
             traces = try await query.execute().value
-            syncFeedOrderedByProximity()
+            syncFeedOrderedByProximity(maxDistanceInMiles: feedMaxDistanceInMiles)
         } catch {
             self.error = error
             print(error)
@@ -215,9 +217,18 @@ class SupabaseManager: ObservableObject {
         
     }
     
-    func syncFeedOrderedByProximity() {
+    func setFeedMaxDistance(miles: Int) {
+        self.feedMaxDistanceInMiles = miles
+    }
+    
+    func syncFeedOrderedByProximity(maxDistanceInMiles: Int) {
         let lastUserLocation = locationManager.userLocation
-        feed = traces.sorted { (trace1, trace2) -> Bool in
+        let maxDistanceInMeters = Double(maxDistanceInMiles) * 1609.34 // convert miles to meters
+        feed = traces.filter { trace in
+            let location = CLLocation(latitude: trace.latitude, longitude: trace.longitude)
+            let distance = location.distance(from: CLLocation(latitude: lastUserLocation.latitude, longitude: lastUserLocation.longitude))
+            return distance <= maxDistanceInMeters
+        }.sorted { (trace1, trace2) -> Bool in
             let location1 = CLLocation(latitude: trace1.latitude, longitude: trace1.longitude)
             let location2 = CLLocation(latitude: trace2.latitude, longitude: trace2.longitude)
             let distance1 = location1.distance(from: CLLocation(latitude: lastUserLocation.latitude, longitude: lastUserLocation.longitude))
