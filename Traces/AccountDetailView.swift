@@ -134,8 +134,6 @@ struct AccountDetailView: View {
             Spacer()
         }
         .background(BorderedCapsule())
-        .opacity(inEditMode ? 1.0 : 0.0)
-        .animation(.easeInOut, value: inEditMode)
     }
 }
 
