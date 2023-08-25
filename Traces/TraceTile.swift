@@ -1,13 +1,11 @@
 //
-//  TraceTile.swift
+//  TraceTileDetail.swift
 //  Traces
 //
-//  Created by Bryce on 5/19/23.
+//  Created by Bryce on 8/21/23.
 //
 
 import SwiftUI
-import MapKit
-import PopupView
 
 struct TraceTile: View {
     
@@ -15,30 +13,40 @@ struct TraceTile: View {
     @ObservedObject var supabaseManager = SupabaseManager.shared
     @ObservedObject var notificationManager = NotificationManager.shared
     @State var username: String = ""
+    @State var shouldShowDetails: Bool = false
     @State var shouldPresentOptions: Bool = false
     @State var shouldPresentEditSheet: Bool = false
     @State var userHasOwnership: Bool = false
     @State var deleteConfirmed: Bool = false
-    var trace: Trace
+    
+    let trace: Trace
     
     var body: some View {
-        Button(action: TraceDetailPopup(trace: trace).showAndStack ) {
-            VStack {
-                buildTileBody()
-                    .frame(height: 180)
-                    .padding(.horizontal)
-                if shouldPresentOptions {
-                    buildOptions()
-                        .transition(.move(edge: self.shouldPresentOptions ? .trailing : .leading))
-                        .frame(height: 120)
+        VStack {
+            buildTileBody()
+                .padding(.vertical, 4)
+                .background(themeManager.theme.background)
+                .zIndex(1.0)
+                .onTapGesture {
+                    withAnimation {
+                        shouldPresentOptions = false
+                        shouldShowDetails.toggle()
+                    }
                 }
+            if shouldPresentOptions {
+                buildOptions()
+                    .transition(.move(edge: self.shouldPresentOptions ? .trailing : .leading))
+                    .frame(height: 120)
             }
-            .frame(height: self.shouldPresentOptions ? 300 : 180)
-            .background(themeManager.theme.background)
-            .animation(
-            .interactiveSpring(response: 0.45, dampingFraction: 0.8, blendDuration: 0.69), value: self.shouldPresentOptions)
+            if shouldShowDetails {
+                details
+                    .zIndex(0.0)
+                    .background(themeManager.theme.backgroundAccent)
+                    .transition(.move(edge: .top))
+            }
         }
-
+        .animation(
+            .interactiveSpring(response: 0.45, dampingFraction: 0.8, blendDuration: 0.69), value: self.shouldPresentOptions)
     }
     
     private func buildTileBody() -> some View {
@@ -49,39 +57,67 @@ struct TraceTile: View {
                 .padding(4)
                 .background( BorderedRectangle() )
             Spacer()
-            ZStack {
-                HStack {
-                    Spacer()
-                    VStack(alignment: .trailing, spacing: 2) {
-                        Button(action: {
-                            shouldPresentOptions.toggle()
-                            deleteConfirmed = false
-                        }) {
-                            Image(systemName: "ellipsis")
-                                .foregroundColor(themeManager.theme.text.opacity(0.6))
-                                .padding(6)
-                                .frame(width: 24, height: 24)
+
+            VStack(alignment: .trailing, spacing: 2) {
+                Button(action: {
+                    withAnimation {
+                        shouldPresentOptions.toggle()
+                        shouldShowDetails = false
+                        deleteConfirmed = false
                         }
-                        Spacer()
-                        Text(trace.locationName)
-                            .foregroundColor(themeManager.theme.text)
-                        if !userHasOwnership {
-                            Text("@\(username)")
-                                .foregroundColor(themeManager.theme.text.opacity(0.4))
-                                .font(.caption)
-                        }
-                        Text(getFormattedDate())
-                            .foregroundColor(themeManager.theme.text.opacity(0.6))
-                            .font(.caption2)
-                    }
-                    .padding(.vertical, 4)
+                    }) {
+                    Image(systemName: "ellipsis")
+                        .foregroundColor(themeManager.theme.text.opacity(0.6))
+                        .padding(6)
+                        .frame(width: 24, height: 24)
                 }
+
+                Spacer()
+                Text(trace.locationName)
+                    .foregroundColor(themeManager.theme.text)
+                if !userHasOwnership {
+                    Text("@\(username)")
+                        .foregroundColor(themeManager.theme.text.opacity(0.4))
+                        .font(.caption)
+                }
+                Text(getFormattedDate())
+                    .foregroundColor(themeManager.theme.text.opacity(0.6))
+                    .font(.caption2)
             }
         }
         .task {
             username = await supabaseManager.getUsernameFromID(trace.userID)
         }
-        .padding(8)
+        .padding(.horizontal, 16)
+        .frame(height: 160)
+    }
+    
+    var details: some View {
+        VStack {
+            createCategory()
+            if trace.content != "" {
+                createDescription()
+            }
+        }
+        .padding()
+    }
+    
+    func createCategory() -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack {
+                ForEach(trace.categories, id: \.self) { tag in
+                    Text(tag)
+                        .font(.caption)
+                    
+                        .background(
+                            BorderedCapsule(hasThinBorder: true)
+                                .shadow(color: themeManager.theme.shadow, radius: 4, x: 2, y: 2)
+                        )
+                        .padding(2)
+                        .foregroundColor(themeManager.theme.text)
+                }
+            }
+        }
     }
     
     private func buildOptions() -> some View {
@@ -118,7 +154,7 @@ struct TraceTile: View {
                         settingsItem(title: deleteConfirmed ? "Are you sure?" : "Delete", icon: "trash", isCritical: true)
                             .animation(.easeInOut, value: deleteConfirmed)
                     }
-
+                    
                 } else {
                     Button(action: {
                         let pasteboard = UIPasteboard.general
@@ -135,7 +171,7 @@ struct TraceTile: View {
                         settingsItem(title: "Report", icon: "exclamationmark.bubble", isCritical: true)
                     }
                 }
-
+                
             }
         }
     }
@@ -156,6 +192,24 @@ struct TraceTile: View {
         .padding(.trailing, 24)
     }
     
+    func createDescription() -> some View {
+        VStack {
+            FieldLabel(fieldLabel: "Notes")
+                .offset(x: -100, y: 20)
+                .zIndex(1)
+            ZStack {
+                BorderedRectangle(cornerRadius: 24, accented: true)
+                HStack {
+                    Text(trace.content)
+                        .foregroundColor(themeManager.theme.text)
+                    Spacer()
+                }
+                .padding()
+            }
+        }
+        
+    }
+    
     private func getFormattedDate() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .short
@@ -164,3 +218,9 @@ struct TraceTile: View {
         return dateString
     }
 }
+
+
+//
+//#Preview {
+//    TraceTileDetail()
+//}
