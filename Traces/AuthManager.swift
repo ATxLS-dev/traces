@@ -131,6 +131,24 @@ class AuthManager: ObservableObject {
         }
     }
     
+    func setBio(_ bio: String) {
+        if authChangeEvent == .signedOut { return }
+        
+        let updateData: [String: String] = ["bio": bio]
+        
+        let query = supabase.database.from("users")
+            .update(values: updateData)
+            .eq(column: "id", value: session!.user.id)
+        
+        Task {
+            do {
+                try await query.execute()
+            } catch {
+                print(error)
+            }
+        }
+    }
+    
     func deleteAccount() {
         
         if authChangeEvent == .signedOut { return }

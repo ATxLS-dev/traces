@@ -23,6 +23,7 @@ struct TraceTile: View {
     
     var body: some View {
         VStack {
+            buildDivider()
             buildTileBody()
                 .padding(.vertical, 4)
                 .background(themeManager.theme.background)
@@ -35,18 +36,25 @@ struct TraceTile: View {
                 }
             if shouldPresentOptions {
                 buildOptions()
-                    .transition(.move(edge: self.shouldPresentOptions ? .trailing : .leading))
-                    .frame(height: 120)
+                    .transition(.move(edge: .trailing))
+                    .frame(height: 128)
             }
             if shouldShowDetails {
                 details
                     .zIndex(0.0)
-                    .background(themeManager.theme.backgroundAccent)
                     .transition(.move(edge: .top))
             }
         }
         .animation(
             .interactiveSpring(response: 0.45, dampingFraction: 0.8, blendDuration: 0.69), value: self.shouldPresentOptions)
+
+    }
+    
+    private func buildDivider() -> some View {
+        Rectangle()
+            .fill(themeManager.theme.border.opacity(0.1))
+            .frame(height: 1.4)
+            .padding(.horizontal, 8)
     }
     
     private func buildTileBody() -> some View {
@@ -57,21 +65,8 @@ struct TraceTile: View {
                 .padding(4)
                 .background( BorderedRectangle() )
             Spacer()
-
             VStack(alignment: .trailing, spacing: 2) {
-                Button(action: {
-                    withAnimation {
-                        shouldPresentOptions.toggle()
-                        shouldShowDetails = false
-                        deleteConfirmed = false
-                        }
-                    }) {
-                    Image(systemName: "ellipsis")
-                        .foregroundColor(themeManager.theme.text.opacity(0.6))
-                        .padding(6)
-                        .frame(width: 24, height: 24)
-                }
-
+                buildOptionsButton()
                 Spacer()
                 Text(trace.locationName)
                     .foregroundColor(themeManager.theme.text)
@@ -92,6 +87,21 @@ struct TraceTile: View {
         .frame(height: 160)
     }
     
+    private func buildOptionsButton() -> some View {
+        Button(action: {
+            withAnimation {
+                shouldPresentOptions.toggle()
+                shouldShowDetails = false
+                deleteConfirmed = false
+            }
+        }) {
+            Image(systemName: "ellipsis")
+                .foregroundColor(themeManager.theme.text.opacity(0.6))
+                .padding(6)
+                .frame(width: 24, height: 24)
+        }
+    }
+    
     var details: some View {
         VStack {
             createCategory()
@@ -108,13 +118,14 @@ struct TraceTile: View {
                 ForEach(trace.categories, id: \.self) { tag in
                     Text(tag)
                         .font(.caption)
-                    
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
                         .background(
                             BorderedCapsule(hasThinBorder: true)
                                 .shadow(color: themeManager.theme.shadow, radius: 4, x: 2, y: 2)
                         )
                         .padding(2)
-                        .foregroundColor(themeManager.theme.text)
+                        .foregroundColor(themeManager.theme.text.opacity(0.8))
                 }
             }
         }
@@ -188,8 +199,8 @@ struct TraceTile: View {
                 )
         }
         .foregroundColor(isCritical ? .red.opacity(0.8) : themeManager.theme.text.opacity(0.8))
-        .frame(width: 180)
-        .padding(.trailing, 24)
+        .frame(width: 196)
+        .padding(.trailing)
     }
     
     func createDescription() -> some View {

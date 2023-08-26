@@ -15,11 +15,18 @@ struct ProfileView: View {
     
     @ObservedObject var supabase = SupabaseManager.shared
     @ObservedObject var themeManager = ThemeManager.shared
+    @ObservedObject var notificationManager = NotificationManager.shared
     @ObservedObject var auth = AuthManager.shared
     
     @State var userTraces: [Trace] = []
     @State var shouldPresentSheet: Bool = false
+    @State var shouldPresentPopover: Bool = false
     @State var username: String = ""
+    @State var bio: String = ""
+    @State var newBio: String = ""
+    @State var error: String = ""
+    
+    let maxCharacters: Int = 280
     
     var body: some View {
         ZStack {
@@ -49,6 +56,7 @@ struct ProfileView: View {
         Task {
             await supabase.loadTracesFromUser(auth.session?.user.id)
             userTraces = supabase.userTraceHistory
+            bio = await supabase.getBioFromID(auth.session?.user.id)
         }
     }
 
@@ -77,11 +85,9 @@ struct ProfileView: View {
     }
     
     func buildTraces() -> some View {
-        VStack(spacing: 10) {
+        VStack() {
             ForEach(userTraces) { trace in
-                Button(action: TraceDetailPopup(trace: trace).showAndStack) {
-                    TraceTile(userHasOwnership: true, trace: trace)
-                }
+                TraceTile(userHasOwnership: true, trace: trace)
             }
         }
     }
@@ -90,20 +96,87 @@ struct ProfileView: View {
         HStack {
             Spacer()
             VStack(alignment: .trailing) {
+                Image(systemName: "pencil")
+                    .foregroundColor(themeManager.theme.text.opacity(0.8))
+                    .onTapGesture {
+                        shouldPresentPopover.toggle()
+                    }
+                    .popover(isPresented: $shouldPresentPopover) {
+                        buildBioPopover()
+                    }
+                Spacer(minLength: 20)
                 Text("@\(username)")
                     .font(.title2)
                     .foregroundColor(themeManager.theme.text)
-//                Text(auth.session?.user.email ?? "---")
-//                    .font(.caption)
-//                    .foregroundColor(themeManager.theme.text.opacity(0.6))
+                Text(bio)
+                    .font(.caption)
+                    .foregroundColor(themeManager.theme.text.opacity(0.6))
             }
-            .padding(.trailing)
         }
         .padding(24)
         .task {
             username = await auth.getCurrentUsername()
         }
         .edgesIgnoringSafeArea(.top)
+    }
+    
+    @ViewBuilder
+    func buildBioPopover() -> some View {
+        VStack {
+            Text("Edit your bio?")
+                .font(.title2)
+                .padding(.bottom, 12)
+            ZStack {
+                BorderedRectangle(cornerRadius: 16)
+                    .frame(minWidth: 300, minHeight: 200)
+                TextEditor(text: $newBio)
+                    .scrollContentBackground(.hidden)
+                    .frame(maxWidth: 280, maxHeight: 180)
+                    .background(themeManager.theme.background)
+                    .onAppear {
+                        newBio = bio
+                    }
+            }
+            .padding(.bottom, 4)
+            characterCounter
+                .padding(.bottom, 12)
+            HStack {
+                Spacer()
+                Button(action: {
+                    self.shouldPresentPopover = false
+                }) {
+                    BorderedHalfButton(icon: "xmark", noBorderColor: true, noBackgroundColor: true)
+                        .rotationEffect(.degrees(180))
+                }
+                Button(action: {
+                    if newBio.count <= maxCharacters {
+                        auth.setBio(newBio)
+                        notificationManager.sendNotification(.bioUpdated)
+                        self.shouldPresentPopover = false
+                    } else {
+                        error = "Bio too long"
+                    }
+                }) {
+                    BorderedHalfButton(icon: "checkmark")
+                }
+            }
+            if error != "" {
+                Text(error)
+                    .foregroundColor(.red)
+            }
+        }
+        .padding()
+        .presentationCompactAdaptation(.none)
+    }
+    
+    @ViewBuilder
+    private var characterCounter: some View {
+        HStack {
+            Spacer()
+            Text(String(newBio.count) + "/" + String(maxCharacters))
+                .font(.caption)
+                .opacity(0.6)
+        }
     }
 }
 

@@ -17,6 +17,7 @@ enum Notification : String {
     case traceReported = "Trace reported"
     case traceDeleted = "Trace deleted"
     case traceCreated = "Trace created"
+    case bioUpdated = "Bio updated"
     case linkCopied = "Details copied to clipboard"
     case coordinatesCopied = "Coordinates copied to clipboard"
 }

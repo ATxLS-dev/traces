@@ -11,7 +11,6 @@
 		0214A98E2A5635E300A3AF7E /* AnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0214A98D2A5635E300A3AF7E /* AnnotationView.swift */; };
 		0219261D2A2FD7BC00B1B314 /* TraceDetailPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0219261C2A2FD7BC00B1B314 /* TraceDetailPopup.swift */; };
 		0219261F2A2FD90100B1B314 /* Trace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0219261E2A2FD90100B1B314 /* Trace.swift */; };
-		021D2C202A23F4CF001BCA8D /* TraceTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021D2C1F2A23F4CF001BCA8D /* TraceTile.swift */; };
 		022A30CE2A759F5500F3674F /* TraceEditPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022A30CD2A759F5500F3674F /* TraceEditPopup.swift */; };
 		02376E0D2A3E0B7200257B5D /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02376E0C2A3E0B7200257B5D /* LocationManager.swift */; };
 		02376E102A3F70C700257B5D /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02376E0F2A3F70C700257B5D /* ThemeManager.swift */; };
@@ -27,6 +26,7 @@
 		02712F582A5BA22B009B4722 /* FAQSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02712F572A5BA22B009B4722 /* FAQSheet.swift */; };
 		028250A82A38FE8300B281DA /* MapboxMaps in Frameworks */ = {isa = PBXBuildFile; productRef = 028250A72A38FE8300B281DA /* MapboxMaps */; };
 		028250AA2A39017B00B281DA /* MapBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028250A92A39017B00B281DA /* MapBox.swift */; };
+		02831D192A941265004D0DAC /* TraceTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02831D182A941265004D0DAC /* TraceTile.swift */; };
 		028635002A18533700BCDF35 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028634FF2A18533700BCDF35 /* SettingsView.swift */; };
 		028635082A18544800BCDF35 /* MapPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028635072A18544800BCDF35 /* MapPageView.swift */; };
 		028635102A18566600BCDF35 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0286350F2A18566600BCDF35 /* HomeView.swift */; };
@@ -47,6 +47,7 @@
 		029A00872A72C68200D78D32 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029A00862A72C68200D78D32 /* AuthManager.swift */; };
 		02EE1B182A6CABA000DCB69D /* BorderedHalfButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EE1B172A6CABA000DCB69D /* BorderedHalfButton.swift */; };
 		02EE1B1A2A71909E00DCB69D /* BorderedRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EE1B192A71909E00DCB69D /* BorderedRectangle.swift */; };
+		02F310EB2A9A9FCE004D8120 /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F310EA2A9A9FCE004D8120 /* Onboarding.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,7 +72,6 @@
 		0214A98D2A5635E300A3AF7E /* AnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationView.swift; sourceTree = "<group>"; };
 		0219261C2A2FD7BC00B1B314 /* TraceDetailPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraceDetailPopup.swift; sourceTree = "<group>"; };
 		0219261E2A2FD90100B1B314 /* Trace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trace.swift; sourceTree = "<group>"; };
-		021D2C1F2A23F4CF001BCA8D /* TraceTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraceTile.swift; sourceTree = "<group>"; };
 		022A30CD2A759F5500F3674F /* TraceEditPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraceEditPopup.swift; sourceTree = "<group>"; };
 		02376E0C2A3E0B7200257B5D /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		02376E0F2A3F70C700257B5D /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
@@ -85,6 +85,7 @@
 		026BB76F2A3BA144000B765E /* CategoryTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTag.swift; sourceTree = "<group>"; };
 		02712F572A5BA22B009B4722 /* FAQSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQSheet.swift; sourceTree = "<group>"; };
 		028250A92A39017B00B281DA /* MapBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapBox.swift; sourceTree = "<group>"; };
+		02831D182A941265004D0DAC /* TraceTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraceTile.swift; sourceTree = "<group>"; };
 		028634FF2A18533700BCDF35 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		028635072A18544800BCDF35 /* MapPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPageView.swift; sourceTree = "<group>"; };
 		0286350F2A18566600BCDF35 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -107,6 +108,7 @@
 		029A00862A72C68200D78D32 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
 		02EE1B172A6CABA000DCB69D /* BorderedHalfButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedHalfButton.swift; sourceTree = "<group>"; };
 		02EE1B192A71909E00DCB69D /* BorderedRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedRectangle.swift; sourceTree = "<group>"; };
+		02F310EA2A9A9FCE004D8120 /* Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboarding.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -166,17 +168,18 @@
 				0286350F2A18566600BCDF35 /* HomeView.swift */,
 				028635072A18544800BCDF35 /* MapPageView.swift */,
 				0243FC732A328E9B007D097D /* ProfileView.swift */,
+				0287BE112A350484006B9CCD /* CircularProgressView.swift */,
+				02F310EC2A9AA26C004D8120 /* Components */,
 				028634FF2A18533700BCDF35 /* SettingsView.swift */,
 				02712F572A5BA22B009B4722 /* FAQSheet.swift */,
 				02956F2A2A4B56AB00E8537C /* AuthView.swift */,
 				026BB76F2A3BA144000B765E /* CategoryTag.swift */,
-				0287BE112A350484006B9CCD /* CircularProgressView.swift */,
 				028BA33D2A377C44000BD0C0 /* CustomTabBarView.swift */,
 				028BA33F2A3791FF000BD0C0 /* FilterDropdown.swift */,
 				02952D732A1E88D100793283 /* NewTracePopup.swift */,
 				0219261C2A2FD7BC00B1B314 /* TraceDetailPopup.swift */,
 				022A30CD2A759F5500F3674F /* TraceEditPopup.swift */,
-				021D2C1F2A23F4CF001BCA8D /* TraceTile.swift */,
+				02831D182A941265004D0DAC /* TraceTile.swift */,
 				028250A92A39017B00B281DA /* MapBox.swift */,
 				0214A98D2A5635E300A3AF7E /* AnnotationView.swift */,
 				02EE1B172A6CABA000DCB69D /* BorderedHalfButton.swift */,
@@ -190,6 +193,7 @@
 				029A00862A72C68200D78D32 /* AuthManager.swift */,
 				02376E0C2A3E0B7200257B5D /* LocationManager.swift */,
 				02376E0F2A3F70C700257B5D /* ThemeManager.swift */,
+				02F310EA2A9A9FCE004D8120 /* Onboarding.swift */,
 				0219261E2A2FD90100B1B314 /* Trace.swift */,
 				028FF0AC2A184F090058EB57 /* Preview Content */,
 				028FF0AA2A184F090058EB57 /* Assets.xcassets */,
@@ -222,6 +226,13 @@
 				028FF0C82A184F090058EB57 /* TracesUITestsLaunchTests.swift */,
 			);
 			path = TracesUITests;
+			sourceTree = "<group>";
+		};
+		02F310EC2A9AA26C004D8120 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -366,6 +377,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02831D192A941265004D0DAC /* TraceTile.swift in Sources */,
 				028635002A18533700BCDF35 /* SettingsView.swift in Sources */,
 				029A00872A72C68200D78D32 /* AuthManager.swift in Sources */,
 				0243FC642A324180007D097D /* SupabaseManager.swift in Sources */,
@@ -376,10 +388,10 @@
 				022A30CE2A759F5500F3674F /* TraceEditPopup.swift in Sources */,
 				0256E4BF2A6C8715000EA684 /* FieldLabel.swift in Sources */,
 				0219261F2A2FD90100B1B314 /* Trace.swift in Sources */,
-				021D2C202A23F4CF001BCA8D /* TraceTile.swift in Sources */,
 				028BA3402A3791FF000BD0C0 /* FilterDropdown.swift in Sources */,
 				028635102A18566600BCDF35 /* HomeView.swift in Sources */,
 				02439F7C2A749771009F70D1 /* NotificationManager.swift in Sources */,
+				02F310EB2A9A9FCE004D8120 /* Onboarding.swift in Sources */,
 				028635082A18544800BCDF35 /* MapPageView.swift in Sources */,
 				0287BE122A350484006B9CCD /* CircularProgressView.swift in Sources */,
 				0214A98E2A5635E300A3AF7E /* AnnotationView.swift in Sources */,

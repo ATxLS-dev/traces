@@ -104,8 +104,6 @@ extension HomeView {
                 Spacer(minLength: 96)
             }
         }
-
-        
         .refreshable {
             Task {
                 await supabaseManager.reloadTraces()

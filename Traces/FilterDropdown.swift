@@ -30,10 +30,8 @@ struct FilterDropdown: View {
             .frame(height: 480)
             .padding(12)
             .background(
-                ZStack {
-                    BorderedRectangle(cornerRadius: 24)
-                        .shadow(color: themeManager.theme.shadow, radius: 6, x: 2, y: 2)
-                }
+                BorderedRectangle(cornerRadius: 24)
+                    .shadow(color: themeManager.theme.shadow, radius: 6, x: 2, y: 2)
             )
         }
         .frame(
@@ -57,13 +55,15 @@ struct FilterDropdown: View {
                     .foregroundColor(themeManager.theme.text)
                     .padding(4)
                 Spacer()
-                Text(String(occurances))
-                    .foregroundColor(themeManager.theme.text.opacity(0.6))
-                    .font(.caption)
-                    .padding(.horizontal)
-                    .background(
-                        BorderedCapsule(hasThinBorder: true)
-                            .frame(width: 22, height: 22))
+                ZStack {
+                    BorderedCapsule(hasThinBorder: true)
+                        .frame(width: 22, height: 22)
+                    Text(String(occurances))
+                        .foregroundColor(themeManager.theme.text.opacity(0.6))
+                        .font(.caption)
+                }
+                .padding(.horizontal, 6)
+
                 if supabase.filters.contains(category.name) {
                     Image(systemName: "checkmark")
                         .foregroundColor(themeManager.theme.accent)

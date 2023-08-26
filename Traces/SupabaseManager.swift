@@ -134,6 +134,25 @@ class SupabaseManager: ObservableObject {
         return "Username not set"
     }
     
+    private func parseBio(_ json: String) -> String {
+        
+        guard let jsonData = json.data(using: .utf8) else {
+            return "Invalid JSON string"
+        }
+        
+        do {
+            if let jsonArray = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [[String: Any]],
+               let bio = jsonArray.first?["bio"] as? String {
+                return bio
+            } else {
+                print("JSON format invalid")
+            }
+        } catch {
+            print("Error parsing JSON: \(error)")
+        }
+        return "Bio not set"
+    }
+    
     func getUsernameFromID(_ id: UUID) async -> String {
         
         let query = supabase.database
@@ -148,6 +167,23 @@ class SupabaseManager: ObservableObject {
             print(error)
         }
         return parseJSON(result)
+    }
+    
+    func getBioFromID(_ id: UUID? = nil) async -> String {
+        guard id != nil else { return "" }
+        
+        let query = supabase.database.from("users")
+            .select(columns: "bio")
+            .eq(column: "id", value: id!)
+        
+        var result: String = ""
+        
+        do {
+            result = try await query.execute().value
+        } catch {
+            print(error)
+        }
+        return parseBio(result)
     }
     
     func createNewTrace(locationName: String, content: String, categories: [String], location: CLLocationCoordinate2D) {
