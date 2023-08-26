@@ -87,9 +87,9 @@ extension Color {
 }
 
 @MainActor
-class ThemeManager: ObservableObject {
+class ThemeController: ObservableObject {
     
-    static let shared = ThemeManager()
+    static let shared = ThemeController()
     let light: ColorTheme = LightTheme()
     let dark: ColorTheme = DarkTheme()
     

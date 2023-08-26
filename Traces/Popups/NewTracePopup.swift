@@ -23,11 +23,11 @@ struct NewTracePopup: CentrePopup {
     @State var showNoteEditor: Bool = false
     @State var tags: Set<String> = []
     
-    @ObservedObject var themeManager = ThemeManager.shared
-    @ObservedObject var supabaseManager = SupabaseManager.shared
-    @ObservedObject var locationManager = LocationManager.shared
-    @ObservedObject var auth = AuthManager.shared
-    @ObservedObject var notificationManager = NotificationManager.shared
+    @ObservedObject var themeController = ThemeController.shared
+    @ObservedObject var supabaseController = SupabaseController.shared
+    @ObservedObject var locationController = LocationController.shared
+    @ObservedObject var auth = AuthController.shared
+    @ObservedObject var notificationController = NotificationController.shared
     
     func createContent() -> some View {
         ZStack {
@@ -74,7 +74,7 @@ struct NewTracePopup: CentrePopup {
             }
         }
         .onAppear {
-            locationManager.snapshotLocation()
+            locationController.snapshotLocation()
             
         }
     }
@@ -85,14 +85,14 @@ struct NewTracePopup: CentrePopup {
                 HStack {
                     Spacer()
                     Image(systemName: "xmark")
-                        .foregroundColor(themeManager.theme.text)
+                        .foregroundColor(themeController.theme.text)
                         .scaleEffect(1.4)
                         .padding(36)
                 }
                 Spacer()
             }
             Text("You'll need an account to leave traces.")
-                .foregroundColor(themeManager.theme.text)
+                .foregroundColor(themeController.theme.text)
         }
         .frame(height: 480)
         .padding()
@@ -114,7 +114,7 @@ private extension NewTracePopup {
     
     func createPrompt() -> some View {
         Text("Leave a trace?")
-            .foregroundColor(themeManager.theme.text)
+            .foregroundColor(themeController.theme.text)
             .font(.title3)
     }
     
@@ -122,7 +122,7 @@ private extension NewTracePopup {
         ZStack {
             TextField("", text: $title)
                 .textFieldStyle(.plain)
-                .foregroundColor(themeManager.theme.text)
+                .foregroundColor(themeController.theme.text)
                 .padding(20)
                 .background( BorderedCapsule() )
             FieldLabel(fieldLabel: "Title")
@@ -142,19 +142,19 @@ private extension NewTracePopup {
                 Text(tag)
                     .font(.caption)
                 Image(systemName: "x.circle")
-                    .foregroundColor(themeManager.theme.accent.opacity(0.4))
+                    .foregroundColor(themeController.theme.accent.opacity(0.4))
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
             .background(
                 ZStack {
                     Capsule()
-                        .fill(themeManager.theme.background)
+                        .fill(themeController.theme.background)
                     Capsule()
-                        .stroke(themeManager.theme.accent, lineWidth: 1.4)
+                        .stroke(themeController.theme.accent, lineWidth: 1.4)
                 }
             )
-            .foregroundColor(themeManager.theme.text)
+            .foregroundColor(themeController.theme.text)
         }
         .padding(2)
     }
@@ -208,7 +208,7 @@ private extension NewTracePopup {
         ZStack {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
-                    ForEach(supabaseManager.categories) { tag in
+                    ForEach(supabaseController.categories) { tag in
                         Button(action: {
                             withAnimation { () -> () in
                                 tags.insert(tag.name)
@@ -217,12 +217,12 @@ private extension NewTracePopup {
                             HStack {
                                 Text(tag.name)
                                     .font(.body)
-                                    .foregroundColor(themeManager.theme.text)
+                                    .foregroundColor(themeController.theme.text)
                                     .padding(4)
                                 Spacer()
                                 if tags.contains(tag.name) {
                                     Image(systemName: "checkmark")
-                                        .foregroundColor(themeManager.theme.accent)
+                                        .foregroundColor(themeController.theme.accent)
                                         .padding(.trailing, 6)
                                 }
                             }
@@ -235,8 +235,8 @@ private extension NewTracePopup {
             .padding(12)
             .background(
                 ZStack {
-                    RoundedRectangle(cornerRadius: 24).foregroundColor(themeManager.theme.backgroundAccent)
-                    RoundedRectangle(cornerRadius: 24).stroke(themeManager.theme.border, lineWidth: 2)
+                    RoundedRectangle(cornerRadius: 24).foregroundColor(themeController.theme.backgroundAccent)
+                    RoundedRectangle(cornerRadius: 24).stroke(themeController.theme.border, lineWidth: 2)
                 }
             )
         }
@@ -262,7 +262,7 @@ private extension NewTracePopup {
         ZStack {
             TextField("", text: $content)
                 .textFieldStyle(.plain)
-                .foregroundColor(themeManager.theme.text)
+                .foregroundColor(themeController.theme.text)
                 .padding(20)
                 .background( BorderedCapsule() )
             FieldLabel(fieldLabel: "Any other notes?")
@@ -272,13 +272,13 @@ private extension NewTracePopup {
     
     func submitButton() -> some View {
         Button(action: {
-            supabaseManager.createNewTrace(
+            supabaseController.createNewTrace(
                 locationName: title,
                 content: content,
                 categories: Array(tags),
-                location: locationManager.userLocation)
+                location: locationController.userLocation)
             PopupManager.dismiss()
-            notificationManager.sendNotification(.traceCreated)
+            notificationController.sendNotification(.traceCreated)
         }) {
             BorderedHalfButton(icon: "checkmark.circle")
         }

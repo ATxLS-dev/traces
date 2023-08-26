@@ -13,10 +13,10 @@ import Combine
 
 struct ProfileView: View {
     
-    @ObservedObject var supabase = SupabaseManager.shared
-    @ObservedObject var themeManager = ThemeManager.shared
-    @ObservedObject var notificationManager = NotificationManager.shared
-    @ObservedObject var auth = AuthManager.shared
+    @ObservedObject var supabase = SupabaseController.shared
+    @ObservedObject var themeController = ThemeController.shared
+    @ObservedObject var notificationController = NotificationController.shared
+    @ObservedObject var auth = AuthController.shared
     
     @State var userTraces: [Trace] = []
     @State var shouldPresentSheet: Bool = false
@@ -31,7 +31,7 @@ struct ProfileView: View {
     var body: some View {
         ZStack {
             Spacer()
-                .background(themeManager.theme.background)
+                .background(themeController.theme.background)
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                 .edgesIgnoringSafeArea(.all)
             if auth.authChangeEvent != .signedIn {
@@ -64,7 +64,7 @@ struct ProfileView: View {
     func buildSignInButton() -> some View {
         VStack {
             Label("Log in / Sign up", systemImage: "hand.wave")
-                .foregroundColor(themeManager.theme.text)
+                .foregroundColor(themeController.theme.text)
                 .onTapGesture { shouldPresentSheet.toggle() }
                 .padding()
                 .background( BorderedCapsule() )
@@ -97,7 +97,7 @@ struct ProfileView: View {
             Spacer()
             VStack(alignment: .trailing) {
                 Image(systemName: "pencil")
-                    .foregroundColor(themeManager.theme.text.opacity(0.8))
+                    .foregroundColor(themeController.theme.text.opacity(0.8))
                     .onTapGesture {
                         shouldPresentPopover.toggle()
                     }
@@ -107,10 +107,10 @@ struct ProfileView: View {
                 Spacer(minLength: 20)
                 Text("@\(username)")
                     .font(.title2)
-                    .foregroundColor(themeManager.theme.text)
+                    .foregroundColor(themeController.theme.text)
                 Text(bio)
                     .font(.caption)
-                    .foregroundColor(themeManager.theme.text.opacity(0.6))
+                    .foregroundColor(themeController.theme.text.opacity(0.6))
             }
         }
         .padding(24)
@@ -132,7 +132,7 @@ struct ProfileView: View {
                 TextEditor(text: $newBio)
                     .scrollContentBackground(.hidden)
                     .frame(maxWidth: 280, maxHeight: 180)
-                    .background(themeManager.theme.background)
+                    .background(themeController.theme.background)
                     .onAppear {
                         newBio = bio
                     }
@@ -151,7 +151,7 @@ struct ProfileView: View {
                 Button(action: {
                     if newBio.count <= maxCharacters {
                         auth.setBio(newBio)
-                        notificationManager.sendNotification(.bioUpdated)
+                        notificationController.sendNotification(.bioUpdated)
                         self.shouldPresentPopover = false
                     } else {
                         error = "Bio too long"

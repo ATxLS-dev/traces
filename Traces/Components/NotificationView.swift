@@ -9,8 +9,8 @@ import SwiftUI
 
 struct NotificationView: View {
     
-    @ObservedObject var themeManager = ThemeManager.shared
-    @ObservedObject var notificationManager = NotificationManager.shared
+    @ObservedObject var themeController = ThemeController.shared
+    @ObservedObject var notificationController = NotificationController.shared
     
     @State var scale = 1.0
     
@@ -19,12 +19,12 @@ struct NotificationView: View {
             Spacer()
             HStack {
                 Spacer()
-                Text(notificationManager.notification?.rawValue ?? "")
+                Text(notificationController.notification?.rawValue ?? "")
                     .padding()
-                    .opacity(notificationManager.notification != nil ? 1 : 0)
+                    .opacity(notificationController.notification != nil ? 1 : 0)
                 Image(systemName: "checkmark")
                     .padding(.trailing, 24)
-                    .opacity(notificationManager.notification != nil ? 1 : 0)
+                    .opacity(notificationController.notification != nil ? 1 : 0)
                     .scaleEffect(scale)
                     .onAppear {
                         let baseAnimation = Animation.easeInOut(duration: 1.2)
@@ -34,14 +34,14 @@ struct NotificationView: View {
                         }
                     }
             }
-            .foregroundColor(themeManager.theme.text)
+            .foregroundColor(themeController.theme.text)
             .background(BorderedCapsule(hasColoredBorder: true)
-                .shadow(color: themeManager.theme.shadow, radius: 4, x: 2, y: 2))
+                .shadow(color: themeController.theme.shadow, radius: 4, x: 2, y: 2))
             .padding()
             .padding(.bottom, 100)
         }
-        .offset(x: notificationManager.notification != nil ? 0 : UIScreen.main.bounds.width, y: 0)
-        .animation(.interactiveSpring(response: 0.45, dampingFraction: 0.8, blendDuration: 0.69), value: notificationManager.notification != nil)
+        .offset(x: notificationController.notification != nil ? 0 : UIScreen.main.bounds.width, y: 0)
+        .animation(.interactiveSpring(response: 0.45, dampingFraction: 0.8, blendDuration: 0.69), value: notificationController.notification != nil)
     }
 }
 

@@ -12,7 +12,7 @@ class AnnotationView: UIView, Identifiable {
     
     var id: UUID?
     
-    @ObservedObject var themeManager = ThemeManager.shared
+    @ObservedObject var themeController = ThemeController.shared
     var trace: Trace?
     private var imageView: UIImageView?
     

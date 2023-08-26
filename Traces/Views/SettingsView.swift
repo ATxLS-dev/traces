@@ -11,9 +11,9 @@ import GoTrue
 
 struct SettingsView: View {
     
-    @ObservedObject var themeManager = ThemeManager.shared
-    @ObservedObject var supabase = SupabaseManager.shared
-    @ObservedObject var auth = AuthManager.shared
+    @ObservedObject var themeController = ThemeController.shared
+    @ObservedObject var supabase = SupabaseController.shared
+    @ObservedObject var auth = AuthController.shared
     @State var shouldPresentAuthSheet: Bool = false
     @State var shouldPresentAccountSheet: Bool = false
     @State var shouldPresentFAQSheet: Bool = false
@@ -38,10 +38,10 @@ struct SettingsView: View {
                     .sheet(isPresented: $shouldPresentFAQSheet) {
                         FAQSheet(isPresented: $shouldPresentFAQSheet)
                     }
-                buildListItem(item: themeManager.isDarkMode ?
+                buildListItem(item: themeController.isDarkMode ?
                               buildLabel(title: "Dark Mode", systemImage: "moon")
                               : buildLabel(title: "Light Mode", systemImage: "sun.max"))
-                    .onTapGesture { themeManager.toggleTheme() }
+                    .onTapGesture { themeController.toggleTheme() }
                 buildListItem(item: buildLabel(title: auth.authChangeEvent == .signedIn ? "Log Out" : "Log in / Sign up", systemImage: "hand.wave"))
                     .onTapGesture {
                         if auth.authChangeEvent == .signedIn {
@@ -58,8 +58,8 @@ struct SettingsView: View {
             }
             .padding(.top, 69)
         }
-        .foregroundColor(themeManager.theme.text)
-        .background(themeManager.theme.background)
+        .foregroundColor(themeController.theme.text)
+        .background(themeController.theme.background)
     }
 }
 
@@ -73,15 +73,15 @@ extension SettingsView {
         } icon: {
             ZStack {
                 Circle()
-                    .fill(themeManager.theme.buttonBackground)
+                    .fill(themeController.theme.buttonBackground)
                 Circle()
-                    .stroke(themeManager.theme.buttonBorder, lineWidth: 1.4)
+                    .stroke(themeController.theme.buttonBorder, lineWidth: 1.4)
             }
             .frame(width: 36, height: 36)
             .overlay(
                 Image(systemName: systemImage)
             )
-            .foregroundColor(themeManager.theme.text)
+            .foregroundColor(themeController.theme.text)
         }
     }
     

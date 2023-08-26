@@ -22,9 +22,9 @@ enum Notification : String {
     case coordinatesCopied = "Coordinates copied to clipboard"
 }
 
-class NotificationManager: ObservableObject {
+class NotificationController: ObservableObject {
     
-    static var shared = NotificationManager()
+    static var shared = NotificationController()
     
     @Published var notification: Notification?
     

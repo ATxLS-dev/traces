@@ -22,11 +22,11 @@ struct TraceEditPopup: CentrePopup {
     @State var showNoteEditor: Bool = false
     @State var newCategories: [Category] = []
 
-    @ObservedObject var themeManager = ThemeManager.shared
-    @ObservedObject var supabaseManager = SupabaseManager.shared
-    @ObservedObject var locationManager = LocationManager.shared
-    @ObservedObject var auth = AuthManager.shared
-    @ObservedObject var notificationManager = NotificationManager.shared
+    @ObservedObject var themeController = ThemeController.shared
+    @ObservedObject var supabaseController = SupabaseController.shared
+    @ObservedObject var locationController = LocationController.shared
+    @ObservedObject var auth = AuthController.shared
+    @ObservedObject var notificationController = NotificationController.shared
     
     func createContent() -> some View {
         ZStack {
@@ -74,7 +74,7 @@ struct TraceEditPopup: CentrePopup {
             }
         }
         .onAppear {
-            locationManager.snapshotLocation()
+            locationController.snapshotLocation()
             
         }
     }
@@ -112,7 +112,7 @@ private extension TraceEditPopup {
     
     func createPrompt() -> some View {
         Text("Make changes?")
-            .foregroundColor(themeManager.theme.text)
+            .foregroundColor(themeController.theme.text)
             .font(.title3)
     }
     
@@ -120,7 +120,7 @@ private extension TraceEditPopup {
         ZStack {
             TextField(trace.locationName, text: $trace.locationName)
                 .textFieldStyle(.plain)
-                .foregroundColor(themeManager.theme.text)
+                .foregroundColor(themeController.theme.text)
                 .padding(20)
                 .background( BorderedCapsule() )
             FieldLabel(fieldLabel: "Title")
@@ -140,14 +140,14 @@ private extension TraceEditPopup {
                 Text(tag)
                     .font(.caption)
                 Image(systemName: "x.circle")
-                    .foregroundColor(themeManager.theme.accent.opacity(0.4))
+                    .foregroundColor(themeController.theme.accent.opacity(0.4))
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
             .background(
                 BorderedCapsule(hasThinBorder: true)
             )
-            .foregroundColor(themeManager.theme.text)
+            .foregroundColor(themeController.theme.text)
         }
         .padding(2)
     }
@@ -201,7 +201,7 @@ private extension TraceEditPopup {
         ZStack {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
-                    ForEach(supabaseManager.categories) { tag in
+                    ForEach(supabaseController.categories) { tag in
                         Button(action: {
                             withAnimation { () -> () in
                                 trace.categories.append(tag.name)
@@ -210,12 +210,12 @@ private extension TraceEditPopup {
                             HStack {
                                 Text(tag.name)
                                     .font(.body)
-                                    .foregroundColor(themeManager.theme.text)
+                                    .foregroundColor(themeController.theme.text)
                                     .padding(4)
                                 Spacer()
                                 if trace.categories.contains(tag.name) {
                                     Image(systemName: "checkmark")
-                                        .foregroundColor(themeManager.theme.accent)
+                                        .foregroundColor(themeController.theme.accent)
                                         .padding(.trailing, 6)
                                 }
                             }
@@ -228,8 +228,8 @@ private extension TraceEditPopup {
             .padding(12)
             .background(
                 ZStack {
-                    RoundedRectangle(cornerRadius: 24).foregroundColor(themeManager.theme.backgroundAccent)
-                    RoundedRectangle(cornerRadius: 24).stroke(themeManager.theme.border, lineWidth: 2)
+                    RoundedRectangle(cornerRadius: 24).foregroundColor(themeController.theme.backgroundAccent)
+                    RoundedRectangle(cornerRadius: 24).stroke(themeController.theme.border, lineWidth: 2)
                 }
             )
         }
@@ -255,7 +255,7 @@ private extension TraceEditPopup {
         ZStack {
             TextField("", text: $trace.content)
                 .textFieldStyle(.plain)
-                .foregroundColor(themeManager.theme.text)
+                .foregroundColor(themeController.theme.text)
                 .padding(20)
                 .background( BorderedCapsule() )
             FieldLabel(fieldLabel: "Notes")
@@ -271,8 +271,8 @@ private extension TraceEditPopup {
     
     func submitButton() -> some View {
         Button(action: {
-            supabaseManager.updateTrace(trace)
-            notificationManager.sendNotification(.traceUpdated)
+            supabaseController.updateTrace(trace)
+            notificationController.sendNotification(.traceUpdated)
             PopupManager.dismiss()
         }) {
             BorderedHalfButton(icon: "checkmark.circle")

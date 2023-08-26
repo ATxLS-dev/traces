@@ -14,16 +14,16 @@ import Supabase
 struct ContentView: View {
     
     @State private var selectedTab: Tab = Tab.home
-    @ObservedObject var locationManager: LocationManager = LocationManager.shared
-    @ObservedObject var authManager: AuthManager = AuthManager.shared
-    @ObservedObject var notificationManager: NotificationManager = NotificationManager.shared
+    @ObservedObject var locationController: LocationController = LocationController.shared
+    @ObservedObject var authController: AuthController = AuthController.shared
+    @ObservedObject var notificationController: NotificationController = NotificationController.shared
     @State var shouldPresentNotification: Bool = false
     
     var body: some View {
         buildNavigation()
             .onAppear {
                 Task {
-                    await locationManager.checkLocationAuthorization()
+                    await locationController.checkLocationAuthorization()
                 }
             }
         

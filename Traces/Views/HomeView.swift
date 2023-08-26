@@ -11,14 +11,14 @@ import Supabase
 struct HomeView: View {
     
     @State var showFilterDropdown: Bool = false
-    @ObservedObject var supabaseManager = SupabaseManager.shared
-    @ObservedObject var themeManager = ThemeManager.shared
+    @ObservedObject var supabaseController = SupabaseController.shared
+    @ObservedObject var themeController = ThemeController.shared
 
     var body: some View {
         ZStack {
             verticalScrollView()
                 .task {
-                    await supabaseManager.reloadTraces()
+                    await supabaseController.reloadTraces()
                 }
             buildFilterBar()
         }
@@ -27,7 +27,7 @@ struct HomeView: View {
                 showFilterDropdown.toggle()
             }
         }
-        .background(themeManager.theme.background)
+        .background(themeController.theme.background)
     }
 }
 
@@ -40,10 +40,10 @@ extension HomeView {
                 .animation(.easeInOut(duration: 0.3), value: showFilterDropdown)
             VStack {
                 HStack {
-                    if !supabaseManager.filters.isEmpty {
+                    if !supabaseController.filters.isEmpty {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
-                                ForEach(Array(supabaseManager.filters), id: \.self) { category in
+                                ForEach(Array(supabaseController.filters), id: \.self) { category in
                                     CategoryTag(category: category)
                                 }
                             }.transition(AnyTransition.scale)
@@ -56,7 +56,7 @@ extension HomeView {
                 .padding(.leading, 4)
                 .background(
                     BorderedCapsule()
-                        .shadow(color: themeManager.theme.shadow, radius: 6, x: 4, y: 4)
+                        .shadow(color: themeController.theme.shadow, radius: 6, x: 4, y: 4)
                 )
                 .onTapGesture {
                     showFilterDropdown.toggle()
@@ -96,8 +96,8 @@ extension HomeView {
             VStack(spacing: 10) {
                 Spacer(minLength: 96)
                 ForEach(
-                    supabaseManager.filteredTraces.isEmpty ?
-                    supabaseManager.feed : supabaseManager.filteredTraces
+                    supabaseController.filteredTraces.isEmpty ?
+                    supabaseController.feed : supabaseController.filteredTraces
                 ) { trace in
                     TraceTile(trace: trace)
                 }
@@ -106,7 +106,7 @@ extension HomeView {
         }
         .refreshable {
             Task {
-                await supabaseManager.reloadTraces()
+                await supabaseController.reloadTraces()
             }
         }
     }

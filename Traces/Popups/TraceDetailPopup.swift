@@ -22,9 +22,9 @@ struct TraceDetailPopup: CentrePopup {
     @State var username: String = ""
     @State var region = CLLocationCoordinate2D(latitude: 37.334722, longitude: -122.008889)
     
-    @ObservedObject var themeManager = ThemeManager.shared
-    @ObservedObject var supabaseManager = SupabaseManager.shared
-    @ObservedObject var notificationManager = NotificationManager.shared
+    @ObservedObject var themeController = ThemeController.shared
+    @ObservedObject var supabaseController = SupabaseController.shared
+    @ObservedObject var notificationController = NotificationController.shared
 
     init(trace: Trace) {
         self.trace = trace
@@ -34,16 +34,16 @@ struct TraceDetailPopup: CentrePopup {
     
     func getUsername(_ id: UUID) {
         Task {
-            self.username = await supabaseManager.getUsernameFromID(id)
+            self.username = await supabaseController.getUsernameFromID(id)
         }
     }
     
     func createContent() -> some View {
         ZStack {
             RoundedRectangle(cornerRadius: 24)
-                .fill(themeManager.theme.background)
+                .fill(themeController.theme.background)
             RoundedRectangle(cornerRadius: 24)
-                .stroke(themeManager.theme.border, lineWidth: 2)
+                .stroke(themeController.theme.border, lineWidth: 2)
             VStack(spacing: 20) {
                 HStack {
                     createMap()
@@ -87,13 +87,13 @@ extension TraceDetailPopup {
     func createTitle() -> some View {
         Text(trace.locationName)
             .font(.title2)
-            .foregroundColor(themeManager.theme.text)
+            .foregroundColor(themeController.theme.text)
     }
     
     func createDate() -> some View {
         Text(Date().formatted())
             .font(.caption)
-            .foregroundColor(themeManager.theme.text)
+            .foregroundColor(themeController.theme.text)
     }
     
     func createCategory() -> some View {
@@ -107,10 +107,10 @@ extension TraceDetailPopup {
                         .padding(.vertical, 10)
                         .background(
                             BorderedCapsule(hasThinBorder: true)
-                                .shadow(color: themeManager.theme.shadow, radius: 4, x: 2, y: 2)
+                                .shadow(color: themeController.theme.shadow, radius: 4, x: 2, y: 2)
                         )
                         .padding(2)
-                        .foregroundColor(themeManager.theme.text)
+                        .foregroundColor(themeController.theme.text)
                 }
                 .padding(.vertical, 8)
             }
@@ -126,7 +126,7 @@ extension TraceDetailPopup {
                 BorderedRectangle(cornerRadius: 24, accented: true)
                 HStack {
                     Text(trace.content)
-                        .foregroundColor(themeManager.theme.text)
+                        .foregroundColor(themeController.theme.text)
                     Spacer()
                 }
                 .padding()
@@ -138,16 +138,16 @@ extension TraceDetailPopup {
     func createUsername() -> some View {
         return Text(username)
             .font(.caption)
-            .foregroundColor(themeManager.theme.text)
+            .foregroundColor(themeController.theme.text)
             .task {
-                username = await supabaseManager.getUsernameFromID(trace.userID)
+                username = await supabaseController.getUsernameFromID(trace.userID)
             }
     }
     
     
     func shareButton() -> some View {
         Button(action: {
-            notificationManager.sendNotification(.linkCopied)
+            notificationController.sendNotification(.linkCopied)
             PopupManager.dismiss()
             
         }) {

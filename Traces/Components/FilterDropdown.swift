@@ -10,8 +10,8 @@ import Supabase
 
 struct FilterDropdown: View {
     
-    @ObservedObject var supabase = SupabaseManager.shared
-    @ObservedObject var themeManager = ThemeManager.shared
+    @ObservedObject var supabase = SupabaseController.shared
+    @ObservedObject var themeController = ThemeController.shared
     
     var body: some View {
         VStack {
@@ -31,7 +31,7 @@ struct FilterDropdown: View {
             .padding(12)
             .background(
                 BorderedRectangle(cornerRadius: 24)
-                    .shadow(color: themeManager.theme.shadow, radius: 6, x: 2, y: 2)
+                    .shadow(color: themeController.theme.shadow, radius: 6, x: 2, y: 2)
             )
         }
         .frame(
@@ -52,21 +52,21 @@ struct FilterDropdown: View {
             HStack {
                 Text(category.name)
                     .font(.body)
-                    .foregroundColor(themeManager.theme.text)
+                    .foregroundColor(themeController.theme.text)
                     .padding(4)
                 Spacer()
                 ZStack {
                     BorderedCapsule(hasThinBorder: true)
                         .frame(width: 22, height: 22)
                     Text(String(occurances))
-                        .foregroundColor(themeManager.theme.text.opacity(0.6))
+                        .foregroundColor(themeController.theme.text.opacity(0.6))
                         .font(.caption)
                 }
                 .padding(.horizontal, 6)
 
                 if supabase.filters.contains(category.name) {
                     Image(systemName: "checkmark")
-                        .foregroundColor(themeManager.theme.accent)
+                        .foregroundColor(themeController.theme.accent)
                         .padding(.trailing, 6)
                 }
             }
@@ -78,12 +78,12 @@ struct FilterDropdown: View {
         HStack {
             Text(category.name)
                 .font(.body)
-                .foregroundColor(themeManager.theme.text.opacity(0.4))
+                .foregroundColor(themeController.theme.text.opacity(0.4))
                 .padding(4)
             Spacer()
             if supabase.filters.contains(category.name) {
                 Image(systemName: "checkmark")
-                    .foregroundColor(themeManager.theme.accent)
+                    .foregroundColor(themeController.theme.accent)
                     .padding(.trailing, 6)
             }
         }

@@ -9,9 +9,9 @@ import SwiftUI
 
 struct TraceTile: View {
     
-    @ObservedObject var themeManager = ThemeManager.shared
-    @ObservedObject var supabaseManager = SupabaseManager.shared
-    @ObservedObject var notificationManager = NotificationManager.shared
+    @ObservedObject var themeController = ThemeController.shared
+    @ObservedObject var supabaseController = SupabaseController.shared
+    @ObservedObject var notificationController = NotificationController.shared
     @State var username: String = ""
     @State var shouldShowDetails: Bool = false
     @State var shouldPresentOptions: Bool = false
@@ -26,7 +26,7 @@ struct TraceTile: View {
             buildDivider()
             buildTileBody()
                 .padding(.vertical, 4)
-                .background(themeManager.theme.background)
+                .background(themeController.theme.background)
                 .zIndex(1.0)
                 .onTapGesture {
                     withAnimation {
@@ -52,7 +52,7 @@ struct TraceTile: View {
     
     private func buildDivider() -> some View {
         Rectangle()
-            .fill(themeManager.theme.border.opacity(0.1))
+            .fill(themeController.theme.border.opacity(0.1))
             .frame(height: 1.4)
             .padding(.horizontal, 8)
     }
@@ -69,19 +69,19 @@ struct TraceTile: View {
                 buildOptionsButton()
                 Spacer()
                 Text(trace.locationName)
-                    .foregroundColor(themeManager.theme.text)
+                    .foregroundColor(themeController.theme.text)
                 if !userHasOwnership {
                     Text("@\(username)")
-                        .foregroundColor(themeManager.theme.text.opacity(0.4))
+                        .foregroundColor(themeController.theme.text.opacity(0.4))
                         .font(.caption)
                 }
                 Text(getFormattedDate())
-                    .foregroundColor(themeManager.theme.text.opacity(0.6))
+                    .foregroundColor(themeController.theme.text.opacity(0.6))
                     .font(.caption2)
             }
         }
         .task {
-            username = await supabaseManager.getUsernameFromID(trace.userID)
+            username = await supabaseController.getUsernameFromID(trace.userID)
         }
         .padding(.horizontal, 16)
         .frame(height: 160)
@@ -96,7 +96,7 @@ struct TraceTile: View {
             }
         }) {
             Image(systemName: "ellipsis")
-                .foregroundColor(themeManager.theme.text.opacity(0.6))
+                .foregroundColor(themeController.theme.text.opacity(0.6))
                 .padding(6)
                 .frame(width: 24, height: 24)
         }
@@ -122,10 +122,10 @@ struct TraceTile: View {
                         .padding(.vertical, 10)
                         .background(
                             BorderedCapsule(hasThinBorder: true)
-                                .shadow(color: themeManager.theme.shadow, radius: 4, x: 2, y: 2)
+                                .shadow(color: themeController.theme.shadow, radius: 4, x: 2, y: 2)
                         )
                         .padding(2)
-                        .foregroundColor(themeManager.theme.text.opacity(0.8))
+                        .foregroundColor(themeController.theme.text.opacity(0.8))
                 }
             }
         }
@@ -138,7 +138,7 @@ struct TraceTile: View {
                 Button(action: {
                     let pasteboard = UIPasteboard.general
                     pasteboard.string = String("\(trace.locationName), \(trace.latitude), \(trace.longitude)")
-                    notificationManager.sendNotification(.linkCopied)
+                    notificationController.sendNotification(.linkCopied)
                     shouldPresentOptions.toggle()
                 }) {
                     settingsItem(title: "Share", icon: "square.and.arrow.up")
@@ -156,8 +156,8 @@ struct TraceTile: View {
                         if !deleteConfirmed {
                             deleteConfirmed = true
                         } else {
-                            notificationManager.sendNotification(.traceDeleted)
-                            supabaseManager.deleteTrace(trace)
+                            notificationController.sendNotification(.traceDeleted)
+                            supabaseController.deleteTrace(trace)
                             shouldPresentOptions.toggle()
                             deleteConfirmed = false
                         }
@@ -170,13 +170,13 @@ struct TraceTile: View {
                     Button(action: {
                         let pasteboard = UIPasteboard.general
                         pasteboard.string = String("\(trace.latitude), \(trace.longitude)")
-                        notificationManager.sendNotification(.coordinatesCopied)
+                        notificationController.sendNotification(.coordinatesCopied)
                         shouldPresentOptions.toggle()
                     }) {
                         settingsItem(title: "Copy Coordinates", icon: "scope")
                     }
                     Button(action: {
-                        notificationManager.sendNotification(.traceReported)
+                        notificationController.sendNotification(.traceReported)
                         shouldPresentOptions.toggle()
                     }) {
                         settingsItem(title: "Report", icon: "exclamationmark.bubble", isCritical: true)
@@ -198,7 +198,7 @@ struct TraceTile: View {
                     Image(systemName: icon)
                 )
         }
-        .foregroundColor(isCritical ? .red.opacity(0.8) : themeManager.theme.text.opacity(0.8))
+        .foregroundColor(isCritical ? .red.opacity(0.8) : themeController.theme.text.opacity(0.8))
         .frame(width: 196)
         .padding(.trailing)
     }
@@ -212,7 +212,7 @@ struct TraceTile: View {
                 BorderedRectangle(cornerRadius: 24, accented: true)
                 HStack {
                     Text(trace.content)
-                        .foregroundColor(themeManager.theme.text)
+                        .foregroundColor(themeController.theme.text)
                     Spacer()
                 }
                 .padding()
@@ -225,7 +225,7 @@ struct TraceTile: View {
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .short
         dateFormatter.timeStyle = .none
-        let dateString = dateFormatter.string(from: supabaseManager.convertFromTimestamptzDate(trace.creationDate))
+        let dateString = dateFormatter.string(from: supabaseController.convertFromTimestamptzDate(trace.creationDate))
         return dateString
     }
 }

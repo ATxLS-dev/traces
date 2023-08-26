@@ -10,7 +10,7 @@ import SwiftUI
 struct FAQSheet: View {
     
     @Binding var isPresented: Bool
-    @ObservedObject var themeManager = ThemeManager.shared
+    @ObservedObject var themeController = ThemeController.shared
 
     var body: some View {
         VStack(spacing: 24) {
@@ -23,7 +23,7 @@ struct FAQSheet: View {
             isPresented = false
         }
         .padding()
-        .background(themeManager.theme.background)
+        .background(themeController.theme.background)
     }
     
     func buildQuestion(q question: String, a answer: String) -> some View {
@@ -37,6 +37,6 @@ struct FAQSheet: View {
                 .font(.body)
         }
         .padding()
-        .foregroundColor(themeManager.theme.text)
+        .foregroundColor(themeController.theme.text)
     }
 }

@@ -10,11 +10,11 @@ import SwiftUI
 struct FieldLabel: View {
     
     let fieldLabel: String
-    @ObservedObject var themeManager: ThemeManager = ThemeManager.shared
+    @ObservedObject var themeController: ThemeController = ThemeController.shared
     
     var body: some View {
         Text(fieldLabel)
-            .foregroundColor(themeManager.theme.text.opacity(0.6))
+            .foregroundColor(themeController.theme.text.opacity(0.6))
             .font(.subheadline)
             .padding(.horizontal)
 //            .padding(.vertical, 4)
@@ -22,7 +22,7 @@ struct FieldLabel: View {
                 Capsule()
                     .fill(
                         LinearGradient(
-                            gradient: Gradient(colors: [themeManager.theme.background, themeManager.theme.backgroundAccent]),
+                            gradient: Gradient(colors: [themeController.theme.background, themeController.theme.backgroundAccent]),
                             startPoint: UnitPoint(x: 0, y: 0.4),
                             endPoint: UnitPoint(x: 0, y: 0.6)
                         )

@@ -16,9 +16,9 @@ struct AuthView: View {
     @State var errorMessage: String?
     @State var loginInProgress: Bool = false
     @Binding var isPresented: Bool
-    @ObservedObject var themeManager = ThemeManager.shared
-    @ObservedObject var supabase = SupabaseManager.shared
-    @ObservedObject var auth = AuthManager.shared
+    @ObservedObject var themeController = ThemeController.shared
+    @ObservedObject var supabase = SupabaseController.shared
+    @ObservedObject var auth = AuthController.shared
 
     enum Mode {
         case signIn, signUp
@@ -37,18 +37,18 @@ extension AuthView {
                     Spacer()
                     Button(action: {isPresented = false} ) {
                         Image(systemName: "xmark")
-                            .foregroundColor(themeManager.theme.text)
+                            .foregroundColor(themeController.theme.text)
                             .padding()
                             .background(BorderedCapsule(hasColoredBorder: true, hasThinBorder: true))
-                            .shadow(color: themeManager.theme.shadow, radius: 4, x: 2, y: 2)
+                            .shadow(color: themeController.theme.shadow, radius: 4, x: 2, y: 2)
                     }
                 }
                 Text("Welcome to Traces")
                     .font(.title2)
-                    .foregroundColor(themeManager.theme.text)
+                    .foregroundColor(themeController.theme.text)
                     .padding(.bottom)
                 TextField("", text: $email)
-                    .foregroundColor(themeManager.theme.text)
+                    .foregroundColor(themeController.theme.text)
                     .keyboardType(.emailAddress)
                     .textContentType(.emailAddress)
                     .autocorrectionDisabled()
@@ -61,7 +61,7 @@ extension AuthView {
                                 .offset(x: -100, y: -26)
                     })
                 SecureField("",text: $password)
-                    .foregroundColor(themeManager.theme.text)
+                    .foregroundColor(themeController.theme.text)
                     .textContentType(.password)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
@@ -73,7 +73,7 @@ extension AuthView {
                                 .offset(x: -88, y: -26)
                     })
                 SecureField("", text: $password)
-                    .foregroundColor(themeManager.theme.text)
+                    .foregroundColor(themeController.theme.text)
                     .textContentType(.password)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
@@ -91,7 +91,7 @@ extension AuthView {
                 Text(errorMessage ?? "")
             }
             .padding()
-        .background(themeManager.theme.background)
+        .background(themeController.theme.background)
         }
     }
 }
@@ -138,13 +138,13 @@ extension AuthView {
                 Text(mode == .signIn ? "Log In" : "Sign Up")
                     .bold()
                     .padding(16)
-                    .foregroundColor(themeManager.theme.text)
+                    .foregroundColor(themeController.theme.text)
             }
             Spacer()
         }
         .background(
             BorderedCapsule(hasColoredBorder: true)
-                .shadow(color: themeManager.theme.shadow, radius: 4, x: 2, y: 2)
+                .shadow(color: themeController.theme.shadow, radius: 4, x: 2, y: 2)
         )
     }
 
@@ -156,14 +156,14 @@ extension AuthView {
             }) {
                 Text(mode == .signUp ? "Log in instead" : "Sign up instead")
                     .padding(16)
-                    .foregroundColor(themeManager.theme.text)
+                    .foregroundColor(themeController.theme.text)
             }
             Spacer()
         }
         .background(
             Capsule()
-                .stroke(themeManager.theme.accent, lineWidth: 2)
-                .shadow(color: themeManager.theme.shadow, radius: 4, x: 2, y: 2))
+                .stroke(themeController.theme.accent, lineWidth: 2)
+                .shadow(color: themeController.theme.shadow, radius: 4, x: 2, y: 2))
         
         
     }

@@ -17,12 +17,12 @@ import CoreLocation
 
 
 @MainActor
-class SupabaseManager: ObservableObject {
+class SupabaseController: ObservableObject {
     
-    static let shared = SupabaseManager()
+    static let shared = SupabaseController()
     let supabase: SupabaseClient = SupabaseClient(supabaseURL: Secrets.supabaseURL, supabaseKey: Secrets.supabaseAnonKey)
-    @ObservedObject var auth = AuthManager.shared
-    @ObservedObject var locationManager = LocationManager.shared
+    @ObservedObject var auth = AuthController.shared
+    @ObservedObject var locationController = LocationController.shared
     
     private var error: Error?
     
@@ -258,7 +258,7 @@ class SupabaseManager: ObservableObject {
     }
     
     func syncFeedOrderedByProximity(maxDistanceInMiles: Int) {
-        let lastUserLocation = locationManager.userLocation
+        let lastUserLocation = locationController.userLocation
         let maxDistanceInMeters = Double(maxDistanceInMiles) * 1609.34 // convert miles to meters
         feed = traces.filter { trace in
             let location = CLLocation(latitude: trace.latitude, longitude: trace.longitude)
