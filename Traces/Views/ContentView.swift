@@ -20,13 +20,17 @@ struct ContentView: View {
     @State var shouldPresentNotification: Bool = false
     
     var body: some View {
-        buildNavigation()
-            .onAppear {
-                Task {
-                    await locationController.checkLocationAuthorization()
+        if UserDefaults.hasOnboarded || authController.authChangeEvent == .signedIn {
+            buildNavigation()
+                .onAppear {
+                    Task {
+                        await locationController.checkLocationAuthorization()
+                    }
                 }
-            }
-        
+        } else {
+            Onboarding()
+        }
+
     }
 
     func buildNavigation() -> some View {

@@ -241,6 +241,7 @@
 				0243FC732A328E9B007D097D /* ProfileView.swift */,
 				028634FF2A18533700BCDF35 /* SettingsView.swift */,
 				02956F2A2A4B56AB00E8537C /* AuthView.swift */,
+				02F310EA2A9A9FCE004D8120 /* Onboarding.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -257,7 +258,6 @@
 		02F310F02A9AA5C5004D8120 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				02F310EA2A9A9FCE004D8120 /* Onboarding.swift */,
 				0219261E2A2FD90100B1B314 /* Trace.swift */,
 			);
 			path = Model;

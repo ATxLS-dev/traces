@@ -21,8 +21,8 @@ struct TracesApp: App {
     
     @ViewBuilder
     var main: some View {
-            ContentView()
-                .implementPopupView()
+        ContentView()
+            .implementPopupView()
     }
 }
 
