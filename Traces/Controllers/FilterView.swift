@@ -1,0 +1,66 @@
+//
+//  FilterView.swift
+//  Traces
+//
+//  Created by Bryce on 9/3/23.
+//
+
+import SwiftUI
+
+struct FilterView: View {
+    
+    @ObservedObject var feedController = FeedController.shared
+    @ObservedObject var themeController = ThemeController.shared
+    
+    @State var proximityLimit = 10.0
+    @State var editing = false
+    @State var presentPopover = false
+    
+    var body: some View {
+        VStack {
+            HStack {
+                Text("Sort by: ")
+                Spacer()
+                Button(action: { presentPopover.toggle() }) {
+                    Text(feedController.filterMode.rawValue)
+                        .foregroundStyle(themeController.theme.text)
+                        .padding()
+                    .background { BorderedCapsule() }
+                }
+                .popover(isPresented: $presentPopover) {
+                    ForEach(FeedOption.allCases, id: \.self) { feedOption in
+                        Text(feedOption.rawValue)
+                            .padding()
+                            .presentationCompactAdaptation(.none)
+                    }
+                }
+            }
+            proximitySlider
+                ScrollView {
+                    ForEach(feedController.categories) { category in
+                        HStack {
+                            Text(category.name)
+                                .foregroundStyle(themeController.theme.text)
+                                .padding()
+                                .background(BorderedCapsule())
+                            Spacer()
+                        }
+                        .padding(.vertical, 6)
+                    }
+                }.frame(maxHeight: 400)
+            }
+        }
+    
+    var proximitySlider: some View {
+        VStack {
+            Text("\(Int(proximityLimit)) mi")
+                .foregroundStyle(editing ? .red : .white)
+            Slider(value: $proximityLimit, in: 0...25, step: 1, onEditingChanged: { editing in
+                self.editing = editing })
+        }
+    }
+}
+
+#Preview {
+    FilterView()
+}

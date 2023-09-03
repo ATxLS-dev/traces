@@ -18,6 +18,7 @@ struct TraceTile: View {
     @State var shouldPresentEditSheet: Bool = false
     @State var userHasOwnership: Bool = false
     @State var deleteConfirmed: Bool = false
+    @State var countedReactions: [CountedReaction] = []
     
     let trace: Trace
     
@@ -81,7 +82,8 @@ struct TraceTile: View {
             }
         }
         .task {
-            username = await supabaseController.getUsernameFromID(trace.userID)
+            username = await supabaseController.getFromID(trace.userID, column: "username")
+            await syncReactions()
         }
         .padding(.horizontal, 16)
         .frame(height: 160)
@@ -102,9 +104,49 @@ struct TraceTile: View {
         }
     }
     
+    private func syncReactions() async {
+        let counted = await supabaseController.getReactions(to: trace.id)
+        countedReactions = counted.map { CountedReaction(value: $0, occurences: $1)}
+        if countedReactions == [] {
+            countedReactions = supabaseController.reactionTypes.map { CountedReaction(value: $0.value, occurences: 0)}
+        }
+    }
+    
+    var reactionView: some View {
+        HStack {
+            Spacer()
+            ForEach(countedReactions, id: \.self) { reaction in
+                Button(action: {
+                    supabaseController.createReaction(to: trace.id, reactionType: reaction.value)
+                    Task {
+                        await syncReactions()
+                    }
+                }) {
+                    reactionCounter(reaction)
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    func reactionCounter(_ reaction: CountedReaction) -> some View {
+        ZStack {
+            BorderedCapsule(hasThinBorder: true)
+                .frame(width: 54)
+            HStack {
+                Text("\(reaction.occurences)")
+                    .foregroundStyle(themeController.theme.text)
+                Text(reaction.value)
+            }
+            .scaleEffect(0.8)
+            .padding(.vertical, 4)
+        }
+    }
+    
     var details: some View {
         VStack {
             createCategory()
+            reactionView
             if trace.content != "" {
                 createDescription()
             }
@@ -225,13 +267,7 @@ struct TraceTile: View {
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .short
         dateFormatter.timeStyle = .none
-        let dateString = dateFormatter.string(from: supabaseController.convertFromTimestamptzDate(trace.creationDate))
+        let dateString = dateFormatter.string(from: trace.creationDate.convertFromTimestamptz())
         return dateString
     }
 }
-
-
-//
-//#Preview {
-//    TraceTileDetail()
-//}

@@ -15,7 +15,6 @@ import Combine
 import GoTrue
 import CoreLocation
 
-
 @MainActor
 class SupabaseController: ObservableObject {
     
@@ -32,6 +31,8 @@ class SupabaseController: ObservableObject {
     @Published private(set) var categories: [Category] = []
     @Published private(set) var filters: Set<String> = []
     
+    @Published private(set) var reactionTypes: [ReactionType] = []
+    
     @Published private(set) var userTraceHistory: [Trace] = []
     @Published var feed: [Trace] = []
     
@@ -39,6 +40,7 @@ class SupabaseController: ObservableObject {
     
     init() {
         syncCategories()
+        syncReactionTypes()
     }
     
     private func syncCategories() {
@@ -54,7 +56,20 @@ class SupabaseController: ObservableObject {
         }
     }
     
-    func countCategoryOccurances(_ category: Category) -> Int {
+    private func syncReactionTypes() {
+        let query = supabase.database.from("reaction_types").select()
+        Task {
+            do {
+                error = nil
+                reactionTypes = try await query.execute().value
+            } catch {
+                self.error = error
+                print(error)
+            }
+        }
+    }
+    
+    func countCategoryOccurences(_ category: Category) -> Int {
         let occurrences = traces
             .flatMap { $0.categories }
             .filter { $0 == category.name }
@@ -90,14 +105,6 @@ class SupabaseController: ObservableObject {
             }
         }
     }
-    
-    func convertFromTimestamptzDate(_ rawDate: String) -> Date {
-        let formatter = ISO8601DateFormatter()
-        if let date = formatter.date(from: rawDate) {
-            return date
-        }
-        return Date()
-    }
 
     func loadTracesFromUser(_ id: UUID? = nil) async {
         if let userID = id ?? auth.session?.user.id {
@@ -115,75 +122,24 @@ class SupabaseController: ObservableObject {
         }
     }
     
-    private func parseJSON(_ json: String) -> String {
-        
-        guard let jsonData = json.data(using: .utf8) else {
-            return "Invalid JSON string"
-        }
-        
-        do {
-            if let jsonArray = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [[String: Any]],
-               let username = jsonArray.first?["username"] as? String {
-                return username
-            } else {
-                print("JSON format invalid")
-            }
-        } catch {
-            print("Error parsing JSON: \(error)")
-        }
-        return "Username not set"
-    }
-    
-    private func parseBio(_ json: String) -> String {
-        
-        guard let jsonData = json.data(using: .utf8) else {
-            return "Invalid JSON string"
-        }
-        
-        do {
-            if let jsonArray = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [[String: Any]],
-               let bio = jsonArray.first?["bio"] as? String {
-                return bio
-            } else {
-                print("JSON format invalid")
-            }
-        } catch {
-            print("Error parsing JSON: \(error)")
-        }
-        return "Bio not set"
-    }
-    
-    func getUsernameFromID(_ id: UUID) async -> String {
+    func getFromID(_ id: UUID, column data: String) async -> String {
         
         let query = supabase.database
             .from("users")
-            .select(columns: "username")
+            .select(columns: data)
             .eq(column: "id", value: id)
+        
         var result: String = ""
+        
         do {
             result = try await query.execute().value
         } catch {
             self.error = error
             print(error)
         }
-        return parseJSON(result)
-    }
-    
-    func getBioFromID(_ id: UUID? = nil) async -> String {
-        guard id != nil else { return "" }
         
-        let query = supabase.database.from("users")
-            .select(columns: "bio")
-            .eq(column: "id", value: id!)
+        return result.parseData(data)
         
-        var result: String = ""
-        
-        do {
-            result = try await query.execute().value
-        } catch {
-            print(error)
-        }
-        return parseBio(result)
     }
     
     func createNewTrace(locationName: String, content: String, categories: [String], location: CLLocationCoordinate2D) {
@@ -192,7 +148,7 @@ class SupabaseController: ObservableObject {
             let formatter = ISO8601DateFormatter()
             formatter.formatOptions = [.withInternetDateTime]
             let creationDateInTimestamptz = formatter.string(from: date)
-            
+       
             let newTrace: Trace = Trace(
                 id: UUID(),
                 userID: auth.session!.user.id,
@@ -236,7 +192,6 @@ class SupabaseController: ObservableObject {
     }
     
     func deleteTrace(_ trace: Trace) {
-        
         let query = supabase.database
             .from("traces")
             .delete()
@@ -250,7 +205,6 @@ class SupabaseController: ObservableObject {
                 print("Error editing trace: \(error)")
             }
         }
-        
     }
     
     func setFeedMaxDistance(miles: Int) {

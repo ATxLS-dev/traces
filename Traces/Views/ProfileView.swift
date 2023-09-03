@@ -56,7 +56,7 @@ struct ProfileView: View {
         Task {
             await supabase.loadTracesFromUser(auth.session?.user.id)
             userTraces = supabase.userTraceHistory
-            bio = await supabase.getBioFromID(auth.session?.user.id)
+            bio = await supabase.getFromID(auth.session!.user.id, column: "bio")
         }
     }
 
@@ -71,13 +71,12 @@ struct ProfileView: View {
                 .sheet(isPresented: $shouldPresentSheet) {
                     AuthView(isPresented: $shouldPresentSheet)
                 }
-
         }
     }
     
     @ViewBuilder
     func buildProfilePage() -> some View {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             buildProfileCard()
             buildTraces()
             Spacer(minLength: 128)
@@ -108,6 +107,7 @@ struct ProfileView: View {
                 Text("@\(username)")
                     .font(.title2)
                     .foregroundColor(themeController.theme.text)
+                    .padding(.bottom,12)
                 Text(bio)
                     .font(.caption)
                     .foregroundColor(themeController.theme.text.opacity(0.6))

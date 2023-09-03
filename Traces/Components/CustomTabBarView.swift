@@ -43,6 +43,8 @@ struct CustomTabBarView: View {
     @ObservedObject var themeController = ThemeController.shared
     @ObservedObject var locationController = LocationController.shared
     
+    @State var shouldPresentTraceCreator: Bool = false
+    
     var body: some View {
         HStack {
             TabBarButton(imageName: Tab.home.rawValue)
@@ -89,7 +91,8 @@ struct CustomTabBarView: View {
 extension CustomTabBarView {
     func buildNewTraceButton() -> some View {
         ZStack(alignment: .bottom) {
-            Button(action: NewTracePopup().showAndStack) {
+//            Button(action: NewTracePopup().showAndStack) {
+            Button(action: {shouldPresentTraceCreator.toggle()}) {
                 Image(systemName: "plus")
                     .scaleEffect(1.4)
                     .frame(width: 48, height: 48)
@@ -103,6 +106,14 @@ extension CustomTabBarView {
                         }
                     )
             }
+        }
+        .fullScreenCover(isPresented: $shouldPresentTraceCreator) {
+            ZStack {
+                Rectangle()
+                    .fill(.ultraThinMaterial)
+                NewTraceView(isPresented: $shouldPresentTraceCreator)
+            }
+            .ignoresSafeArea()
         }
         .padding(12)
     }

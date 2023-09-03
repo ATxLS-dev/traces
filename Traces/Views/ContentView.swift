@@ -13,10 +13,11 @@ import Supabase
 
 struct ContentView: View {
     
-    @State private var selectedTab: Tab = Tab.home
     @ObservedObject var locationController: LocationController = LocationController.shared
     @ObservedObject var authController: AuthController = AuthController.shared
     @ObservedObject var notificationController: NotificationController = NotificationController.shared
+    
+    @State private var selectedTab: Tab = Tab.home
     @State var shouldPresentNotification: Bool = false
     
     var body: some View {
@@ -30,7 +31,6 @@ struct ContentView: View {
         } else {
             Onboarding()
         }
-
     }
 
     func buildNavigation() -> some View {

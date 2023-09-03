@@ -14,13 +14,16 @@ struct FilterDropdown: View {
     @ObservedObject var themeController = ThemeController.shared
     
     var body: some View {
-        VStack {
+        ZStack {
+            BorderedRectangle(cornerRadius: 24)
+                .shadow(color: themeController.theme.shadow, radius: 6, x: 2, y: 2)
+                .frame(width: 260, height: 500)
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
                     ForEach(supabase.categories) { category in
-                        let occurances = supabase.countCategoryOccurances(category)
-                        if occurances != 0 {
-                            buildActiveFilter(category: category, occurances: occurances)
+                        let occurences = supabase.countCategoryOccurences(category)
+                        if occurences != 0 {
+                            buildActiveFilter(category: category, occurences: occurences)
                         } else {
                             buildInactiveFilter(category: category)
                         }
@@ -29,10 +32,6 @@ struct FilterDropdown: View {
             }
             .frame(height: 480)
             .padding(12)
-            .background(
-                BorderedRectangle(cornerRadius: 24)
-                    .shadow(color: themeController.theme.shadow, radius: 6, x: 2, y: 2)
-            )
         }
         .frame(
             minWidth: 0,
@@ -43,7 +42,7 @@ struct FilterDropdown: View {
         )
     }
     
-    func buildActiveFilter(category: Category, occurances: Int) -> some View {
+    func buildActiveFilter(category: Category, occurences: Int) -> some View {
         Button(action: {
             withAnimation { () -> () in
                 supabase.toggleFilter(category: category.name)
@@ -58,7 +57,7 @@ struct FilterDropdown: View {
                 ZStack {
                     BorderedCapsule(hasThinBorder: true)
                         .frame(width: 22, height: 22)
-                    Text(String(occurances))
+                    Text(String(occurences))
                         .foregroundColor(themeController.theme.text.opacity(0.6))
                         .font(.caption)
                 }

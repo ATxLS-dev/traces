@@ -70,12 +70,12 @@ extension HomeView {
                 Spacer(minLength: 80)
                 if showFilterDropdown {
                     FilterDropdown()
-                        .transition(.move(edge: self.showFilterDropdown ? .leading : .trailing))
+                        .transition(.move(edge: .leading))
                 }
             }
             .padding(16)
             .animation(
-                .interactiveSpring(response: 0.45, dampingFraction: 0.69, blendDuration: 0.69), value: self.showFilterDropdown)
+                .interactiveSpring(response: 0.45, dampingFraction: 0.8, blendDuration: 0.69), value: self.showFilterDropdown)
         }
     }
 }
