@@ -19,7 +19,7 @@ struct BorderedCapsule: View {
             Capsule()
                 .fill(themeController.theme.backgroundAccent)
             Capsule()
-                .stroke(hasColoredBorder ? themeController.theme.buttonBorder : themeController.theme.border, lineWidth: hasThinBorder ? 1.4 : 2)
+                .strokeBorder(hasColoredBorder ? themeController.theme.buttonBorder : themeController.theme.border, lineWidth: hasThinBorder ? 1.4 : 2)
         }
     }
 }

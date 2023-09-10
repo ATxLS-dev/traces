@@ -87,7 +87,7 @@ extension Color {
 }
 
 @MainActor
-class ThemeController: ObservableObject {
+class ThemeController: Observable, ObservableObject {
     
     static let shared = ThemeController()
     let light: ColorTheme = LightTheme()
@@ -102,7 +102,7 @@ class ThemeController: ObservableObject {
     
     var isDarkMode: Bool = UserDefaults.standard.bool(forKey: "darkMode")
     
-    private init() {
+    override init() {
         self.theme = isDarkMode ? light : dark
     }
     

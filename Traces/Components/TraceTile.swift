@@ -35,6 +35,8 @@ struct TraceTile: View {
                         shouldShowDetails.toggle()
                     }
                 }
+            reactions
+                .padding(.horizontal)
             if shouldPresentOptions {
                 buildOptions()
                     .transition(.move(edge: .trailing))
@@ -42,8 +44,7 @@ struct TraceTile: View {
             }
             if shouldShowDetails {
                 details
-                    .zIndex(0.0)
-                    .transition(.move(edge: .top))
+                    .transition(.move(edge: .leading))
             }
         }
         .animation(
@@ -112,49 +113,33 @@ struct TraceTile: View {
         }
     }
     
-    var reactionView: some View {
-        HStack {
-            Spacer()
-            ForEach(countedReactions, id: \.self) { reaction in
-                Button(action: {
-                    supabaseController.createReaction(to: trace.id, reactionType: reaction.value)
-                    Task {
-                        await syncReactions()
+    var reactions: some View {
+            HStack {
+                Spacer()
+                ForEach(countedReactions, id: \.self) { reaction in
+                    Button(action: {
+                        supabaseController.createReaction(to: trace.id, reactionType: reaction.value)
+                        Task {
+                            await syncReactions()
+                        }
+                    }) {
+                        ReactionCounter(reaction)
                     }
-                }) {
-                    reactionCounter(reaction)
                 }
             }
         }
-    }
-    
-    @ViewBuilder
-    func reactionCounter(_ reaction: CountedReaction) -> some View {
-        ZStack {
-            BorderedCapsule(hasThinBorder: true)
-                .frame(width: 54)
-            HStack {
-                Text("\(reaction.occurences)")
-                    .foregroundStyle(themeController.theme.text)
-                Text(reaction.value)
-            }
-            .scaleEffect(0.8)
-            .padding(.vertical, 4)
-        }
-    }
     
     var details: some View {
         VStack {
-            createCategory()
-            reactionView
+            categories
             if trace.content != "" {
-                createDescription()
+                description
             }
         }
         .padding()
     }
     
-    func createCategory() -> some View {
+    var categories: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 ForEach(trace.categories, id: \.self) { tag in
@@ -245,7 +230,7 @@ struct TraceTile: View {
         .padding(.trailing)
     }
     
-    func createDescription() -> some View {
+    var description: some View {
         VStack {
             FieldLabel(fieldLabel: "Notes")
                 .offset(x: -100, y: 20)

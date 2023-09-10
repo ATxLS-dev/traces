@@ -11,14 +11,15 @@ import Supabase
 struct HomeView: View {
     
     @State var showFilterDropdown: Bool = false
-    @ObservedObject var supabaseController = SupabaseController.shared
+    @StateObject var feedController = FeedController.shared
+//    @ObservedObject var supabaseController = SupabaseController.shared
     @ObservedObject var themeController = ThemeController.shared
 
     var body: some View {
         ZStack {
             verticalScrollView()
                 .task {
-                    await supabaseController.reloadTraces()
+                    await feedController.syncUnsortedFeed()
                 }
             buildFilterBar()
         }
@@ -40,10 +41,10 @@ extension HomeView {
                 .animation(.easeInOut(duration: 0.3), value: showFilterDropdown)
             VStack {
                 HStack {
-                    if !supabaseController.filters.isEmpty {
+                    if !feedController.filters.isEmpty {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
-                                ForEach(Array(supabaseController.filters), id: \.self) { category in
+                                ForEach(Array(feedController.filters), id: \.self) { category in
                                     CategoryTag(category: category)
                                 }
                             }.transition(AnyTransition.scale)
@@ -62,7 +63,7 @@ extension HomeView {
                     showFilterDropdown.toggle()
                 }
                 FieldLabel(fieldLabel: "Filters")
-                    .offset(x: -100, y: -72)
+                    .offset(x: -100, y: -70)
                 Spacer()
             }
             .padding()
@@ -95,18 +96,10 @@ extension HomeView {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 10) {
                 Spacer(minLength: 96)
-                ForEach(
-                    supabaseController.filteredTraces.isEmpty ?
-                    supabaseController.feed : supabaseController.filteredTraces
-                ) { trace in
+                ForEach(feedController.feed) { trace in
                     TraceTile(trace: trace)
                 }
                 Spacer(minLength: 96)
-            }
-        }
-        .refreshable {
-            Task {
-                await supabaseController.reloadTraces()
             }
         }
     }

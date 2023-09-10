@@ -24,7 +24,7 @@ class FeedController: ObservableObject {
     static let shared = FeedController()
     let supabase: SupabaseClient = SupabaseClient(supabaseURL: Secrets.supabaseURL, supabaseKey: Secrets.supabaseAnonKey)
 
-    @ObservedObject var location = LocationController.shared
+    @StateObject var location = LocationController.shared
     
     @Published var feed: [Trace] = []
     

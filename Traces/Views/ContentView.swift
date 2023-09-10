@@ -19,6 +19,7 @@ struct ContentView: View {
     
     @State private var selectedTab: Tab = Tab.home
     @State var shouldPresentNotification: Bool = false
+
     
     var body: some View {
         if UserDefaults.hasOnboarded || authController.authChangeEvent == .signedIn {

@@ -18,8 +18,8 @@ struct BorderedRectangle: View {
         ZStack {
             RoundedRectangle(cornerRadius: cornerRadius)
                 .fill(accented ? themeController.theme.backgroundAccent : themeController.theme.background)
-            RoundedRectangle(cornerRadius: cornerRadius)
-                .stroke(hasColoredBorder ? themeController.theme.accent : themeController.theme.border, lineWidth: 2)
+            RoundedRectangle(cornerRadius: cornerRadius + 1)
+                .strokeBorder(hasColoredBorder ? themeController.theme.accent : themeController.theme.border, lineWidth: 2)
         }
     }
 }

@@ -36,18 +36,18 @@ struct FilterView: View {
                 }
             }
             proximitySlider
-                ScrollView {
-                    ForEach(feedController.categories) { category in
-                        HStack {
-                            Text(category.name)
-                                .foregroundStyle(themeController.theme.text)
-                                .padding()
-                                .background(BorderedCapsule())
-                            Spacer()
-                        }
-                        .padding(.vertical, 6)
+            ScrollView {
+                ForEach(feedController.categories) { category in
+                    HStack {
+                        Text(category.name)
+                            .foregroundStyle(themeController.theme.text)
+                            .padding()
+                            .background(BorderedCapsule())
+                        Spacer()
                     }
-                }.frame(maxHeight: 400)
+                    .padding(.vertical, 6)
+                }
+            }.frame(maxHeight: 400)
             }
         }
     
