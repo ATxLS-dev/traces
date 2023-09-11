@@ -10,7 +10,7 @@ import Supabase
 
 struct FilterDropdown: View {
     
-    @ObservedObject var supabase = SupabaseController.shared
+    @EnvironmentObject var supabase: SupabaseController
     @EnvironmentObject var theme: ThemeController
     
     var body: some View {

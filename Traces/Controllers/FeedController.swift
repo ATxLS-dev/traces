@@ -24,7 +24,7 @@ class FeedController: ObservableObject {
     static let shared = FeedController()
     let supabase: SupabaseClient = SupabaseClient(supabaseURL: Secrets.supabaseURL, supabaseKey: Secrets.supabaseAnonKey)
 
-    @StateObject var location = LocationController.shared
+    @EnvironmentObject var locator: LocationController
     
     @Published var feed: [Trace] = []
     
@@ -100,7 +100,7 @@ class FeedController: ObservableObject {
     }
     
     func syncFeedOrderedByProximity(maxDistanceInMiles: Int) {
-        let lastUserLocation = location.userLocation
+        let lastUserLocation = locator.userLocation
         let maxDistanceInMeters = Double(maxDistanceInMiles) * 1609.34
         feed = rawFeed.filter { trace in
             let location = CLLocation(latitude: trace.latitude, longitude: trace.longitude)

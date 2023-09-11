@@ -12,8 +12,9 @@ import GoTrue
 struct SettingsView: View {
     
     @EnvironmentObject var theme: ThemeController
-    @ObservedObject var supabase = SupabaseController.shared
-    @ObservedObject var auth = AuthController.shared
+    @EnvironmentObject var auth: AuthController
+    @EnvironmentObject var supabase: SupabaseController
+
     @State var shouldPresentAuthSheet: Bool = false
     @State var shouldPresentAccountSheet: Bool = false
     @State var shouldPresentFAQSheet: Bool = false

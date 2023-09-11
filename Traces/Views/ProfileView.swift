@@ -13,11 +13,10 @@ import Combine
 
 struct ProfileView: View {
     
-    @ObservedObject var supabase = SupabaseController.shared
-    @ObservedObject var auth = AuthController.shared
-    
+    @EnvironmentObject var supabase: SupabaseController
     @EnvironmentObject var notifications: NotificationController
     @EnvironmentObject var theme: ThemeController
+    @EnvironmentObject var auth: AuthController
     
     @State var userTraces: [Trace] = []
     @State var shouldPresentSheet: Bool = false

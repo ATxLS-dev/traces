@@ -16,8 +16,8 @@ struct AuthView: View {
     @State var errorMessage: String?
     @State var loginInProgress: Bool = false
     @Binding var isPresented: Bool
-    @ObservedObject var supabase = SupabaseController.shared
-    @ObservedObject var auth = AuthController.shared
+    @EnvironmentObject var supabase: SupabaseController
+    @EnvironmentObject var auth: AuthController
     @EnvironmentObject var theme: ThemeController
 
     enum Mode {

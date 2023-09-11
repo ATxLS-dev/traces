@@ -41,7 +41,7 @@ struct CustomTabBarView: View {
     
     @Binding var currentTab: Tab
     @EnvironmentObject var theme: ThemeController
-    @ObservedObject var locationController = LocationController.shared
+    @EnvironmentObject var locator: LocationController
     
     @State var shouldPresentTraceCreator: Bool = false
     

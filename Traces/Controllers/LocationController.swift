@@ -10,14 +10,11 @@ import Combine
 
 @MainActor
 class LocationController: NSObject, CLLocationManagerDelegate, ObservableObject {
-    
-    static let shared = LocationController()
 
     private let locationManager = CLLocationManager()
     var lastLocation: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.789467, longitude: -122.416772)
     @Published var userLocation: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.789467, longitude: -122.416772)
     
-    // Use an @Published property to store the authorization status.
     @Published var authorizationStatus: CLAuthorizationStatus?
     
     override init() {

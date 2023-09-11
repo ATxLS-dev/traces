@@ -25,9 +25,9 @@ struct NewTracePopup: CentrePopup {
     
     @EnvironmentObject var theme: ThemeController
     @EnvironmentObject var notifications: NotificationController
-    @ObservedObject var supabaseController = SupabaseController.shared
-    @ObservedObject var locationController = LocationController.shared
-    @ObservedObject var auth = AuthController.shared
+    @EnvironmentObject var supabase: SupabaseController
+    @EnvironmentObject var locator: LocationController
+    @EnvironmentObject var auth: AuthController
 
     
     func createContent() -> some View {
@@ -75,7 +75,7 @@ struct NewTracePopup: CentrePopup {
             }
         }
         .onAppear {
-            locationController.snapshotLocation()
+            locator.snapshotLocation()
             
         }
     }
@@ -209,7 +209,7 @@ private extension NewTracePopup {
         ZStack {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
-                    ForEach(supabaseController.categories) { tag in
+                    ForEach(supabase.categories) { tag in
                         Button(action: {
                             withAnimation { () -> () in
                                 tags.insert(tag.name)
@@ -273,11 +273,11 @@ private extension NewTracePopup {
     
     func submitButton() -> some View {
         Button(action: {
-            supabaseController.createNewTrace(
+            supabase.createNewTrace(
                 locationName: title,
                 content: content,
                 categories: Array(tags),
-                location: locationController.userLocation)
+                location: locator.userLocation)
             PopupManager.dismiss()
             notifications.sendNotification(.traceCreated)
         }) {

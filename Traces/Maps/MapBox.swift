@@ -15,8 +15,8 @@ struct MapBox: View {
     var focalTrace: Trace?
     @State var annotations: [Trace] = []
 
-    @ObservedObject var supabaseController: SupabaseController = SupabaseController.shared
-    @ObservedObject var locationController: LocationController = LocationController.shared
+    @EnvironmentObject var supabase: SupabaseController
+    @EnvironmentObject var locator: LocationController
     @EnvironmentObject var theme: ThemeController
 
     var body: some View {
@@ -31,7 +31,7 @@ struct MapBox: View {
         if focalTrace != nil {
             return MiniMapViewConverter(center: CLLocationCoordinate2D(latitude: focalTrace!.latitude, longitude: focalTrace!.longitude))
         } else {
-            return MiniMapViewConverter(center: locationController.userLocation)
+            return MiniMapViewConverter(center: locator.userLocation)
         }
         
     }
@@ -39,11 +39,11 @@ struct MapBox: View {
     func buildInteractiveMap() -> some View {
         InteractiveMapViewConverter()
             .task {
-                await supabaseController.reloadTraces()
-                await locationController.checkLocationAuthorization()
+                await supabase.reloadTraces()
+                await locator.checkLocationAuthorization()
             }
             .onAppear {
-                annotations = supabaseController.traces
+                annotations = supabase.traces
             }
     }
 }
@@ -51,18 +51,18 @@ struct MapBox: View {
 struct InteractiveMapViewConverter: UIViewControllerRepresentable {
 
     @EnvironmentObject var theme: ThemeController
-    @ObservedObject var locationController: LocationController = LocationController.shared
-    @ObservedObject var supabaseController: SupabaseController = SupabaseController.shared
+    @EnvironmentObject var locator: LocationController
+    @EnvironmentObject var supabase: SupabaseController
     
     func makeUIViewController(context: Context) -> InteractiveMapViewController {
-        locationController.snapshotLocation()
-        print(locationController.userLocation)
-        return InteractiveMapViewController(center: locationController.lastLocation, style: theme.mapStyle, annotations: supabaseController.traces)
+        locator.snapshotLocation()
+        print(locator.userLocation)
+        return InteractiveMapViewController(center: locator.lastLocation, style: theme.mapStyle, annotations: supabase.traces)
     }
     
     func updateUIViewController(_ uiViewController: InteractiveMapViewController, context: Context) {
-        uiViewController.centerOnPosition(locationController.userLocation)
-        uiViewController.updateAnnotations(supabaseController.traces)
+        uiViewController.centerOnPosition(locator.userLocation)
+        uiViewController.updateAnnotations(supabase.traces)
         uiViewController.updateStyle(theme.mapStyle)
     }
 }
@@ -181,11 +181,11 @@ struct MiniMapViewConverter: UIViewControllerRepresentable {
 
     var center: CLLocationCoordinate2D?
 
-    @ObservedObject var locationController: LocationController = LocationController.shared
+    @EnvironmentObject var locator: LocationController
     @EnvironmentObject var theme: ThemeController
     
     func makeUIViewController(context: Context) -> MiniMapViewController {
-        MiniMapViewController(center: center ?? locationController.lastLocation, style: theme.mapStyle)
+        MiniMapViewController(center: center ?? locator.lastLocation, style: theme.mapStyle)
     }
     
     func updateUIViewController(_ uiViewController: MiniMapViewController, context: Context) {

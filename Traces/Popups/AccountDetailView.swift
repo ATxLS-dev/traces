@@ -15,8 +15,8 @@ struct AccountDetailView: View {
     @State var newUsername: String = ""
     @State var username: String = ""
     @Binding var isPresented: Bool
-    @ObservedObject var supabase = SupabaseController.shared
-    @ObservedObject var auth = AuthController.shared
+    @EnvironmentObject var supabase: SupabaseController
+    @EnvironmentObject var auth: AuthController
     @EnvironmentObject var theme: ThemeController
     
     enum Mode {

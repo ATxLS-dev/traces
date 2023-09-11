@@ -24,9 +24,9 @@ struct TraceEditPopup: CentrePopup {
 
     @EnvironmentObject var theme: ThemeController
     @EnvironmentObject var notifications: NotificationController
-    @ObservedObject var supabaseController = SupabaseController.shared
-    @ObservedObject var locationController = LocationController.shared
-    @ObservedObject var auth = AuthController.shared
+    @EnvironmentObject var auth: AuthController
+    @EnvironmentObject var supabase: SupabaseController
+    @EnvironmentObject var locator: LocationController
     
     func createContent() -> some View {
         ZStack {
@@ -74,7 +74,7 @@ struct TraceEditPopup: CentrePopup {
             }
         }
         .onAppear {
-            locationController.snapshotLocation()
+            locator.snapshotLocation()
             
         }
     }
@@ -201,7 +201,7 @@ private extension TraceEditPopup {
         ZStack {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
-                    ForEach(supabaseController.categories) { tag in
+                    ForEach(supabase.categories) { tag in
                         Button(action: {
                             withAnimation { () -> () in
                                 trace.categories.append(tag.name)
@@ -271,7 +271,7 @@ private extension TraceEditPopup {
     
     func submitButton() -> some View {
         Button(action: {
-            supabaseController.updateTrace(trace)
+            supabase.updateTrace(trace)
             notifications.sendNotification(.traceUpdated)
             PopupManager.dismiss()
         }) {

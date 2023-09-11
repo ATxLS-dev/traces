@@ -10,7 +10,7 @@ import CoreLocation
 
 struct MapPageView: View {
     
-    @ObservedObject var locationController = LocationController.shared
+    @EnvironmentObject var locator: LocationController
     @EnvironmentObject var theme: ThemeController
     
     private let buttonDimen: CGFloat = 55
@@ -29,7 +29,7 @@ struct MapPageView: View {
             HStack {
                 Spacer()
                 Button(action: {
-                    locationController.snapshotLocation()
+                    locator.snapshotLocation()
                 }) {
                     ZStack {
                         Circle()

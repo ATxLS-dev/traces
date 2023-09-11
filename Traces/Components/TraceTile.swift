@@ -11,7 +11,7 @@ struct TraceTile: View {
     
     @EnvironmentObject var theme: ThemeController
     @EnvironmentObject var notifications: NotificationController
-    @ObservedObject var supabaseController = SupabaseController.shared
+    @EnvironmentObject var supabase: SupabaseController
     @State var username: String = ""
     @State var shouldShowDetails: Bool = false
     @State var shouldPresentOptions: Bool = false
@@ -83,7 +83,7 @@ struct TraceTile: View {
             }
         }
         .task {
-            username = await supabaseController.getFromID(trace.userID, column: "username")
+            username = await supabase.getFromID(trace.userID, column: "username")
             await syncReactions()
         }
         .padding(.horizontal, 16)
@@ -106,10 +106,10 @@ struct TraceTile: View {
     }
     
     private func syncReactions() async {
-        let counted = await supabaseController.getReactions(to: trace.id)
+        let counted = await supabase.getReactions(to: trace.id)
         countedReactions = counted.map { CountedReaction(value: $0, occurences: $1)}
         if countedReactions == [] {
-            countedReactions = supabaseController.reactionTypes.map { CountedReaction(value: $0.value, occurences: 0)}
+            countedReactions = supabase.reactionTypes.map { CountedReaction(value: $0.value, occurences: 0)}
         }
     }
     
@@ -118,7 +118,7 @@ struct TraceTile: View {
                 Spacer()
                 ForEach(countedReactions, id: \.self) { reaction in
                     Button(action: {
-                        supabaseController.createReaction(to: trace.id, reactionType: reaction.value)
+                        supabase.createReaction(to: trace.id, reactionType: reaction.value)
                         Task {
                             await syncReactions()
                         }
@@ -184,7 +184,7 @@ struct TraceTile: View {
                             deleteConfirmed = true
                         } else {
                             notifications.sendNotification(.traceDeleted)
-                            supabaseController.deleteTrace(trace)
+                            supabase.deleteTrace(trace)
                             shouldPresentOptions.toggle()
                             deleteConfirmed = false
                         }

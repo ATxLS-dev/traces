@@ -23,10 +23,9 @@ struct NewTraceView: View {
     
     @EnvironmentObject var theme: ThemeController
     @EnvironmentObject var notifications: NotificationController
-
-    @ObservedObject var supabaseController = SupabaseController.shared
-    @ObservedObject var locationController = LocationController.shared
-    @ObservedObject var auth = AuthController.shared
+    @EnvironmentObject var auth: AuthController
+    @EnvironmentObject var supabase: SupabaseController
+    @EnvironmentObject var locator: LocationController
 
     
     var body: some View {
@@ -75,7 +74,7 @@ struct NewTraceView: View {
         }
         .padding()
         .onAppear {
-            locationController.snapshotLocation()
+            locator.snapshotLocation()
             
         }
     }
@@ -209,7 +208,7 @@ private extension NewTraceView {
         ZStack {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
-                    ForEach(supabaseController.categories) { tag in
+                    ForEach(supabase.categories) { tag in
                         Button(action: {
                             withAnimation { () -> () in
                                 tags.insert(tag.name)
@@ -273,11 +272,11 @@ private extension NewTraceView {
     
     func submitButton() -> some View {
         Button(action: {
-            supabaseController.createNewTrace(
+            supabase.createNewTrace(
                 locationName: title,
                 content: content,
                 categories: Array(tags),
-                location: locationController.userLocation)
+                location: locator.userLocation)
             isPresented.toggle()
             notifications.sendNotification(.traceCreated)
         }) {

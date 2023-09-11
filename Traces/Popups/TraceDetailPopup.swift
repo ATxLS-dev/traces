@@ -24,7 +24,7 @@ struct TraceDetailPopup: CentrePopup {
     
     @EnvironmentObject var theme: ThemeController
     @EnvironmentObject var notifications: NotificationController
-    @ObservedObject var supabaseController = SupabaseController.shared
+    @EnvironmentObject var supabase: SupabaseController
 
 
     init(trace: Trace) {
@@ -35,7 +35,7 @@ struct TraceDetailPopup: CentrePopup {
     
     func getUsername(_ id: UUID) {
         Task {
-            self.username = await supabaseController.getFromID(id, column: "username")
+            self.username = await supabase.getFromID(id, column: "username")
         }
     }
     
@@ -141,7 +141,7 @@ extension TraceDetailPopup {
             .font(.caption)
             .foregroundColor(theme.text)
             .task {
-                username = await supabaseController.getFromID(trace.userID, column: "username")
+                username = await supabase.getFromID(trace.userID, column: "username")
             }
     }
     

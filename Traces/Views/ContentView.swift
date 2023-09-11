@@ -13,11 +13,11 @@ import Supabase
 
 struct ContentView: View {
     
-    @ObservedObject var locationController: LocationController = LocationController.shared
-    @ObservedObject var authController: AuthController = AuthController.shared
-    
     @StateObject var theme = ThemeController()
     @StateObject var notifications = NotificationController()
+    @StateObject var auth = AuthController()
+    @StateObject var locator = LocationController()
+    @StateObject var supabase = SupabaseController()
     
     @State private var selectedTab: Tab = Tab.home
     @State var shouldPresentNotification: Bool = false
@@ -27,11 +27,14 @@ struct ContentView: View {
             buildNavigation()
                 .onAppear {
                     Task {
-                        await locationController.checkLocationAuthorization()
+                        await locator.checkLocationAuthorization()
                     }
                 }
                 .environmentObject(theme)
                 .environmentObject(notifications)
+                .environmentObject(auth)
+                .environmentObject(locator)
+                .environmentObject(supabase)
 //        } else {
 //            Onboarding()
 //        }
