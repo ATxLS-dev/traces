@@ -287,9 +287,3 @@ private extension TraceEditPopup {
         }
     }
 }
-
-//struct TraceEditPopup_Previews: PreviewProvider {
-//    static var previews: some View {
-//        TraceEditPopup()
-//    }
-//}

@@ -19,11 +19,10 @@ struct ContentView: View {
     @StateObject var locator = LocationController()
     @StateObject var supabase = SupabaseController()
     
-    @State private var selectedTab: Tab = Tab.home
-    @State var shouldPresentNotification: Bool = false
+    @AppStorage("selectedTab") private var selectedTab: Tab = Tab.home
     
     var body: some View {
-//        if UserDefaults.hasOnboarded || authController.authChangeEvent == .signedIn {
+        if UserDefaults.hasOnboarded || auth.authChangeEvent == .signedIn {
             buildNavigation()
                 .onAppear {
                     Task {
@@ -35,9 +34,9 @@ struct ContentView: View {
                 .environmentObject(auth)
                 .environmentObject(locator)
                 .environmentObject(supabase)
-//        } else {
-//            Onboarding()
-//        }
+        } else {
+            Onboarding()
+        }
     }
 
     func buildNavigation() -> some View {
@@ -65,6 +64,11 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .environmentObject(ThemeController())
+            .environmentObject(NotificationController())
+            .environmentObject(AuthController())
+            .environmentObject(LocationController())
+            .environmentObject(SupabaseController())
     }
 }
 
