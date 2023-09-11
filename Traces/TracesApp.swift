@@ -13,13 +13,11 @@ import GoTrue
 @main
 struct TracesApp: App {
     
-    @StateObject var auth = AuthController()
-    @StateObject var theme = ThemeController()
+    
 
     var body: some Scene {
         WindowGroup {
             main
-                .environmentObject(theme)
         }
     }
     

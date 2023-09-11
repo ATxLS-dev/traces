@@ -18,6 +18,8 @@ struct ProfileView: View {
     @ObservedObject var notificationController = NotificationController.shared
     @ObservedObject var auth = AuthController.shared
     
+    @EnvironmentObject var theme: ThemeController
+    
     @State var userTraces: [Trace] = []
     @State var shouldPresentSheet: Bool = false
     @State var shouldPresentPopover: Bool = false
@@ -31,7 +33,7 @@ struct ProfileView: View {
     var body: some View {
         ZStack {
             Spacer()
-                .background(themeController.theme.background)
+                .background(theme.background)
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                 .edgesIgnoringSafeArea(.all)
             if auth.authChangeEvent != .signedIn {
@@ -180,8 +182,9 @@ struct ProfileView: View {
     }
 }
 
-struct ProfileView_Previews: PreviewProvider {
-    static var previews: some View {
-        ProfileView()
-    }
-}
+//struct ProfileView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ProfileView()
+//            .environmentObject(ThemeController())
+//    }
+//}

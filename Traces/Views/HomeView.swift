@@ -14,6 +14,8 @@ struct HomeView: View {
     @StateObject var feedController = FeedController.shared
 //    @ObservedObject var supabaseController = SupabaseController.shared
     @ObservedObject var themeController = ThemeController.shared
+    
+    @EnvironmentObject var theme: ThemeController
 
     var body: some View {
         ZStack {
@@ -28,7 +30,7 @@ struct HomeView: View {
                 showFilterDropdown.toggle()
             }
         }
-        .background(themeController.theme.background)
+        .background(theme.background)
     }
 }
 
@@ -57,7 +59,7 @@ extension HomeView {
                 .padding(.leading, 4)
                 .background(
                     BorderedCapsule()
-                        .shadow(color: themeController.theme.shadow, radius: 6, x: 4, y: 4)
+                        .shadow(color: theme.shadow, radius: 6, x: 4, y: 4)
                 )
                 .onTapGesture {
                     showFilterDropdown.toggle()
@@ -108,5 +110,6 @@ extension HomeView {
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
         HomeView()
+            .environmentObject(ThemeController())
     }
 }

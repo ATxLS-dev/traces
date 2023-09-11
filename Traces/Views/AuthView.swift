@@ -19,6 +19,7 @@ struct AuthView: View {
     @ObservedObject var themeController = ThemeController.shared
     @ObservedObject var supabase = SupabaseController.shared
     @ObservedObject var auth = AuthController.shared
+    @EnvironmentObject var theme: ThemeController
 
     enum Mode {
         case signIn, signUp
@@ -40,15 +41,15 @@ extension AuthView {
                             .foregroundColor(themeController.theme.text)
                             .padding()
                             .background(BorderedCapsule(hasColoredBorder: true, hasThinBorder: true))
-                            .shadow(color: themeController.theme.shadow, radius: 4, x: 2, y: 2)
+                            .shadow(color: theme.shadow, radius: 4, x: 2, y: 2)
                     }
                 }
                 Text("Welcome to Traces")
                     .font(.title2)
-                    .foregroundColor(themeController.theme.text)
+                    .foregroundColor(theme.text)
                     .padding(.bottom)
                 TextField("", text: $email)
-                    .foregroundColor(themeController.theme.text)
+                    .foregroundColor(theme.text)
                     .keyboardType(.emailAddress)
                     .textContentType(.emailAddress)
                     .autocorrectionDisabled()
@@ -61,7 +62,7 @@ extension AuthView {
                                 .offset(x: -100, y: -26)
                     })
                 SecureField("",text: $password)
-                    .foregroundColor(themeController.theme.text)
+                    .foregroundColor(theme.text)
                     .textContentType(.password)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
@@ -73,7 +74,7 @@ extension AuthView {
                                 .offset(x: -88, y: -26)
                     })
                 SecureField("", text: $password)
-                    .foregroundColor(themeController.theme.text)
+                    .foregroundColor(theme.text)
                     .textContentType(.password)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
@@ -91,7 +92,7 @@ extension AuthView {
                 Text(errorMessage ?? "")
             }
             .padding()
-        .background(themeController.theme.background)
+        .background(theme.background)
         }
     }
 }
@@ -138,13 +139,13 @@ extension AuthView {
                 Text(mode == .signIn ? "Log In" : "Sign Up")
                     .bold()
                     .padding(16)
-                    .foregroundColor(themeController.theme.text)
+                    .foregroundColor(theme.text)
             }
             Spacer()
         }
         .background(
             BorderedCapsule(hasColoredBorder: true)
-                .shadow(color: themeController.theme.shadow, radius: 4, x: 2, y: 2)
+                .shadow(color: theme.shadow, radius: 4, x: 2, y: 2)
         )
     }
 
@@ -156,18 +157,19 @@ extension AuthView {
             }) {
                 Text(mode == .signUp ? "Log in instead" : "Sign up instead")
                     .padding(16)
-                    .foregroundColor(themeController.theme.text)
+                    .foregroundColor(theme.text)
             }
             Spacer()
         }
         .background(
             Capsule()
-                .stroke(themeController.theme.accent, lineWidth: 2)
-                .shadow(color: themeController.theme.shadow, radius: 4, x: 2, y: 2))
+                .stroke(theme.accent, lineWidth: 2)
+                .shadow(color: theme.shadow, radius: 4, x: 2, y: 2))
         
         
     }
 
 
 }
+
 

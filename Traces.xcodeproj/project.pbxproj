@@ -51,7 +51,6 @@
 		02BD99172AA2AAD200E3C504 /* FeedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BD99162AA2AAD200E3C504 /* FeedController.swift */; };
 		02BD991F2AA50A2A00E3C504 /* FilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BD991E2AA50A2A00E3C504 /* FilterView.swift */; };
 		02BD99212AA518CE00E3C504 /* ReactionCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BD99202AA518CE00E3C504 /* ReactionCounter.swift */; };
-		02BD99232AA51BAC00E3C504 /* ReactionSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BD99222AA51BAC00E3C504 /* ReactionSlider.swift */; };
 		02EE1B182A6CABA000DCB69D /* BorderedHalfButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EE1B172A6CABA000DCB69D /* BorderedHalfButton.swift */; };
 		02EE1B1A2A71909E00DCB69D /* BorderedRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EE1B192A71909E00DCB69D /* BorderedRectangle.swift */; };
 		02F310EB2A9A9FCE004D8120 /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F310EA2A9A9FCE004D8120 /* Onboarding.swift */; };
@@ -119,7 +118,6 @@
 		02BD99162AA2AAD200E3C504 /* FeedController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedController.swift; sourceTree = "<group>"; };
 		02BD991E2AA50A2A00E3C504 /* FilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterView.swift; sourceTree = "<group>"; };
 		02BD99202AA518CE00E3C504 /* ReactionCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionCounter.swift; sourceTree = "<group>"; };
-		02BD99222AA51BAC00E3C504 /* ReactionSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionSlider.swift; sourceTree = "<group>"; };
 		02EE1B172A6CABA000DCB69D /* BorderedHalfButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedHalfButton.swift; sourceTree = "<group>"; };
 		02EE1B192A71909E00DCB69D /* BorderedRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedRectangle.swift; sourceTree = "<group>"; };
 		02F310EA2A9A9FCE004D8120 /* Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboarding.swift; sourceTree = "<group>"; };
@@ -220,10 +218,10 @@
 		02F310EC2A9AA26C004D8120 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				02BD991E2AA50A2A00E3C504 /* FilterView.swift */,
 				02BD99202AA518CE00E3C504 /* ReactionCounter.swift */,
 				02439F792A74856F009F70D1 /* NotificationView.swift */,
 				02831D182A941265004D0DAC /* TraceTile.swift */,
-				02BD99222AA51BAC00E3C504 /* ReactionSlider.swift */,
 				028BA33F2A3791FF000BD0C0 /* FilterDropdown.swift */,
 				028BA33D2A377C44000BD0C0 /* CustomTabBarView.swift */,
 				02EE1B172A6CABA000DCB69D /* BorderedHalfButton.swift */,
@@ -241,7 +239,6 @@
 			children = (
 				0243FC632A324180007D097D /* SupabaseController.swift */,
 				02BD99162AA2AAD200E3C504 /* FeedController.swift */,
-				02BD991E2AA50A2A00E3C504 /* FilterView.swift */,
 				02439F7B2A749771009F70D1 /* NotificationController.swift */,
 				029A00862A72C68200D78D32 /* AuthController.swift */,
 				02376E0C2A3E0B7200257B5D /* LocationController.swift */,
@@ -470,7 +467,6 @@
 				02EE1B182A6CABA000DCB69D /* BorderedHalfButton.swift in Sources */,
 				02376E102A3F70C700257B5D /* ThemeController.swift in Sources */,
 				028FF0A92A184F080058EB57 /* ContentView.swift in Sources */,
-				02BD99232AA51BAC00E3C504 /* ReactionSlider.swift in Sources */,
 				02712F582A5BA22B009B4722 /* FAQSheet.swift in Sources */,
 				0256E4BD2A6C857D000EA684 /* BorderedCapsule.swift in Sources */,
 				02952D742A1E88D100793283 /* NewTracePopup.swift in Sources */,

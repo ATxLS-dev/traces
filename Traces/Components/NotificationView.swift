@@ -9,7 +9,7 @@ import SwiftUI
 
 struct NotificationView: View {
     
-    @ObservedObject var themeController = ThemeController.shared
+    @EnvironmentObject var theme: ThemeController
     @ObservedObject var notificationController = NotificationController.shared
     
     @State var scale = 1.0
@@ -34,19 +34,13 @@ struct NotificationView: View {
                         }
                     }
             }
-            .foregroundColor(themeController.theme.text)
+            .foregroundColor(theme.text)
             .background(BorderedCapsule(hasColoredBorder: true)
-                .shadow(color: themeController.theme.shadow, radius: 4, x: 2, y: 2))
+                .shadow(color: theme.shadow, radius: 4, x: 2, y: 2))
             .padding()
             .padding(.bottom, 100)
         }
         .offset(x: notificationController.notification != nil ? 0 : UIScreen.main.bounds.width, y: 0)
         .animation(.interactiveSpring(response: 0.45, dampingFraction: 0.8, blendDuration: 0.69), value: notificationController.notification != nil)
-    }
-}
-
-struct NotificationView_Previews: PreviewProvider {
-    static var previews: some View {
-        NotificationView()
     }
 }

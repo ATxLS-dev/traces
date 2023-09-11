@@ -10,30 +10,23 @@ import SwiftUI
 struct CircularProgressView: View {
     
     let progress: Double = 0.0
-    @ObservedObject var themeController = ThemeController.shared
-
+    @EnvironmentObject var theme: ThemeController
 
     var body: some View {
         ZStack {
             Circle()
                 .stroke(
-                    themeController.theme.accent.opacity(0.5),
+                    theme.accent.opacity(0.5),
                     lineWidth: 30)
             Circle()
                 .trim(from: 0, to: 0.25)
                 .stroke(
-                    themeController.theme.background, style: StrokeStyle(
+                    theme.background, style: StrokeStyle(
                     lineWidth: 24,
                     lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
                 .animation(.easeOut, value: progress)
         }
-    }
-}
-
-struct CircularProgressView_Previews: PreviewProvider {
-    static var previews: some View {
-        CircularProgressView()
     }
 }

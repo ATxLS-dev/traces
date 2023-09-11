@@ -11,12 +11,12 @@ import Supabase
 struct FilterDropdown: View {
     
     @ObservedObject var supabase = SupabaseController.shared
-    @ObservedObject var themeController = ThemeController.shared
+    @EnvironmentObject var theme: ThemeController
     
     var body: some View {
         ZStack {
             BorderedRectangle(cornerRadius: 24)
-                .shadow(color: themeController.theme.shadow, radius: 6, x: 2, y: 2)
+                .shadow(color: theme.shadow, radius: 6, x: 2, y: 2)
                 .frame(width: 260, height: 500)
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
@@ -51,21 +51,21 @@ struct FilterDropdown: View {
             HStack {
                 Text(category.name)
                     .font(.body)
-                    .foregroundColor(themeController.theme.text)
+                    .foregroundColor(theme.text)
                     .padding(4)
                 Spacer()
                 ZStack {
                     BorderedCapsule(hasThinBorder: true)
                         .frame(width: 22, height: 22)
                     Text(String(occurences))
-                        .foregroundColor(themeController.theme.text.opacity(0.6))
+                        .foregroundColor(theme.text.opacity(0.6))
                         .font(.caption)
                 }
                 .padding(.horizontal, 6)
 
                 if supabase.filters.contains(category.name) {
                     Image(systemName: "checkmark")
-                        .foregroundColor(themeController.theme.accent)
+                        .foregroundColor(theme.accent)
                         .padding(.trailing, 6)
                 }
             }
@@ -77,22 +77,15 @@ struct FilterDropdown: View {
         HStack {
             Text(category.name)
                 .font(.body)
-                .foregroundColor(themeController.theme.text.opacity(0.4))
+                .foregroundColor(theme.text.opacity(0.4))
                 .padding(4)
             Spacer()
             if supabase.filters.contains(category.name) {
                 Image(systemName: "checkmark")
-                    .foregroundColor(themeController.theme.accent)
+                    .foregroundColor(theme.accent)
                     .padding(.trailing, 6)
             }
         }
         .frame(width: 220)
-    }
-}
-
-
-struct FilterDropdown_Previews: PreviewProvider {
-    static var previews: some View {
-        FilterDropdown()
     }
 }

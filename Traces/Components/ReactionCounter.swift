@@ -10,7 +10,7 @@ import SwiftUI
 struct ReactionCounter: View {
     
     let reaction: CountedReaction
-    @StateObject var themeController = ThemeController.shared
+    @EnvironmentObject var theme: ThemeController
     
     init(_ reaction: CountedReaction) {
         self.reaction = reaction
@@ -26,9 +26,9 @@ struct ReactionCounter: View {
 //                .frame(width: 54)
             HStack {
                 Text("\(reaction.occurences)")
-                    .foregroundStyle(themeController.theme.text)
+                    .foregroundStyle(theme.text)
                 Image(systemName: reaction.value)
-                    .foregroundStyle(themeController.theme.text)
+                    .foregroundStyle(theme.text)
             }
             .scaleEffect(0.8)
 //            .padding(.vertical, 4)

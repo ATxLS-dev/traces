@@ -9,7 +9,8 @@ import SwiftUI
 
 struct TraceTile: View {
     
-    @ObservedObject var themeController = ThemeController.shared
+//    @ObservedObject var themeController = ThemeController.shared
+    @EnvironmentObject var theme: ThemeController
     @ObservedObject var supabaseController = SupabaseController.shared
     @ObservedObject var notificationController = NotificationController.shared
     @State var username: String = ""
@@ -27,7 +28,7 @@ struct TraceTile: View {
             buildDivider()
             buildTileBody()
                 .padding(.vertical, 4)
-                .background(themeController.theme.background)
+                .background(theme.background)
                 .zIndex(1.0)
                 .onTapGesture {
                     withAnimation {
@@ -54,7 +55,7 @@ struct TraceTile: View {
     
     private func buildDivider() -> some View {
         Rectangle()
-            .fill(themeController.theme.border.opacity(0.1))
+            .fill(theme.border.opacity(0.1))
             .frame(height: 1.4)
             .padding(.horizontal, 8)
     }
@@ -71,14 +72,14 @@ struct TraceTile: View {
                 buildOptionsButton()
                 Spacer()
                 Text(trace.locationName)
-                    .foregroundColor(themeController.theme.text)
+                    .foregroundColor(theme.text)
                 if !userHasOwnership {
                     Text("@\(username)")
-                        .foregroundColor(themeController.theme.text.opacity(0.4))
+                        .foregroundColor(theme.text.opacity(0.4))
                         .font(.caption)
                 }
                 Text(getFormattedDate())
-                    .foregroundColor(themeController.theme.text.opacity(0.6))
+                    .foregroundColor(theme.text.opacity(0.6))
                     .font(.caption2)
             }
         }
@@ -99,7 +100,7 @@ struct TraceTile: View {
             }
         }) {
             Image(systemName: "ellipsis")
-                .foregroundColor(themeController.theme.text.opacity(0.6))
+                .foregroundColor(theme.text.opacity(0.6))
                 .padding(6)
                 .frame(width: 24, height: 24)
         }
@@ -149,10 +150,10 @@ struct TraceTile: View {
                         .padding(.vertical, 10)
                         .background(
                             BorderedCapsule(hasThinBorder: true)
-                                .shadow(color: themeController.theme.shadow, radius: 4, x: 2, y: 2)
+                                .shadow(color: theme.shadow, radius: 4, x: 2, y: 2)
                         )
                         .padding(2)
-                        .foregroundColor(themeController.theme.text.opacity(0.8))
+                        .foregroundColor(theme.text.opacity(0.8))
                 }
             }
         }
@@ -225,7 +226,7 @@ struct TraceTile: View {
                     Image(systemName: icon)
                 )
         }
-        .foregroundColor(isCritical ? .red.opacity(0.8) : themeController.theme.text.opacity(0.8))
+        .foregroundColor(isCritical ? .red.opacity(0.8) : theme.text.opacity(0.8))
         .frame(width: 196)
         .padding(.trailing)
     }
@@ -239,7 +240,7 @@ struct TraceTile: View {
                 BorderedRectangle(cornerRadius: 24, accented: true)
                 HStack {
                     Text(trace.content)
-                        .foregroundColor(themeController.theme.text)
+                        .foregroundColor(theme.text)
                     Spacer()
                 }
                 .padding()

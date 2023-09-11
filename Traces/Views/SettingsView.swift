@@ -18,6 +18,8 @@ struct SettingsView: View {
     @State var shouldPresentAccountSheet: Bool = false
     @State var shouldPresentFAQSheet: Bool = false
     
+    @EnvironmentObject var theme: ThemeController
+    
     var body: some View {
         ZStack {
             VStack(spacing: 16) {
@@ -41,7 +43,9 @@ struct SettingsView: View {
                 buildListItem(item: themeController.isDarkMode ?
                               buildLabel(title: "Dark Mode", systemImage: "moon")
                               : buildLabel(title: "Light Mode", systemImage: "sun.max"))
-                    .onTapGesture { themeController.toggleTheme() }
+                    .onTapGesture { 
+                        theme.toggleTheme()
+                    }
                 buildListItem(item: buildLabel(title: auth.authChangeEvent == .signedIn ? "Log Out" : "Log in / Sign up", systemImage: "hand.wave"))
                     .onTapGesture {
                         if auth.authChangeEvent == .signedIn {
@@ -58,8 +62,8 @@ struct SettingsView: View {
             }
             .padding(.top, 69)
         }
-        .foregroundColor(themeController.theme.text)
-        .background(themeController.theme.background)
+        .foregroundColor(theme.text)
+        .background(theme.background)
     }
 }
 
@@ -73,15 +77,15 @@ extension SettingsView {
         } icon: {
             ZStack {
                 Circle()
-                    .fill(themeController.theme.buttonBackground)
+                    .fill(theme.buttonBackground)
                 Circle()
-                    .stroke(themeController.theme.buttonBorder, lineWidth: 1.4)
+                    .stroke(theme.buttonBorder, lineWidth: 1.4)
             }
             .frame(width: 36, height: 36)
             .overlay(
                 Image(systemName: systemImage)
             )
-            .foregroundColor(themeController.theme.text)
+            .foregroundColor(theme.text)
         }
     }
     
@@ -95,9 +99,10 @@ extension SettingsView {
         .padding(.horizontal)
     }
 }
-
-struct SettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsView()
-    }
-}
+//
+//struct SettingsView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SettingsView()
+//            .environmentObject(ThemeController())
+//    }
+//}

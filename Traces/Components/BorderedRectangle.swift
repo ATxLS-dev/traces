@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct BorderedRectangle: View {
-    @ObservedObject var themeController: ThemeController = ThemeController.shared
+    @EnvironmentObject var theme: ThemeController
     
     var hasColoredBorder: Bool = false
     var cornerRadius: CGFloat = 32
@@ -17,15 +17,10 @@ struct BorderedRectangle: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: cornerRadius)
-                .fill(accented ? themeController.theme.backgroundAccent : themeController.theme.background)
+                .fill(accented ? theme.backgroundAccent : theme.background)
             RoundedRectangle(cornerRadius: cornerRadius + 1)
-                .strokeBorder(hasColoredBorder ? themeController.theme.accent : themeController.theme.border, lineWidth: 2)
+                .strokeBorder(hasColoredBorder ? theme.accent : theme.border, lineWidth: 2)
         }
     }
 }
 
-struct BorderedRectangle_Previews: PreviewProvider {
-    static var previews: some View {
-        BorderedRectangle()
-    }
-}

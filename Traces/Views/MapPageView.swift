@@ -11,7 +11,7 @@ import CoreLocation
 struct MapPageView: View {
     
     @ObservedObject var locationController = LocationController.shared
-    @ObservedObject var themeController = ThemeController.shared
+    @EnvironmentObject var theme: ThemeController
     
     private let buttonDimen: CGFloat = 55
     
@@ -33,13 +33,13 @@ struct MapPageView: View {
                 }) {
                     ZStack {
                         Circle()
-                            .fill(themeController.theme.background)
+                            .fill(theme.background)
                             .frame(width: buttonDimen, height: buttonDimen)
                         Circle()
-                            .stroke(themeController.theme.buttonBorder, lineWidth: 2)
+                            .stroke(theme.buttonBorder, lineWidth: 2)
                             .frame(width: buttonDimen, height: buttonDimen)
                         Image(systemName: "location")
-                            .foregroundColor(themeController.theme.text)
+                            .foregroundColor(theme.text)
                             .padding()
                     }
                     .padding()
@@ -47,11 +47,5 @@ struct MapPageView: View {
             }
         }
         .padding(.bottom, 120)
-    }
-}
-
-struct MapPageView_Previews: PreviewProvider {
-    static var previews: some View {
-        MapPageView()
     }
 }

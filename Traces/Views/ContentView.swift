@@ -17,21 +17,23 @@ struct ContentView: View {
     @ObservedObject var authController: AuthController = AuthController.shared
     @ObservedObject var notificationController: NotificationController = NotificationController.shared
     
+    @StateObject var theme = ThemeController()
+    
     @State private var selectedTab: Tab = Tab.home
     @State var shouldPresentNotification: Bool = false
-
     
     var body: some View {
-        if UserDefaults.hasOnboarded || authController.authChangeEvent == .signedIn {
+//        if UserDefaults.hasOnboarded || authController.authChangeEvent == .signedIn {
             buildNavigation()
                 .onAppear {
                     Task {
                         await locationController.checkLocationAuthorization()
                     }
                 }
-        } else {
-            Onboarding()
-        }
+                .environmentObject(theme)
+//        } else {
+//            Onboarding()
+//        }
     }
 
     func buildNavigation() -> some View {

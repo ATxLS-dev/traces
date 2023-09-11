@@ -11,7 +11,7 @@ struct CategoryTag: View {
     
     let category: String
     @ObservedObject var supabaseController = SupabaseController.shared
-    @ObservedObject var themeController = ThemeController.shared
+    @EnvironmentObject var theme: ThemeController
     
     var body: some View {
         Button(action: {
@@ -22,25 +22,19 @@ struct CategoryTag: View {
                 Text(category)
                     .font(.caption)
                 Image(systemName: "x.circle")
-                    .foregroundColor(themeController.theme.accent.opacity(0.4))
+                    .foregroundColor(theme.accent.opacity(0.4))
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
             .background(
                 ZStack {
                     Capsule()
-                        .fill(themeController.theme.background)
+                        .fill(theme.background)
                     Capsule()
-                        .stroke(themeController.theme.accent, lineWidth: 1.4)
+                        .stroke(theme.accent, lineWidth: 1.4)
                 }
             )
-            .foregroundColor(themeController.theme.text)
+            .foregroundColor(theme.text)
         }.padding(2)
-    }
-}
-
-struct CategoryTag_Previews: PreviewProvider {
-    static var previews: some View {
-        CategoryTag(category: "Adventure")
     }
 }

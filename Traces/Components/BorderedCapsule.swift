@@ -9,7 +9,7 @@ import SwiftUI
 
 struct BorderedCapsule: View {
     
-    @ObservedObject var themeController: ThemeController = ThemeController.shared
+    @EnvironmentObject var theme: ThemeController
     
     var hasColoredBorder: Bool = false
     var hasThinBorder: Bool = false
@@ -17,15 +17,9 @@ struct BorderedCapsule: View {
     var body: some View {
         ZStack {
             Capsule()
-                .fill(themeController.theme.backgroundAccent)
+                .fill(theme.backgroundAccent)
             Capsule()
-                .strokeBorder(hasColoredBorder ? themeController.theme.buttonBorder : themeController.theme.border, lineWidth: hasThinBorder ? 1.4 : 2)
+                .strokeBorder(hasColoredBorder ? theme.buttonBorder : theme.border, lineWidth: hasThinBorder ? 1.4 : 2)
         }
-    }
-}
-
-struct BorderedCapsule_Previews: PreviewProvider {
-    static var previews: some View {
-        BorderedCapsule()
     }
 }
