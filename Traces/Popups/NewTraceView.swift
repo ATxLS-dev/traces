@@ -22,10 +22,12 @@ struct NewTraceView: View {
     @Binding var isPresented: Bool
     
     @EnvironmentObject var theme: ThemeController
+    @EnvironmentObject var notifications: NotificationController
+
     @ObservedObject var supabaseController = SupabaseController.shared
     @ObservedObject var locationController = LocationController.shared
     @ObservedObject var auth = AuthController.shared
-    @ObservedObject var notificationController = NotificationController.shared
+
     
     var body: some View {
         ZStack {
@@ -277,7 +279,7 @@ private extension NewTraceView {
                 categories: Array(tags),
                 location: locationController.userLocation)
             isPresented.toggle()
-            notificationController.sendNotification(.traceCreated)
+            notifications.sendNotification(.traceCreated)
         }) {
             BorderedHalfButton(icon: "checkmark.circle")
         }

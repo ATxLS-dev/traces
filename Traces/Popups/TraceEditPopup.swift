@@ -23,10 +23,10 @@ struct TraceEditPopup: CentrePopup {
     @State var newCategories: [Category] = []
 
     @EnvironmentObject var theme: ThemeController
+    @EnvironmentObject var notifications: NotificationController
     @ObservedObject var supabaseController = SupabaseController.shared
     @ObservedObject var locationController = LocationController.shared
     @ObservedObject var auth = AuthController.shared
-    @ObservedObject var notificationController = NotificationController.shared
     
     func createContent() -> some View {
         ZStack {
@@ -272,7 +272,7 @@ private extension TraceEditPopup {
     func submitButton() -> some View {
         Button(action: {
             supabaseController.updateTrace(trace)
-            notificationController.sendNotification(.traceUpdated)
+            notifications.sendNotification(.traceUpdated)
             PopupManager.dismiss()
         }) {
             BorderedHalfButton(icon: "checkmark.circle")

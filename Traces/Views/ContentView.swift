@@ -15,9 +15,9 @@ struct ContentView: View {
     
     @ObservedObject var locationController: LocationController = LocationController.shared
     @ObservedObject var authController: AuthController = AuthController.shared
-    @ObservedObject var notificationController: NotificationController = NotificationController.shared
     
     @StateObject var theme = ThemeController()
+    @StateObject var notifications = NotificationController()
     
     @State private var selectedTab: Tab = Tab.home
     @State var shouldPresentNotification: Bool = false
@@ -31,6 +31,7 @@ struct ContentView: View {
                     }
                 }
                 .environmentObject(theme)
+                .environmentObject(notifications)
 //        } else {
 //            Onboarding()
 //        }

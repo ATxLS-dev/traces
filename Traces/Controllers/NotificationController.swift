@@ -24,7 +24,7 @@ enum Notification : String {
 
 class NotificationController: ObservableObject {
     
-    static var shared = NotificationController()
+//    static var shared = NotificationController()
     
     @Published var notification: Notification?
     

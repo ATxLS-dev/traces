@@ -9,10 +9,9 @@ import SwiftUI
 
 struct TraceTile: View {
     
-//    @ObservedObject var themeController = ThemeController.shared
     @EnvironmentObject var theme: ThemeController
+    @EnvironmentObject var notifications: NotificationController
     @ObservedObject var supabaseController = SupabaseController.shared
-    @ObservedObject var notificationController = NotificationController.shared
     @State var username: String = ""
     @State var shouldShowDetails: Bool = false
     @State var shouldPresentOptions: Bool = false
@@ -166,7 +165,7 @@ struct TraceTile: View {
                 Button(action: {
                     let pasteboard = UIPasteboard.general
                     pasteboard.string = String("\(trace.locationName), \(trace.latitude), \(trace.longitude)")
-                    notificationController.sendNotification(.linkCopied)
+                    notifications.sendNotification(.linkCopied)
                     shouldPresentOptions.toggle()
                 }) {
                     settingsItem(title: "Share", icon: "square.and.arrow.up")
@@ -184,7 +183,7 @@ struct TraceTile: View {
                         if !deleteConfirmed {
                             deleteConfirmed = true
                         } else {
-                            notificationController.sendNotification(.traceDeleted)
+                            notifications.sendNotification(.traceDeleted)
                             supabaseController.deleteTrace(trace)
                             shouldPresentOptions.toggle()
                             deleteConfirmed = false
@@ -198,13 +197,13 @@ struct TraceTile: View {
                     Button(action: {
                         let pasteboard = UIPasteboard.general
                         pasteboard.string = String("\(trace.latitude), \(trace.longitude)")
-                        notificationController.sendNotification(.coordinatesCopied)
+                        notifications.sendNotification(.coordinatesCopied)
                         shouldPresentOptions.toggle()
                     }) {
                         settingsItem(title: "Copy Coordinates", icon: "scope")
                     }
                     Button(action: {
-                        notificationController.sendNotification(.traceReported)
+                        notifications.sendNotification(.traceReported)
                         shouldPresentOptions.toggle()
                     }) {
                         settingsItem(title: "Report", icon: "exclamationmark.bubble", isCritical: true)

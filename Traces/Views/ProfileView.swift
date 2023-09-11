@@ -14,9 +14,9 @@ import Combine
 struct ProfileView: View {
     
     @ObservedObject var supabase = SupabaseController.shared
-    @ObservedObject var notificationController = NotificationController.shared
     @ObservedObject var auth = AuthController.shared
     
+    @EnvironmentObject var notifications: NotificationController
     @EnvironmentObject var theme: ThemeController
     
     @State var userTraces: [Trace] = []
@@ -152,7 +152,7 @@ struct ProfileView: View {
                 Button(action: {
                     if newBio.count <= maxCharacters {
                         auth.setBio(newBio)
-                        notificationController.sendNotification(.bioUpdated)
+                        notifications.sendNotification(.bioUpdated)
                         self.shouldPresentPopover = false
                     } else {
                         error = "Bio too long"

@@ -23,8 +23,9 @@ struct TraceDetailPopup: CentrePopup {
     @State var region = CLLocationCoordinate2D(latitude: 37.334722, longitude: -122.008889)
     
     @EnvironmentObject var theme: ThemeController
+    @EnvironmentObject var notifications: NotificationController
     @ObservedObject var supabaseController = SupabaseController.shared
-    @ObservedObject var notificationController = NotificationController.shared
+
 
     init(trace: Trace) {
         self.trace = trace
@@ -147,7 +148,7 @@ extension TraceDetailPopup {
     
     func shareButton() -> some View {
         Button(action: {
-            notificationController.sendNotification(.linkCopied)
+            notifications.sendNotification(.linkCopied)
             PopupManager.dismiss()
             
         }) {

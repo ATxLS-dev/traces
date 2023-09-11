@@ -10,7 +10,7 @@ import SwiftUI
 struct NotificationView: View {
     
     @EnvironmentObject var theme: ThemeController
-    @ObservedObject var notificationController = NotificationController.shared
+    @EnvironmentObject var notifications: NotificationController
     
     @State var scale = 1.0
     
@@ -19,12 +19,12 @@ struct NotificationView: View {
             Spacer()
             HStack {
                 Spacer()
-                Text(notificationController.notification?.rawValue ?? "")
+                Text(notifications.notification?.rawValue ?? "")
                     .padding()
-                    .opacity(notificationController.notification != nil ? 1 : 0)
+                    .opacity(notifications.notification != nil ? 1 : 0)
                 Image(systemName: "checkmark")
                     .padding(.trailing, 24)
-                    .opacity(notificationController.notification != nil ? 1 : 0)
+                    .opacity(notifications.notification != nil ? 1 : 0)
                     .scaleEffect(scale)
                     .onAppear {
                         let baseAnimation = Animation.easeInOut(duration: 1.2)
@@ -40,7 +40,7 @@ struct NotificationView: View {
             .padding()
             .padding(.bottom, 100)
         }
-        .offset(x: notificationController.notification != nil ? 0 : UIScreen.main.bounds.width, y: 0)
-        .animation(.interactiveSpring(response: 0.45, dampingFraction: 0.8, blendDuration: 0.69), value: notificationController.notification != nil)
+        .offset(x: notifications.notification != nil ? 0 : UIScreen.main.bounds.width, y: 0)
+        .animation(.interactiveSpring(response: 0.45, dampingFraction: 0.8, blendDuration: 0.69), value: notifications.notification != nil)
     }
 }
