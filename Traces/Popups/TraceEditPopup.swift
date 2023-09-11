@@ -22,7 +22,7 @@ struct TraceEditPopup: CentrePopup {
     @State var showNoteEditor: Bool = false
     @State var newCategories: [Category] = []
 
-    @ObservedObject var themeController = ThemeController.shared
+    @EnvironmentObject var theme: ThemeController
     @ObservedObject var supabaseController = SupabaseController.shared
     @ObservedObject var locationController = LocationController.shared
     @ObservedObject var auth = AuthController.shared
@@ -112,7 +112,7 @@ private extension TraceEditPopup {
     
     func createPrompt() -> some View {
         Text("Make changes?")
-            .foregroundColor(themeController.theme.text)
+            .foregroundColor(theme.text)
             .font(.title3)
     }
     
@@ -120,7 +120,7 @@ private extension TraceEditPopup {
         ZStack {
             TextField(trace.locationName, text: $trace.locationName)
                 .textFieldStyle(.plain)
-                .foregroundColor(themeController.theme.text)
+                .foregroundColor(theme.text)
                 .padding(20)
                 .background( BorderedCapsule() )
             FieldLabel(fieldLabel: "Title")
@@ -140,14 +140,14 @@ private extension TraceEditPopup {
                 Text(tag)
                     .font(.caption)
                 Image(systemName: "x.circle")
-                    .foregroundColor(themeController.theme.accent.opacity(0.4))
+                    .foregroundColor(theme.accent.opacity(0.4))
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
             .background(
                 BorderedCapsule(hasThinBorder: true)
             )
-            .foregroundColor(themeController.theme.text)
+            .foregroundColor(theme.text)
         }
         .padding(2)
     }
@@ -210,12 +210,12 @@ private extension TraceEditPopup {
                             HStack {
                                 Text(tag.name)
                                     .font(.body)
-                                    .foregroundColor(themeController.theme.text)
+                                    .foregroundColor(theme.text)
                                     .padding(4)
                                 Spacer()
                                 if trace.categories.contains(tag.name) {
                                     Image(systemName: "checkmark")
-                                        .foregroundColor(themeController.theme.accent)
+                                        .foregroundColor(theme.accent)
                                         .padding(.trailing, 6)
                                 }
                             }
@@ -228,8 +228,8 @@ private extension TraceEditPopup {
             .padding(12)
             .background(
                 ZStack {
-                    RoundedRectangle(cornerRadius: 24).foregroundColor(themeController.theme.backgroundAccent)
-                    RoundedRectangle(cornerRadius: 24).stroke(themeController.theme.border, lineWidth: 2)
+                    RoundedRectangle(cornerRadius: 24).foregroundColor(theme.backgroundAccent)
+                    RoundedRectangle(cornerRadius: 24).stroke(theme.border, lineWidth: 2)
                 }
             )
         }
@@ -255,7 +255,7 @@ private extension TraceEditPopup {
         ZStack {
             TextField("", text: $trace.content)
                 .textFieldStyle(.plain)
-                .foregroundColor(themeController.theme.text)
+                .foregroundColor(theme.text)
                 .padding(20)
                 .background( BorderedCapsule() )
             FieldLabel(fieldLabel: "Notes")

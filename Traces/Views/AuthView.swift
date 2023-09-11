@@ -16,7 +16,6 @@ struct AuthView: View {
     @State var errorMessage: String?
     @State var loginInProgress: Bool = false
     @Binding var isPresented: Bool
-    @ObservedObject var themeController = ThemeController.shared
     @ObservedObject var supabase = SupabaseController.shared
     @ObservedObject var auth = AuthController.shared
     @EnvironmentObject var theme: ThemeController
@@ -38,7 +37,7 @@ extension AuthView {
                     Spacer()
                     Button(action: {isPresented = false} ) {
                         Image(systemName: "xmark")
-                            .foregroundColor(themeController.theme.text)
+                            .foregroundColor(theme.text)
                             .padding()
                             .background(BorderedCapsule(hasColoredBorder: true, hasThinBorder: true))
                             .shadow(color: theme.shadow, radius: 4, x: 2, y: 2)

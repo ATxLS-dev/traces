@@ -14,7 +14,6 @@ import Combine
 struct ProfileView: View {
     
     @ObservedObject var supabase = SupabaseController.shared
-    @ObservedObject var themeController = ThemeController.shared
     @ObservedObject var notificationController = NotificationController.shared
     @ObservedObject var auth = AuthController.shared
     
@@ -66,7 +65,7 @@ struct ProfileView: View {
     func buildSignInButton() -> some View {
         VStack {
             Label("Log in / Sign up", systemImage: "hand.wave")
-                .foregroundColor(themeController.theme.text)
+                .foregroundColor(theme.text)
                 .onTapGesture { shouldPresentSheet.toggle() }
                 .padding()
                 .background( BorderedCapsule() )
@@ -98,7 +97,7 @@ struct ProfileView: View {
             Spacer()
             VStack(alignment: .trailing) {
                 Image(systemName: "pencil")
-                    .foregroundColor(themeController.theme.text.opacity(0.8))
+                    .foregroundColor(theme.text.opacity(0.8))
                     .onTapGesture {
                         shouldPresentPopover.toggle()
                     }
@@ -108,11 +107,11 @@ struct ProfileView: View {
                 Spacer(minLength: 20)
                 Text("@\(username)")
                     .font(.title2)
-                    .foregroundColor(themeController.theme.text)
+                    .foregroundColor(theme.text)
                     .padding(.bottom,12)
                 Text(bio)
                     .font(.caption)
-                    .foregroundColor(themeController.theme.text.opacity(0.6))
+                    .foregroundColor(theme.text.opacity(0.6))
             }
         }
         .padding(24)
@@ -134,7 +133,7 @@ struct ProfileView: View {
                 TextEditor(text: $newBio)
                     .scrollContentBackground(.hidden)
                     .frame(maxWidth: 280, maxHeight: 180)
-                    .background(themeController.theme.background)
+                    .background(theme.background)
                     .onAppear {
                         newBio = bio
                     }
@@ -181,10 +180,3 @@ struct ProfileView: View {
         }
     }
 }
-
-//struct ProfileView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ProfileView()
-//            .environmentObject(ThemeController())
-//    }
-//}

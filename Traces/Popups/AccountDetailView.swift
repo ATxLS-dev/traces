@@ -15,9 +15,9 @@ struct AccountDetailView: View {
     @State var newUsername: String = ""
     @State var username: String = ""
     @Binding var isPresented: Bool
-    @ObservedObject var themeController = ThemeController.shared
     @ObservedObject var supabase = SupabaseController.shared
     @ObservedObject var auth = AuthController.shared
+    @EnvironmentObject var theme: ThemeController
     
     enum Mode {
         case signIn, signUp
@@ -26,7 +26,7 @@ struct AccountDetailView: View {
     var body: some View {
         createBody()
             .padding()
-            .background(themeController.theme.background)
+            .background(theme.background)
             .task {
                 do {
                     guard let userId = auth.session?.user.id else {
@@ -45,7 +45,7 @@ struct AccountDetailView: View {
             Text("Manage your account")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(themeController.theme.text)
+                .foregroundColor(theme.text)
                 .padding(.bottom)
             
             buildField("Username", content: username, editable: true)
@@ -63,7 +63,7 @@ struct AccountDetailView: View {
             HStack {
                 if inEditMode && editable {
                     TextField(content ?? "Not found", text: $newUsername)
-                        .foregroundColor(themeController.theme.text)
+                        .foregroundColor(theme.text)
                         .padding()
                 } else {
                     Text(content ?? "Not found")
@@ -74,7 +74,7 @@ struct AccountDetailView: View {
             }
             .padding(.horizontal, 8)
             .frame(height: 64)
-            .foregroundColor(themeController.theme.text)
+            .foregroundColor(theme.text)
             .background( BorderedCapsule() )
             FieldLabel(fieldLabel: fieldLabel)
                 .offset(x: 84, y: -30)
@@ -103,7 +103,7 @@ struct AccountDetailView: View {
                 }
             }) {
                 Text(inEditMode ? "Save" : "Edit Account Info")
-                    .foregroundColor(themeController.theme.text)
+                    .foregroundColor(theme.text)
                     .fontWeight(.bold)
                     .padding(16)
             }
@@ -111,7 +111,7 @@ struct AccountDetailView: View {
         }
         .background(
             BorderedCapsule(hasColoredBorder: false)
-                .shadow(color: themeController.theme.shadow, radius: 6, x: 4, y: 4)
+                .shadow(color: theme.shadow, radius: 6, x: 4, y: 4)
         )
     }
     
@@ -129,17 +129,10 @@ struct AccountDetailView: View {
                 Text(confirmed ? "Are you sure?" : "Delete Account")
                     .foregroundColor(.red)
                     .padding(16)
-                    .foregroundColor(themeController.theme.text)
+                    .foregroundColor(theme.text)
             }
             Spacer()
         }
         .background(BorderedCapsule())
     }
 }
-
-struct AccountDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        AccountDetailView(isPresented: .constant(true))
-    }
-}
-

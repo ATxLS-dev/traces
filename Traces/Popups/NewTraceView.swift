@@ -21,7 +21,7 @@ struct NewTraceView: View {
     
     @Binding var isPresented: Bool
     
-    @ObservedObject var themeController = ThemeController.shared
+    @EnvironmentObject var theme: ThemeController
     @ObservedObject var supabaseController = SupabaseController.shared
     @ObservedObject var locationController = LocationController.shared
     @ObservedObject var auth = AuthController.shared
@@ -84,14 +84,14 @@ struct NewTraceView: View {
                 HStack {
                     Spacer()
                     Image(systemName: "xmark")
-                        .foregroundColor(themeController.theme.text)
+                        .foregroundColor(theme.text)
                         .scaleEffect(1.4)
                         .padding(36)
                 }
                 Spacer()
             }
             Text("You'll need an account to leave traces.")
-                .foregroundColor(themeController.theme.text)
+                .foregroundColor(theme.text)
         }
         .frame(height: 480)
         .padding()
@@ -113,7 +113,7 @@ private extension NewTraceView {
     
     func createPrompt() -> some View {
         Text("Leave a trace?")
-            .foregroundColor(themeController.theme.text)
+            .foregroundColor(theme.text)
             .font(.title3)
     }
     
@@ -121,7 +121,7 @@ private extension NewTraceView {
         ZStack {
             TextField("", text: $title)
                 .textFieldStyle(.plain)
-                .foregroundColor(themeController.theme.text)
+                .foregroundColor(theme.text)
                 .padding(20)
                 .background( BorderedCapsule() )
             FieldLabel(fieldLabel: "Title")
@@ -141,19 +141,19 @@ private extension NewTraceView {
                 Text(tag)
                     .font(.caption)
                 Image(systemName: "x.circle")
-                    .foregroundColor(themeController.theme.accent.opacity(0.4))
+                    .foregroundColor(theme.accent.opacity(0.4))
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
             .background(
                 ZStack {
                     Capsule()
-                        .fill(themeController.theme.background)
+                        .fill(theme.background)
                     Capsule()
-                        .stroke(themeController.theme.accent, lineWidth: 1.4)
+                        .stroke(theme.accent, lineWidth: 1.4)
                 }
             )
-            .foregroundColor(themeController.theme.text)
+            .foregroundColor(theme.text)
         }
         .padding(2)
     }
@@ -216,12 +216,12 @@ private extension NewTraceView {
                             HStack {
                                 Text(tag.name)
                                     .font(.body)
-                                    .foregroundColor(themeController.theme.text)
+                                    .foregroundColor(theme.text)
                                     .padding(4)
                                 Spacer()
                                 if tags.contains(tag.name) {
                                     Image(systemName: "checkmark")
-                                        .foregroundColor(themeController.theme.accent)
+                                        .foregroundColor(theme.accent)
                                         .padding(.trailing, 6)
                                 }
                             }
@@ -234,8 +234,8 @@ private extension NewTraceView {
             .padding(12)
             .background(
                 ZStack {
-                    RoundedRectangle(cornerRadius: 24).foregroundColor(themeController.theme.backgroundAccent)
-                    RoundedRectangle(cornerRadius: 24).stroke(themeController.theme.border, lineWidth: 2)
+                    RoundedRectangle(cornerRadius: 24).foregroundColor(theme.backgroundAccent)
+                    RoundedRectangle(cornerRadius: 24).stroke(theme.border, lineWidth: 2)
                 }
             )
         }
@@ -261,7 +261,7 @@ private extension NewTraceView {
         ZStack {
             TextField("", text: $content)
                 .textFieldStyle(.plain)
-                .foregroundColor(themeController.theme.text)
+                .foregroundColor(theme.text)
                 .padding(20)
                 .background( BorderedCapsule() )
             FieldLabel(fieldLabel: "Any other notes?")
@@ -290,8 +290,4 @@ private extension NewTraceView {
                 .rotationEffect(.degrees(180))
         }
     }
-}
-
-#Preview {
-    NewTraceView(isPresented: .constant(true))
 }

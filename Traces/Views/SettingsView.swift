@@ -11,14 +11,14 @@ import GoTrue
 
 struct SettingsView: View {
     
-    @ObservedObject var themeController = ThemeController.shared
+    @EnvironmentObject var theme: ThemeController
     @ObservedObject var supabase = SupabaseController.shared
     @ObservedObject var auth = AuthController.shared
     @State var shouldPresentAuthSheet: Bool = false
     @State var shouldPresentAccountSheet: Bool = false
     @State var shouldPresentFAQSheet: Bool = false
     
-    @EnvironmentObject var theme: ThemeController
+
     
     var body: some View {
         ZStack {
@@ -40,7 +40,7 @@ struct SettingsView: View {
                     .sheet(isPresented: $shouldPresentFAQSheet) {
                         FAQSheet(isPresented: $shouldPresentFAQSheet)
                     }
-                buildListItem(item: themeController.isDarkMode ?
+                buildListItem(item: theme.isDarkMode ?
                               buildLabel(title: "Dark Mode", systemImage: "moon")
                               : buildLabel(title: "Light Mode", systemImage: "sun.max"))
                     .onTapGesture { 
@@ -99,10 +99,3 @@ extension SettingsView {
         .padding(.horizontal)
     }
 }
-//
-//struct SettingsView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        SettingsView()
-//            .environmentObject(ThemeController())
-//    }
-//}

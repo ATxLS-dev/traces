@@ -60,7 +60,3 @@ struct FilterView: View {
         }
     }
 }
-
-#Preview {
-    FilterView()
-}

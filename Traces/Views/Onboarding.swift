@@ -37,7 +37,7 @@ extension UserDefaults {
 
 struct Onboarding: View {
     
-    @ObservedObject var themeController = ThemeController.shared
+    @EnvironmentObject var theme: ThemeController
     @State var shouldPresentAuth: Bool = false
     @State var selectedTab: Int = 1
     
@@ -98,7 +98,7 @@ struct Onboarding: View {
             Image("home")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .foregroundColor(themeController.theme.text)
+                .foregroundColor(theme.text)
                 .padding()
         }
         .padding(.top, 80)
@@ -113,7 +113,7 @@ struct Onboarding: View {
             Image("map")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .foregroundColor(themeController.theme.text)
+                .foregroundColor(theme.text)
                 .padding()
         }
         .padding(.top, 80)
@@ -128,7 +128,7 @@ struct Onboarding: View {
             Image("new_trace")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .foregroundColor(themeController.theme.text)
+                .foregroundColor(theme.text)
                 .padding()
         }
         .padding(.top, 80)
@@ -143,7 +143,7 @@ struct Onboarding: View {
             }) {
                 Text("Sign Up/Log in?")
                     .padding()
-                    .foregroundColor(themeController.theme.text)
+                    .foregroundColor(theme.text)
                     .background {
                         BorderedCapsule()
                     }
@@ -157,8 +157,4 @@ struct Onboarding: View {
     }
     
 
-}
-
-#Preview {
-    Onboarding()
 }

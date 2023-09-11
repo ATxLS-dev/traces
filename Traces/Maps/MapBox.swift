@@ -17,7 +17,7 @@ struct MapBox: View {
 
     @ObservedObject var supabaseController: SupabaseController = SupabaseController.shared
     @ObservedObject var locationController: LocationController = LocationController.shared
-    @ObservedObject var themeController: ThemeController = ThemeController.shared
+    @EnvironmentObject var theme: ThemeController
 
     var body: some View {
         if isInteractive {
@@ -50,20 +50,20 @@ struct MapBox: View {
     
 struct InteractiveMapViewConverter: UIViewControllerRepresentable {
 
-    @ObservedObject var themeController: ThemeController = ThemeController.shared
+    @EnvironmentObject var theme: ThemeController
     @ObservedObject var locationController: LocationController = LocationController.shared
     @ObservedObject var supabaseController: SupabaseController = SupabaseController.shared
     
     func makeUIViewController(context: Context) -> InteractiveMapViewController {
         locationController.snapshotLocation()
         print(locationController.userLocation)
-        return InteractiveMapViewController(center: locationController.lastLocation, style: themeController.theme.mapStyle, annotations: supabaseController.traces)
+        return InteractiveMapViewController(center: locationController.lastLocation, style: theme.mapStyle, annotations: supabaseController.traces)
     }
     
     func updateUIViewController(_ uiViewController: InteractiveMapViewController, context: Context) {
         uiViewController.centerOnPosition(locationController.userLocation)
         uiViewController.updateAnnotations(supabaseController.traces)
-        uiViewController.updateStyle(themeController.theme.mapStyle)
+        uiViewController.updateStyle(theme.mapStyle)
     }
 }
 
@@ -182,14 +182,14 @@ struct MiniMapViewConverter: UIViewControllerRepresentable {
     var center: CLLocationCoordinate2D?
 
     @ObservedObject var locationController: LocationController = LocationController.shared
-    @ObservedObject var themeController: ThemeController = ThemeController.shared
+    @EnvironmentObject var theme: ThemeController
     
     func makeUIViewController(context: Context) -> MiniMapViewController {
-        MiniMapViewController(center: center ?? locationController.lastLocation, style: themeController.theme.mapStyle)
+        MiniMapViewController(center: center ?? locationController.lastLocation, style: theme.mapStyle)
     }
     
     func updateUIViewController(_ uiViewController: MiniMapViewController, context: Context) {
-        uiViewController.updateStyle(themeController.theme.mapStyle)
+        uiViewController.updateStyle(theme.mapStyle)
     }
 }
 

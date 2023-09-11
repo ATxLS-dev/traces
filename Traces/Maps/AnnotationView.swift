@@ -6,13 +6,11 @@
 //
 
 import UIKit
-import SwiftUI
 
 class AnnotationView: UIView, Identifiable {
     
     var id: UUID?
     
-    @ObservedObject var themeController = ThemeController.shared
     var trace: Trace?
     private var imageView: UIImageView?
     

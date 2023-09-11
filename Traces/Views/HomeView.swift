@@ -12,9 +12,6 @@ struct HomeView: View {
     
     @State var showFilterDropdown: Bool = false
     @StateObject var feedController = FeedController.shared
-//    @ObservedObject var supabaseController = SupabaseController.shared
-    @ObservedObject var themeController = ThemeController.shared
-    
     @EnvironmentObject var theme: ThemeController
 
     var body: some View {
@@ -104,12 +101,5 @@ extension HomeView {
                 Spacer(minLength: 96)
             }
         }
-    }
-}
-
-struct HomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        HomeView()
-            .environmentObject(ThemeController())
     }
 }
