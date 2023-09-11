@@ -10,7 +10,7 @@ import SwiftUI
 struct FilterView: View {
     
     @ObservedObject var feedController = FeedController.shared
-    @ObservedObject var themeController = ThemeController.shared
+    @EnvironmentObject var theme: ThemeController
     
     @State var proximityLimit = 10.0
     @State var editing = false
@@ -23,7 +23,7 @@ struct FilterView: View {
                 Spacer()
                 Button(action: { presentPopover.toggle() }) {
                     Text(feedController.filterMode.rawValue)
-                        .foregroundStyle(themeController.theme.text)
+                        .foregroundStyle(theme.text)
                         .padding()
                     .background { BorderedCapsule() }
                 }
@@ -40,7 +40,7 @@ struct FilterView: View {
                 ForEach(feedController.categories) { category in
                     HStack {
                         Text(category.name)
-                            .foregroundStyle(themeController.theme.text)
+                            .foregroundStyle(theme.text)
                             .padding()
                             .background(BorderedCapsule())
                         Spacer()
