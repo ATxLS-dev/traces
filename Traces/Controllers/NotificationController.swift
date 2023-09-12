@@ -26,10 +26,10 @@ class NotificationController: ObservableObject {
     
 //    static var shared = NotificationController()
     
-    @Published var notification: Notification?
+    @Published var current: Notification?
     
     func sendNotification(_ notification: Notification) {
-        self.notification = notification
+        self.current = notification
         Task {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) {
                 self.endNotification()
@@ -38,7 +38,7 @@ class NotificationController: ObservableObject {
     }
     
     func endNotification() {
-        self.notification = nil
+        self.current = nil
     }
     
 }

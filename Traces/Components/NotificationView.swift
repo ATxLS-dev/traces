@@ -19,12 +19,12 @@ struct NotificationView: View {
             Spacer()
             HStack {
                 Spacer()
-                Text(notifications.notification?.rawValue ?? "")
+                Text(notifications.current?.rawValue ?? "")
                     .padding()
-                    .opacity(notifications.notification != nil ? 1 : 0)
+                    .opacity(notifications.current != nil ? 1 : 0)
                 Image(systemName: "checkmark")
                     .padding(.trailing, 24)
-                    .opacity(notifications.notification != nil ? 1 : 0)
+                    .opacity(notifications.current != nil ? 1 : 0)
                     .scaleEffect(scale)
                     .onAppear {
                         let baseAnimation = Animation.easeInOut(duration: 1.2)
@@ -40,7 +40,7 @@ struct NotificationView: View {
             .padding()
             .padding(.bottom, 100)
         }
-        .offset(x: notifications.notification != nil ? 0 : UIScreen.main.bounds.width, y: 0)
-        .animation(.interactiveSpring(response: 0.45, dampingFraction: 0.8, blendDuration: 0.69), value: notifications.notification != nil)
+        .offset(x: notifications.current != nil ? 0 : UIScreen.main.bounds.width, y: 0)
+        .animation(.interactiveSpring(response: 0.45, dampingFraction: 0.8, blendDuration: 0.69), value: notifications.current != nil)
     }
 }

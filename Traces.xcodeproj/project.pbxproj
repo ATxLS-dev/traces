@@ -16,6 +16,7 @@
 		02376E102A3F70C700257B5D /* ThemeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02376E0F2A3F70C700257B5D /* ThemeController.swift */; };
 		02439F7A2A74856F009F70D1 /* NotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02439F792A74856F009F70D1 /* NotificationView.swift */; };
 		02439F7C2A749771009F70D1 /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02439F7B2A749771009F70D1 /* NotificationController.swift */; };
+		0243ED932AB11888006AAB46 /* ProfileSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0243ED922AB11888006AAB46 /* ProfileSheetView.swift */; };
 		0243FC622A324007007D097D /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 0243FC612A324007007D097D /* Supabase */; };
 		0243FC642A324180007D097D /* SupabaseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0243FC632A324180007D097D /* SupabaseController.swift */; };
 		0243FC682A327463007D097D /* _Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0243FC672A327463007D097D /* _Secrets.swift */; };
@@ -83,6 +84,7 @@
 		02376E0F2A3F70C700257B5D /* ThemeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeController.swift; sourceTree = "<group>"; };
 		02439F792A74856F009F70D1 /* NotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationView.swift; sourceTree = "<group>"; };
 		02439F7B2A749771009F70D1 /* NotificationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationController.swift; sourceTree = "<group>"; };
+		0243ED922AB11888006AAB46 /* ProfileSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSheetView.swift; sourceTree = "<group>"; };
 		0243FC632A324180007D097D /* SupabaseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseController.swift; sourceTree = "<group>"; };
 		0243FC672A327463007D097D /* _Secrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _Secrets.swift; sourceTree = "<group>"; };
 		0243FC732A328E9B007D097D /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
@@ -222,6 +224,7 @@
 				02BD99202AA518CE00E3C504 /* ReactionCounter.swift */,
 				02439F792A74856F009F70D1 /* NotificationView.swift */,
 				02831D182A941265004D0DAC /* TraceTile.swift */,
+				0243ED922AB11888006AAB46 /* ProfileSheetView.swift */,
 				028BA33F2A3791FF000BD0C0 /* FilterDropdown.swift */,
 				028BA33D2A377C44000BD0C0 /* CustomTabBarView.swift */,
 				02EE1B172A6CABA000DCB69D /* BorderedHalfButton.swift */,
@@ -462,6 +465,7 @@
 				02376E0D2A3E0B7200257B5D /* LocationController.swift in Sources */,
 				028250AA2A39017B00B281DA /* MapBox.swift in Sources */,
 				028BA33E2A377C44000BD0C0 /* CustomTabBarView.swift in Sources */,
+				0243ED932AB11888006AAB46 /* ProfileSheetView.swift in Sources */,
 				026BB7702A3BA144000B765E /* CategoryTag.swift in Sources */,
 				0243FC742A328E9B007D097D /* ProfileView.swift in Sources */,
 				02EE1B182A6CABA000DCB69D /* BorderedHalfButton.swift in Sources */,

@@ -10,13 +10,13 @@ import SwiftUI
 struct CategoryTag: View {
     
     let category: String
-    @EnvironmentObject var supabase: SupabaseController
+    @EnvironmentObject var feed: FeedController
     @EnvironmentObject var theme: ThemeController
     
     var body: some View {
         Button(action: {
             withAnimation {
-                supabase.toggleFilter(category: category)
+                feed.toggleFilter(category: category)
             }}) {
             HStack(spacing: 12) {
                 Text(category)

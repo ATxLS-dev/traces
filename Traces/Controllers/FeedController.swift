@@ -19,29 +19,31 @@ enum FeedOption: String, CaseIterable {
 @MainActor
 class FeedController: ObservableObject {
     
-    private var feedMaxDistanceInMiles: Int = 15
+    private var feedMaxDistanceInMiles: Double = 5.0
     
-    static let shared = FeedController()
     let supabase: SupabaseClient = SupabaseClient(supabaseURL: Secrets.supabaseURL, supabaseKey: Secrets.supabaseAnonKey)
-
-    @EnvironmentObject var locator: LocationController
-    
-    @Published var feed: [Trace] = []
+    let locator = LocationController()
     
     private var rawFeed: [Trace] = []
     private var activeFilters: [String] = []
     public var filterMode: FeedOption = .mostRecent
     
-    @Published private(set) var filteredTraces: [Trace] = []
+    @Published var traces: [Trace] = []
     @Published private(set) var categories: [Category] = []
+    @Published private(set) var countedCategories: [(Category, Int)] = []
     @Published private(set) var filters: Set<String> = []
     
     init() {
         self.syncCategories()
+        self.syncUnsortedFeed()
+        self.syncTracesWithin(miles: feedMaxDistanceInMiles)
+        self.syncCountedCategories()
     }
     
     private func syncCategories() {
-        let query = supabase.database.from("categories").select()
+        let query = supabase.database
+            .from("categories")
+            .select()
         Task {
             do {
                 categories = try await query.execute().value
@@ -50,8 +52,40 @@ class FeedController: ObservableObject {
             }
         }
     }
+    
+    private func syncTracesWithin(miles distance: Double) {
+        let query = supabase.database
+            .rpc(fn: "get_traces_within_distance",
+                 params: [locator.userLocation.latitude, locator.userLocation.longitude, distance])
+        Task {
+            do {
+                rawFeed = try await query.execute().value
+            } catch {
+                print(error)
+            }
+        }
+    }
+    
+    private func countCategoryOccurences(_ category: Category) -> (Category, Int) {
+        let occurrences = rawFeed
+            .flatMap { $0.categories }
+            .filter { $0 == category.name }
+            .count
+        return (category, occurrences)
+    }
+    
+    func syncCountedCategories() {
+        for category in categories {
+            countedCategories.append(countCategoryOccurences(category))
+        }
+        countedCategories.sort { $0.1 > $1.1 }
+    }
+    
+    func setMaxFeedDistanceInMiles(_ miles: Double) {
+        self.feedMaxDistanceInMiles = miles
+    }
 
-    func setFeed(to option: FeedOption) {
+    func setFeedMode(to option: FeedOption) {
         switch(option) {
         case .proximity:
             print("proximity")
@@ -62,16 +96,18 @@ class FeedController: ObservableObject {
         }
     }
     
-    //Don't want to get more than 20 at a time
-    func syncUnsortedFeed() async {
+    func syncUnsortedFeed() {
         let query = supabase.database
             .from("traces")
             .select()
             .order(column: "creation_date", ascending: true)
-        do {
-            self.feed = try await query.execute().value
-        } catch {
-            print(error)
+        Task {
+            do {
+                rawFeed = try await query.execute().value
+                traces = rawFeed
+            } catch {
+                print(error)
+            }
         }
     }
     
@@ -82,27 +118,23 @@ class FeedController: ObservableObject {
             filters.insert(category)
         }
         if filters == [] {
-            feed = []
+            traces = rawFeed
         } else {
-            feed = rawFeed.filter { trace in
+            traces = traces.filter { trace in
                 let commonCategories = Set(trace.categories).intersection(Set(filters))
                 return !commonCategories.isEmpty
             }
         }
     }
     
-    func refreshTraces() {
-        syncFeedOrderedByProximity(maxDistanceInMiles: feedMaxDistanceInMiles)
-    }
-    
-    func setFeedMaxDistance(miles: Int) {
+    func setFeedMaxDistance(miles: Double) {
         self.feedMaxDistanceInMiles = miles
     }
     
     func syncFeedOrderedByProximity(maxDistanceInMiles: Int) {
         let lastUserLocation = locator.userLocation
         let maxDistanceInMeters = Double(maxDistanceInMiles) * 1609.34
-        feed = rawFeed.filter { trace in
+        traces = rawFeed.filter { trace in
             let location = CLLocation(latitude: trace.latitude, longitude: trace.longitude)
             let distance = location.distance(from: CLLocation(latitude: lastUserLocation.latitude, longitude: lastUserLocation.longitude))
             return distance <= maxDistanceInMeters
@@ -114,6 +146,4 @@ class FeedController: ObservableObject {
             return distance1 < distance2
         }
     }
-    
-    
 }

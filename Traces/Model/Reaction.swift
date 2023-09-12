@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Reaction: Codable, Identifiable, Equatable {
+struct Reaction: Codable, Identifiable, Equatable, Hashable {
     let id: UUID
     let traceID: UUID
     let userID: UUID

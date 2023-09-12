@@ -10,7 +10,7 @@ import Supabase
 
 struct FilterDropdown: View {
     
-    @EnvironmentObject var supabase: SupabaseController
+    @EnvironmentObject var feed: FeedController
     @EnvironmentObject var theme: ThemeController
     
     var body: some View {
@@ -20,12 +20,11 @@ struct FilterDropdown: View {
                 .frame(width: 260, height: 500)
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
-                    ForEach(supabase.categories) { category in
-                        let occurences = supabase.countCategoryOccurences(category)
-                        if occurences != 0 {
-                            buildActiveFilter(category: category, occurences: occurences)
+                    ForEach(feed.countedCategories, id: \.self.0.name) { (category, count) in
+                        if count > 0 {
+                            activeFilter(category: category, occurences: count)
                         } else {
-                            buildInactiveFilter(category: category)
+                            inactiveFilter(category: category)
                         }
                     }
                 }
@@ -40,12 +39,15 @@ struct FilterDropdown: View {
             maxHeight: .infinity,
             alignment: .topLeading
         )
+        .onAppear {
+            feed.syncCountedCategories()
+        }
     }
     
-    func buildActiveFilter(category: Category, occurences: Int) -> some View {
+    func activeFilter(category: Category, occurences: Int) -> some View {
         Button(action: {
             withAnimation { () -> () in
-                supabase.toggleFilter(category: category.name)
+                feed.toggleFilter(category: category.name)
             }
         }) {
             HStack {
@@ -62,8 +64,7 @@ struct FilterDropdown: View {
                         .font(.caption)
                 }
                 .padding(.horizontal, 6)
-
-                if supabase.filters.contains(category.name) {
+                if feed.filters.contains(category.name) {
                     Image(systemName: "checkmark")
                         .foregroundColor(theme.accent)
                         .padding(.trailing, 6)
@@ -73,14 +74,14 @@ struct FilterDropdown: View {
         }
     }
     
-    func buildInactiveFilter(category: Category) -> some View {
+    func inactiveFilter(category: Category) -> some View {
         HStack {
             Text(category.name)
                 .font(.body)
                 .foregroundColor(theme.text.opacity(0.4))
                 .padding(4)
             Spacer()
-            if supabase.filters.contains(category.name) {
+            if feed.filters.contains(category.name) {
                 Image(systemName: "checkmark")
                     .foregroundColor(theme.accent)
                     .padding(.trailing, 6)

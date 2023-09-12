@@ -11,16 +11,16 @@ import Supabase
 struct HomeView: View {
     
     @State var showFilterDropdown: Bool = false
-    @StateObject var feedController = FeedController.shared
+    @EnvironmentObject var feed: FeedController
     @EnvironmentObject var theme: ThemeController
 
     var body: some View {
         ZStack {
-            verticalScrollView()
+            verticalScrollView
                 .task {
-                    await feedController.syncUnsortedFeed()
+                    feed.syncUnsortedFeed()
                 }
-            buildFilterBar()
+            filterBar
         }
         .onTapGesture {
             if showFilterDropdown {
@@ -29,10 +29,8 @@ struct HomeView: View {
         }
         .background(theme.background)
     }
-}
 
-extension HomeView {
-    func buildFilterBar() -> some View {
+    var filterBar: some View {
         ZStack {
             Spacer()
                 .background(.ultraThinMaterial)
@@ -40,17 +38,17 @@ extension HomeView {
                 .animation(.easeInOut(duration: 0.3), value: showFilterDropdown)
             VStack {
                 HStack {
-                    if !feedController.filters.isEmpty {
+                    if !feed.filters.isEmpty {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
-                                ForEach(Array(feedController.filters), id: \.self) { category in
+                                ForEach(Array(feed.filters), id: \.self) { category in
                                     CategoryTag(category: category)
                                 }
                             }.transition(AnyTransition.scale)
                         }
                     }
                     Spacer()
-                    sortButton()
+                    sortButton
                 }
                 .padding(4)
                 .padding(.leading, 4)
@@ -78,24 +76,20 @@ extension HomeView {
                 .interactiveSpring(response: 0.45, dampingFraction: 0.8, blendDuration: 0.69), value: self.showFilterDropdown)
         }
     }
-}
-
-extension HomeView {
-    func sortButton() -> some View {
+    
+    var sortButton: some View {
         Button(action: {
             showFilterDropdown.toggle()
         }) {
             BorderedHalfButton()
         }
     }
-}
 
-extension HomeView {
-    func verticalScrollView() -> some View {
+    var verticalScrollView: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 10) {
                 Spacer(minLength: 96)
-                ForEach(feedController.feed) { trace in
+                ForEach(feed.traces) { trace in
                     TraceTile(trace: trace)
                 }
                 Spacer(minLength: 96)

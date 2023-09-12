@@ -22,18 +22,10 @@ class SupabaseController: ObservableObject {
     @EnvironmentObject var auth: AuthController
     @EnvironmentObject var locator: LocationController
     
-    private var error: Error?
-    
     @Published private(set) var traces: [Trace] = []
-    @Published private(set) var filteredTraces: [Trace] = []
-    
     @Published private(set) var categories: [Category] = []
-    @Published private(set) var filters: Set<String> = []
-    
     @Published private(set) var reactionTypes: [ReactionType] = []
-    
     @Published private(set) var userTraceHistory: [Trace] = []
-    @Published var feed: [Trace] = []
     
     private var feedMaxDistanceInMiles: Int = 15
     
@@ -46,10 +38,8 @@ class SupabaseController: ObservableObject {
         let query = supabase.database.from("categories").select()
         Task {
             do {
-                error = nil
                 categories = try await query.execute().value
             } catch {
-                self.error = error
                 print(error)
             }
         }
@@ -59,10 +49,8 @@ class SupabaseController: ObservableObject {
         let query = supabase.database.from("reaction_types").select()
         Task {
             do {
-                error = nil
                 reactionTypes = try await query.execute().value
             } catch {
-                self.error = error
                 print(error)
             }
         }
@@ -79,29 +67,11 @@ class SupabaseController: ObservableObject {
     func reloadTraces() async {
         let query = supabase.database.from("traces").select()
         do {
-            error = nil
             traces = try await query.execute().value
         } catch {
-            self.error = error
             print(error)
         }
 
-    }
-    
-    func toggleFilter(category: String) {
-        if filters.contains(category) {
-            filters.remove(category)
-        } else {
-            filters.insert(category)
-        }
-        if filters == [] {
-            filteredTraces = []
-        } else {
-            filteredTraces = traces.filter { trace in
-                let commonCategories = Set(trace.categories).intersection(Set(filters))
-                return !commonCategories.isEmpty
-            }
-        }
     }
 
     func loadTracesFromUser(_ id: UUID? = nil) async {
@@ -112,9 +82,7 @@ class SupabaseController: ObservableObject {
                 .match(query: ["user_id": userID])
             do {
                 userTraceHistory = try await query.execute().value
-                error = nil
             } catch {
-                self.error = error
                 print(error)
             }
         }
@@ -132,7 +100,6 @@ class SupabaseController: ObservableObject {
         do {
             result = try await query.execute().value
         } catch {
-            self.error = error
             print(error)
         }
         
@@ -164,7 +131,6 @@ class SupabaseController: ObservableObject {
                 do {
                     try await query.execute()
                 } catch {
-                    self.error = error
                     print("Error inserting trace: \(error)")
                 }
             }
@@ -183,8 +149,7 @@ class SupabaseController: ObservableObject {
                 try await query.execute()
                 await self.loadTracesFromUser(newTrace.userID)
             } catch {
-                self.error = error
-                print("Error editing trace: \(error)")
+                print("Error updating trace: \(error)")
             }
         }
     }
@@ -199,8 +164,7 @@ class SupabaseController: ObservableObject {
                 try await query.execute()
                 await self.loadTracesFromUser(trace.userID)
             } catch {
-                self.error = error
-                print("Error editing trace: \(error)")
+                print("Error deleting trace: \(error)")
             }
         }
     }

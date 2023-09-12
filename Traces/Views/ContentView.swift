@@ -18,6 +18,7 @@ struct ContentView: View {
     @StateObject var auth = AuthController()
     @StateObject var locator = LocationController()
     @StateObject var supabase = SupabaseController()
+    @StateObject var feed = FeedController()
     
     @AppStorage("selectedTab") private var selectedTab: Tab = Tab.home
     
@@ -34,6 +35,7 @@ struct ContentView: View {
                 .environmentObject(auth)
                 .environmentObject(locator)
                 .environmentObject(supabase)
+                .environmentObject(feed)
         } else {
             Onboarding()
         }
@@ -69,6 +71,7 @@ struct ContentView_Previews: PreviewProvider {
             .environmentObject(AuthController())
             .environmentObject(LocationController())
             .environmentObject(SupabaseController())
+            .environmentObject(FeedController())
     }
 }
 

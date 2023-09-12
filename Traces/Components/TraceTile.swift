@@ -24,8 +24,8 @@ struct TraceTile: View {
     
     var body: some View {
         VStack {
-            buildDivider()
-            buildTileBody()
+            divider
+            tileBody
                 .padding(.vertical, 4)
                 .background(theme.background)
                 .zIndex(1.0)
@@ -38,7 +38,7 @@ struct TraceTile: View {
             reactions
                 .padding(.horizontal)
             if shouldPresentOptions {
-                buildOptions()
+                options
                     .transition(.move(edge: .trailing))
                     .frame(height: 128)
             }
@@ -52,14 +52,14 @@ struct TraceTile: View {
 
     }
     
-    private func buildDivider() -> some View {
+    var divider: some View {
         Rectangle()
             .fill(theme.border.opacity(0.1))
             .frame(height: 1.4)
             .padding(.horizontal, 8)
     }
     
-    private func buildTileBody() -> some View {
+    var tileBody: some View {
         HStack {
             MapBox(focalTrace: trace)
                 .clipShape(RoundedRectangle(cornerRadius: 29))
@@ -68,7 +68,7 @@ struct TraceTile: View {
                 .background( BorderedRectangle() )
             Spacer()
             VStack(alignment: .trailing, spacing: 2) {
-                buildOptionsButton()
+                optionsButton
                 Spacer()
                 Text(trace.locationName)
                     .foregroundColor(theme.text)
@@ -90,7 +90,7 @@ struct TraceTile: View {
         .frame(height: 160)
     }
     
-    private func buildOptionsButton() -> some View {
+    var optionsButton: some View {
         Button(action: {
             withAnimation {
                 shouldPresentOptions.toggle()
@@ -114,20 +114,20 @@ struct TraceTile: View {
     }
     
     var reactions: some View {
-            HStack {
-                Spacer()
-                ForEach(countedReactions, id: \.self) { reaction in
-                    Button(action: {
-                        supabase.createReaction(to: trace.id, reactionType: reaction.value)
-                        Task {
-                            await syncReactions()
-                        }
-                    }) {
-                        ReactionCounter(reaction)
+        HStack {
+            Spacer()
+            ForEach(countedReactions, id: \.self) { reaction in
+                Button(action: {
+                    supabase.createReaction(to: trace.id, reactionType: reaction.value)
+                    Task {
+                        await syncReactions()
                     }
+                }) {
+                    ReactionCounter(reaction)
                 }
             }
         }
+    }
     
     var details: some View {
         VStack {
@@ -158,7 +158,7 @@ struct TraceTile: View {
         }
     }
     
-    private func buildOptions() -> some View {
+    var options: some View {
         HStack {
             Spacer()
             VStack() {
@@ -200,7 +200,7 @@ struct TraceTile: View {
                         notifications.sendNotification(.coordinatesCopied)
                         shouldPresentOptions.toggle()
                     }) {
-                        settingsItem(title: "Copy Coordinates", icon: "scope")
+                        settingsItem(title: "View user profile", icon: "scope")
                     }
                     Button(action: {
                         notifications.sendNotification(.traceReported)

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct FilterView: View {
     
-    @ObservedObject var feedController = FeedController.shared
+    @EnvironmentObject var feed: FeedController
     @EnvironmentObject var theme: ThemeController
     
     @State var proximityLimit = 10.0
@@ -22,7 +22,7 @@ struct FilterView: View {
                 Text("Sort by: ")
                 Spacer()
                 Button(action: { presentPopover.toggle() }) {
-                    Text(feedController.filterMode.rawValue)
+                    Text(feed.filterMode.rawValue)
                         .foregroundStyle(theme.text)
                         .padding()
                     .background { BorderedCapsule() }
@@ -37,7 +37,7 @@ struct FilterView: View {
             }
             proximitySlider
             ScrollView {
-                ForEach(feedController.categories) { category in
+                ForEach(feed.categories) { category in
                     HStack {
                         Text(category.name)
                             .foregroundStyle(theme.text)
