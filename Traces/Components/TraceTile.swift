@@ -16,6 +16,7 @@ struct TraceTile: View {
     @State var shouldShowDetails: Bool = false
     @State var shouldPresentOptions: Bool = false
     @State var shouldPresentEditSheet: Bool = false
+    @State var shouldPresentProfileSheet: Bool = false
     @State var userHasOwnership: Bool = false
     @State var deleteConfirmed: Bool = false
     @State var countedReactions: [CountedReaction] = []
@@ -46,6 +47,14 @@ struct TraceTile: View {
                 details
                     .transition(.move(edge: .leading))
             }
+        }
+        .fullScreenCover(isPresented: $shouldPresentProfileSheet) {
+            ZStack {
+                Rectangle()
+                    .fill(.ultraThinMaterial)
+                ProfileSheetView(userID: trace.userID, isPresented: $shouldPresentProfileSheet)
+            }
+            .ignoresSafeArea()
         }
         .animation(
             .interactiveSpring(response: 0.45, dampingFraction: 0.8, blendDuration: 0.69), value: self.shouldPresentOptions)
@@ -106,8 +115,9 @@ struct TraceTile: View {
     }
     
     private func syncReactions() async {
+        
         let counted = await supabase.getReactions(to: trace.id)
-        countedReactions = counted.map { CountedReaction(value: $0, occurences: $1)}
+        countedReactions = counted.map { CountedReaction(value: $0, occurences: $1) }
         if countedReactions == [] {
             countedReactions = supabase.reactionTypes.map { CountedReaction(value: $0.value, occurences: 0)}
         }
@@ -118,9 +128,13 @@ struct TraceTile: View {
             Spacer()
             ForEach(countedReactions, id: \.self) { reaction in
                 Button(action: {
-                    supabase.createReaction(to: trace.id, reactionType: reaction.value)
-                    Task {
-                        await syncReactions()
+                    Task.detached {
+                        do {
+                            try await supabase.createReaction(to: trace.id, reactionType: reaction.value)
+                            await syncReactions()
+                        } catch {
+                            print("Error creating reaction: \(error)")
+                        }
                     }
                 }) {
                     ReactionCounter(reaction)
@@ -195,10 +209,8 @@ struct TraceTile: View {
                     
                 } else {
                     Button(action: {
-                        let pasteboard = UIPasteboard.general
-                        pasteboard.string = String("\(trace.latitude), \(trace.longitude)")
-                        notifications.sendNotification(.coordinatesCopied)
                         shouldPresentOptions.toggle()
+                        shouldPresentProfileSheet.toggle()
                     }) {
                         settingsItem(title: "View user profile", icon: "scope")
                     }

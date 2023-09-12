@@ -19,8 +19,8 @@ import CoreLocation
 class SupabaseController: ObservableObject {
     
     let supabase: SupabaseClient = SupabaseClient(supabaseURL: Secrets.supabaseURL, supabaseKey: Secrets.supabaseAnonKey)
-    @EnvironmentObject var auth: AuthController
-    @EnvironmentObject var locator: LocationController
+    let auth = AuthController.shared
+    let locator = LocationController()
     
     @Published private(set) var traces: [Trace] = []
     @Published private(set) var categories: [Category] = []
@@ -167,5 +167,77 @@ class SupabaseController: ObservableObject {
                 print("Error deleting trace: \(error)")
             }
         }
+    }
+    
+    func getReactions(to traceID: UUID) async -> [(String, Int)] {
+        
+        var result: [Reaction] = []
+        let query = supabase.database
+            .from("reactions")
+            .select()
+            .eq(column: "trace_id", value: traceID)
+        
+        do {
+            result = try await query.execute().value
+        } catch {
+            print("Error fetching reactions: \(error)")
+        }
+        
+        var reactionRawTypes: [UUID: String] = [:]
+        reactionTypes.forEach { item in
+            reactionRawTypes[item.id] = item.value
+        }
+        
+        let reactions: [UUID] = result.map(\.reactionType)
+        let end = Dictionary(grouping: reactions) { $0 }
+            .map { (reactionRawTypes[$0]!, $1.count) }
+        
+        return end
+    }
+    
+    func createReaction(to traceID: UUID, reactionType: String) async throws {
+        print("create reaction called")
+        
+        guard auth.authChangeEvent != .signedOut, let session = auth.session else {
+            throw ReactionError.signedOut
+        }
+        
+        let date = Date()
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        let creationDateInTimestamptz = formatter.string(from: date)
+        
+        
+        guard let reactionTypeID = reactionTypes
+            .first(where: { $0.value == reactionType })?.id else {
+            throw ReactionError.reactionTypeNotFound
+        }
+        
+        let newReaction = Reaction(
+            id: UUID(),
+            traceID: traceID,
+            userID: session.user.id,
+            creationDate: creationDateInTimestamptz,
+            reactionType: reactionTypeID)
+        print(newReaction)
+        
+        let query = supabase.database
+            .from("reactions")
+            .insert(values: newReaction)
+        
+        do {
+            try await query.execute()
+        } catch {
+            throw ReactionError.databaseError
+        }
+    }
+    
+    
+    func updateReaction() {
+        
+    }
+    
+    func deleteReaction() {
+        
     }
 }

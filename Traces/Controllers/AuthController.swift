@@ -20,6 +20,8 @@ enum CreateUserError: Error {
 @MainActor
 class AuthController: ObservableObject {
     
+    static var shared = AuthController()
+    
     let supabase: SupabaseClient = SupabaseClient(supabaseURL: Secrets.supabaseURL, supabaseKey: Secrets.supabaseAnonKey)
     
     private var error: Error?

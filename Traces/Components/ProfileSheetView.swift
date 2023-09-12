@@ -9,7 +9,8 @@ import SwiftUI
 
 struct ProfileSheetView: View {
     
-    @Binding var userID: UUID
+    var userID: UUID
+    @Binding var isPresented: Bool
     
     @EnvironmentObject var supabase: SupabaseController
     @EnvironmentObject var notifications: NotificationController
@@ -31,7 +32,7 @@ struct ProfileSheetView: View {
                 .background(theme.background)
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                 .edgesIgnoringSafeArea(.all)
-            buildProfilePage()
+            profilePage
                 .onAppear {
                     loadUserProfile()
                 }
@@ -46,8 +47,7 @@ struct ProfileSheetView: View {
         }
     }
     
-    @ViewBuilder
-    func buildSignInButton() -> some View {
+    var signInButton: some View {
         VStack {
             Label("Log in / Sign up", systemImage: "hand.wave")
                 .foregroundColor(theme.text)
@@ -60,28 +60,32 @@ struct ProfileSheetView: View {
         }
     }
     
-    @ViewBuilder
-    func buildProfilePage() -> some View {
+    var profilePage: some View {
         ScrollView(showsIndicators: false) {
-            buildProfileCard()
-            buildTraces()
+            Spacer(minLength: 48)
+            HStack {
+                Spacer()
+                exitButton
+            }
+            .padding(.horizontal, 20)
+            profileCard
+            traceList
             Spacer(minLength: 128)
         }
     }
     
-    func buildTraces() -> some View {
+    var traceList: some View {
         VStack() {
             ForEach(userTraces) { trace in
-                TraceTile(userHasOwnership: true, trace: trace)
+                TraceTile(userHasOwnership: false, trace: trace)
             }
         }
     }
     
-    func buildProfileCard() -> some View {
+    var profileCard: some View {
         HStack {
             Spacer()
             VStack(alignment: .trailing) {
-                Spacer(minLength: 20)
                 Text("@\(username)")
                     .font(.title2)
                     .foregroundColor(theme.text)
@@ -97,10 +101,21 @@ struct ProfileSheetView: View {
         }
         .edgesIgnoringSafeArea(.top)
     }
+    
+    var exitButton: some View {
+        Button(action: { isPresented.toggle() }) {
+            ZStack {
+                BorderedCapsule()
+                    .frame(width: 48, height: 48)
+                Image(systemName: "xmark")
+                    .foregroundStyle(theme.text)
+            }
+        }
+    }
 }
 
 #Preview {
-    ProfileSheetView(userID: .constant(UUID(uuidString: "7dd199fd-aead-48d9-8246-bc0a86eed806")!))
+    ProfileSheetView(userID: UUID(uuidString: "7dd199fd-aead-48d9-8246-bc0a86eed806")!, isPresented: .constant(true))
         .environmentObject(ThemeController())
         .environmentObject(NotificationController())
         .environmentObject(AuthController())

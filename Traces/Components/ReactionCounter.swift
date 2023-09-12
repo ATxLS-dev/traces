@@ -22,8 +22,6 @@ struct ReactionCounter: View {
     
     func reactionCounter() -> some View {
         ZStack {
-//            BorderedCapsule(hasThinBorder: true)
-//                .frame(width: 54)
             HStack {
                 Text("\(reaction.occurences)")
                     .foregroundStyle(theme.text)
