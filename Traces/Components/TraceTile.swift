@@ -19,6 +19,7 @@ struct TraceTile: View {
     @State var shouldPresentProfileSheet: Bool = false
     @State var userHasOwnership: Bool = false
     @State var deleteConfirmed: Bool = false
+    @State var userReaction: Reaction?
     @State var countedReactions: [CountedReaction] = []
     
     let trace: Trace
@@ -116,11 +117,20 @@ struct TraceTile: View {
     
     private func syncReactions() async {
         
-        let counted = await supabase.getReactions(to: trace.id)
-        countedReactions = counted.map { CountedReaction(value: $0, occurences: $1) }
-        if countedReactions == [] {
-            countedReactions = supabase.reactionTypes.map { CountedReaction(value: $0.value, occurences: 0)}
+        let reactions = await supabase.getReactions(to: trace.id).map({ $0.0 })
+        
+        let reactionTypes = supabase.reactionTypes.map { $0 }
+        var reactionDict: [String: Int] = [:]
+        
+        for reaction in reactionTypes {
+            reactionDict[reaction.value] = 0
         }
+        
+        for reaction in reactions {
+            reactionDict[reaction]! += 1
+        }
+        
+        countedReactions = reactionDict.map { CountedReaction(value: $0, occurences: $1 ) }.sorted(by: {$0.value > $1.value})
     }
     
     var reactions: some View {

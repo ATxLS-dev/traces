@@ -27,7 +27,7 @@ struct Reaction: Codable, Identifiable, Equatable, Hashable {
     }
 }
 
-struct ReactionType: Codable, Identifiable, Equatable {
+struct ReactionType: Codable, Identifiable, Equatable, Hashable {
     
     var id: UUID
     var value: String

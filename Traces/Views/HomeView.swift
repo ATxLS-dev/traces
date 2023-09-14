@@ -34,7 +34,7 @@ struct HomeView: View {
         ZStack {
             Spacer()
                 .background(.ultraThinMaterial)
-                .opacity(showFilterDropdown ? 0.8 : 0.0)
+                .opacity(showFilterDropdown ? 0.2 : 0.0)
                 .animation(.easeInOut(duration: 0.3), value: showFilterDropdown)
             VStack {
                 HStack {

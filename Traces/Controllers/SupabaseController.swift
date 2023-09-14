@@ -39,6 +39,7 @@ class SupabaseController: ObservableObject {
         Task {
             do {
                 categories = try await query.execute().value
+                categories = Array(Set(categories))
             } catch {
                 print(error)
             }

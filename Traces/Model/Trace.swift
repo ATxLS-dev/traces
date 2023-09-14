@@ -37,7 +37,7 @@ struct Trace: Codable, Identifiable, Equatable {
     }
 }
 
-struct Category: Codable, Identifiable, Equatable {
+struct Category: Codable, Identifiable, Equatable, Hashable {
     
     var id: UUID
     var name: String

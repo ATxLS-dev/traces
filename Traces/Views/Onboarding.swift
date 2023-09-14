@@ -38,6 +38,7 @@ extension UserDefaults {
 struct Onboarding: View {
     
     @EnvironmentObject var theme: ThemeController
+    @Binding var isPresented: Bool
     @State var shouldPresentAuth: Bool = false
     @State var selectedTab: Int = 1
     
@@ -48,7 +49,7 @@ struct Onboarding: View {
                     Spacer()
                     Button(action: {
                         UserDefaults.hasOnboarded = true
-                        print(UserDefaults.hasOnboarded)
+                        isPresented = false
                     }) {
                         HStack {
                             Text("Skip intro")

@@ -22,9 +22,18 @@ struct ContentView: View {
     
     @AppStorage("selectedTab") private var selectedTab: Tab = Tab.home
     
+    @State var shouldPresentOnboardingSheet: Bool
+    
+    init() {
+        shouldPresentOnboardingSheet = UserDefaults.hasOnboarded
+    }
+    
     var body: some View {
-        if UserDefaults.hasOnboarded || auth.authChangeEvent == .signedIn {
+        if auth.authChangeEvent == .signedIn {
             buildNavigation()
+                .fullScreenCover(isPresented: $shouldPresentOnboardingSheet) {
+                    Onboarding(isPresented: $shouldPresentOnboardingSheet)
+                }
                 .onAppear {
                     Task {
                         await locator.checkLocationAuthorization()
@@ -36,8 +45,6 @@ struct ContentView: View {
                 .environmentObject(locator)
                 .environmentObject(supabase)
                 .environmentObject(feed)
-        } else {
-            Onboarding()
         }
     }
 
@@ -65,13 +72,15 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
-            .environmentObject(ThemeController())
-            .environmentObject(NotificationController())
-            .environmentObject(AuthController())
-            .environmentObject(LocationController())
-            .environmentObject(SupabaseController())
-            .environmentObject(FeedController())
+        ZStack {
+            ContentView()
+                .environmentObject(ThemeController())
+                .environmentObject(NotificationController())
+                .environmentObject(AuthController())
+                .environmentObject(LocationController())
+                .environmentObject(SupabaseController())
+                .environmentObject(FeedController())
+        }
     }
 }
 
