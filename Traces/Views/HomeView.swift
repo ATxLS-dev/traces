@@ -36,6 +36,9 @@ struct HomeView: View {
                 .background(.ultraThinMaterial)
                 .opacity(showFilterDropdown ? 0.2 : 0.0)
                 .animation(.easeInOut(duration: 0.3), value: showFilterDropdown)
+                .onTapGesture {
+                    showFilterDropdown.toggle()
+                }
             VStack {
                 HStack {
                     if !feed.filters.isEmpty {

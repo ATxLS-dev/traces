@@ -49,6 +49,8 @@
 		02956F292A4B50BE00E8537C /* MapboxStatic in Frameworks */ = {isa = PBXBuildFile; productRef = 02956F282A4B50BE00E8537C /* MapboxStatic */; };
 		02956F2B2A4B56AB00E8537C /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02956F2A2A4B56AB00E8537C /* AuthView.swift */; };
 		029A00872A72C68200D78D32 /* AuthController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029A00862A72C68200D78D32 /* AuthController.swift */; };
+		02B4D9112AC232A2000D9996 /* SheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B4D9102AC232A2000D9996 /* SheetController.swift */; };
+		02B4D9132AC23417000D9996 /* TraceDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B4D9122AC23417000D9996 /* TraceDetailView.swift */; };
 		02BD99172AA2AAD200E3C504 /* FeedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BD99162AA2AAD200E3C504 /* FeedController.swift */; };
 		02BD991F2AA50A2A00E3C504 /* FilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BD991E2AA50A2A00E3C504 /* FilterView.swift */; };
 		02BD99212AA518CE00E3C504 /* ReactionCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BD99202AA518CE00E3C504 /* ReactionCounter.swift */; };
@@ -117,6 +119,8 @@
 		02952D732A1E88D100793283 /* NewTracePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTracePopup.swift; sourceTree = "<group>"; };
 		02956F2A2A4B56AB00E8537C /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
 		029A00862A72C68200D78D32 /* AuthController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthController.swift; sourceTree = "<group>"; };
+		02B4D9102AC232A2000D9996 /* SheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetController.swift; sourceTree = "<group>"; };
+		02B4D9122AC23417000D9996 /* TraceDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraceDetailView.swift; sourceTree = "<group>"; };
 		02BD99162AA2AAD200E3C504 /* FeedController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedController.swift; sourceTree = "<group>"; };
 		02BD991E2AA50A2A00E3C504 /* FilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterView.swift; sourceTree = "<group>"; };
 		02BD99202AA518CE00E3C504 /* ReactionCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionCounter.swift; sourceTree = "<group>"; };
@@ -268,6 +272,7 @@
 			isa = PBXGroup;
 			children = (
 				028250A92A39017B00B281DA /* MapBox.swift */,
+				02B4D9102AC232A2000D9996 /* SheetController.swift */,
 				0214A98D2A5635E300A3AF7E /* AnnotationView.swift */,
 			);
 			path = Maps;
@@ -289,6 +294,7 @@
 				02712F572A5BA22B009B4722 /* FAQSheet.swift */,
 				02952D732A1E88D100793283 /* NewTracePopup.swift */,
 				02597FD32A9BE0C200EBB614 /* NewTraceView.swift */,
+				02B4D9122AC23417000D9996 /* TraceDetailView.swift */,
 				0219261C2A2FD7BC00B1B314 /* TraceDetailPopup.swift */,
 				022A30CD2A759F5500F3674F /* TraceEditPopup.swift */,
 				020D9C412A4E3A3200958A6D /* AccountDetailView.swift */,
@@ -366,7 +372,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					028FF0A22A184F080058EB57 = {
 						CreatedOnToolsVersion = 14.3;
@@ -440,9 +446,11 @@
 			files = (
 				02831D192A941265004D0DAC /* TraceTile.swift in Sources */,
 				028635002A18533700BCDF35 /* SettingsView.swift in Sources */,
+				02B4D9132AC23417000D9996 /* TraceDetailView.swift in Sources */,
 				029A00872A72C68200D78D32 /* AuthController.swift in Sources */,
 				02597FDD2AA12F7E00EBB614 /* Parsed.swift in Sources */,
 				0243FC642A324180007D097D /* SupabaseController.swift in Sources */,
+				02B4D9112AC232A2000D9996 /* SheetController.swift in Sources */,
 				02EE1B1A2A71909E00DCB69D /* BorderedRectangle.swift in Sources */,
 				02597FD62A9BF0F300EBB614 /* Reaction.swift in Sources */,
 				02BD99172AA2AAD200E3C504 /* FeedController.swift in Sources */,
@@ -549,6 +557,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -609,6 +618,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -651,7 +661,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brycekormylo.Traces;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -686,7 +696,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brycekormylo.Traces;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

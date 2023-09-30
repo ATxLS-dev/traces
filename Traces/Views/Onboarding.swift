@@ -48,8 +48,8 @@ struct Onboarding: View {
                 HStack {
                     Spacer()
                     Button(action: {
-                        UserDefaults.hasOnboarded = true
                         isPresented = false
+                        UserDefaults.hasOnboarded = true
                     }) {
                         HStack {
                             Text("Skip intro")

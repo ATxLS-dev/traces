@@ -42,6 +42,7 @@ struct CustomTabBarView: View {
     @Binding var currentTab: Tab
     @EnvironmentObject var theme: ThemeController
     @EnvironmentObject var locator: LocationController
+    @EnvironmentObject var sheet: SheetController
     
     @State var shouldPresentTraceCreator: Bool = false
     
@@ -91,8 +92,7 @@ struct CustomTabBarView: View {
 extension CustomTabBarView {
     func buildNewTraceButton() -> some View {
         ZStack(alignment: .bottom) {
-//            Button(action: NewTracePopup().showAndStack) {
-            Button(action: {shouldPresentTraceCreator.toggle()}) {
+            Button(action: {sheet.newTrace = true}) {
                 Image(systemName: "plus")
                     .scaleEffect(1.4)
                     .frame(width: 48, height: 48)
@@ -107,13 +107,19 @@ extension CustomTabBarView {
                     )
             }
         }
-        .fullScreenCover(isPresented: $shouldPresentTraceCreator) {
+        .fullScreenCover(isPresented: $sheet.newTrace) {
             ZStack {
                 Rectangle()
                     .fill(.ultraThinMaterial)
-                NewTraceView(isPresented: $shouldPresentTraceCreator)
+                NewTraceView(isPresented: $sheet.newTrace)
             }
             .ignoresSafeArea()
+        }
+        .fullScreenCover(isPresented: $sheet.showDetail) {
+            Text("Showing Detail")
+//            if let trace = sheet.detail {
+//                TraceDetailView(isPresented: $sheet.showDetail, trace: trace)
+//            }
         }
         .padding(12)
     }

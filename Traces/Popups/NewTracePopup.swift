@@ -25,9 +25,9 @@ struct NewTracePopup: CentrePopup {
     
     @EnvironmentObject var theme: ThemeController
     @EnvironmentObject var notifications: NotificationController
+    @EnvironmentObject var auth: AuthController
     @EnvironmentObject var supabase: SupabaseController
     @EnvironmentObject var locator: LocationController
-    @EnvironmentObject var auth: AuthController
 
     
     func createContent() -> some View {
@@ -76,7 +76,6 @@ struct NewTracePopup: CentrePopup {
         }
         .onAppear {
             locator.snapshotLocation()
-            
         }
     }
     

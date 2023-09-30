@@ -12,6 +12,7 @@ struct TraceTile: View {
     @EnvironmentObject var theme: ThemeController
     @EnvironmentObject var notifications: NotificationController
     @EnvironmentObject var supabase: SupabaseController
+
     @State var username: String = ""
     @State var shouldShowDetails: Bool = false
     @State var shouldPresentOptions: Bool = false

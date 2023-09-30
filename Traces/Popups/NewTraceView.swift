@@ -26,7 +26,6 @@ struct NewTraceView: View {
     @EnvironmentObject var auth: AuthController
     @EnvironmentObject var supabase: SupabaseController
     @EnvironmentObject var locator: LocationController
-
     
     var body: some View {
         ZStack {
@@ -98,12 +97,10 @@ struct NewTraceView: View {
         .padding()
         .background(BorderedRectangle(cornerRadius: 24))
         .onTapGesture {
-            PopupManager.dismiss()
+            isPresented.toggle()
         }
     }
-}
 
-private extension NewTraceView {
     func createMap() -> some View {
         MapBox()
             .clipShape(RoundedRectangle(cornerRadius: 29))

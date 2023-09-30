@@ -19,33 +19,34 @@ struct ContentView: View {
     @StateObject var locator = LocationController()
     @StateObject var supabase = SupabaseController()
     @StateObject var feed = FeedController()
+    @StateObject var sheet = SheetController()
     
     @AppStorage("selectedTab") private var selectedTab: Tab = Tab.home
     
-    @State var shouldPresentOnboardingSheet: Bool
+    @State var shouldPresentOnboardingSheet: Bool = false
     
     init() {
         shouldPresentOnboardingSheet = UserDefaults.hasOnboarded
     }
     
     var body: some View {
-        if auth.authChangeEvent == .signedIn {
-            buildNavigation()
-                .fullScreenCover(isPresented: $shouldPresentOnboardingSheet) {
-                    Onboarding(isPresented: $shouldPresentOnboardingSheet)
+        buildNavigation()
+            .fullScreenCover(isPresented: $shouldPresentOnboardingSheet) {
+                Onboarding(isPresented: $shouldPresentOnboardingSheet)
+            }
+            .onAppear {
+                Task {
+                    await locator.checkLocationAuthorization()
                 }
-                .onAppear {
-                    Task {
-                        await locator.checkLocationAuthorization()
-                    }
-                }
-                .environmentObject(theme)
-                .environmentObject(notifications)
-                .environmentObject(auth)
-                .environmentObject(locator)
-                .environmentObject(supabase)
-                .environmentObject(feed)
-        }
+            }
+            .environmentObject(theme)
+            .environmentObject(notifications)
+            .environmentObject(auth)
+            .environmentObject(locator)
+            .environmentObject(supabase)
+            .environmentObject(feed)
+            .environmentObject(sheet)
+        
     }
 
     func buildNavigation() -> some View {
@@ -80,6 +81,7 @@ struct ContentView_Previews: PreviewProvider {
                 .environmentObject(LocationController())
                 .environmentObject(SupabaseController())
                 .environmentObject(FeedController())
+                .environmentObject(SheetController())
         }
     }
 }

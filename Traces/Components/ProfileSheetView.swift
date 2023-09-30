@@ -114,12 +114,12 @@ struct ProfileSheetView: View {
     }
 }
 
-#Preview {
-    ProfileSheetView(userID: UUID(uuidString: "7dd199fd-aead-48d9-8246-bc0a86eed806")!, isPresented: .constant(true))
-        .environmentObject(ThemeController())
-        .environmentObject(NotificationController())
-        .environmentObject(AuthController())
-        .environmentObject(LocationController())
-        .environmentObject(SupabaseController())
-        .environmentObject(FeedController())
-}
+//#Preview {
+//    ProfileSheetView(userID: UUID(uuidString: "7dd199fd-aead-48d9-8246-bc0a86eed806")!, isPresented: .constant(true))
+//        .environmentObject(ThemeController())
+//        .environmentObject(NotificationController())
+//        .environmentObject(AuthController())
+//        .environmentObject(LocationController())
+//        .environmentObject(SupabaseController())
+//        .environmentObject(FeedController())
+//}

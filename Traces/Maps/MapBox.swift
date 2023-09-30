@@ -14,10 +14,13 @@ struct MapBox: View {
     var isInteractive: Bool = false
     var focalTrace: Trace?
     @State var annotations: [Trace] = []
+    @State var selectedAnnotation: Trace?
+    @State var presentSheet: Bool = false
 
     @EnvironmentObject var supabase: SupabaseController
     @EnvironmentObject var locator: LocationController
     @EnvironmentObject var theme: ThemeController
+    @EnvironmentObject var sheet: SheetController
 
     var body: some View {
         if isInteractive {
@@ -37,7 +40,7 @@ struct MapBox: View {
     }
     
     func buildInteractiveMap() -> some View {
-        InteractiveMapViewConverter()
+        InteractiveMapViewConverter(selectedAnnotation: $selectedAnnotation, presentSheet: $presentSheet)
             .task {
                 await supabase.reloadTraces()
                 await locator.checkLocationAuthorization()
@@ -45,6 +48,16 @@ struct MapBox: View {
             .onAppear {
                 annotations = supabase.traces
             }
+            .fullScreenCover(isPresented: $presentSheet, content: {
+                if let selectedAnnotation = selectedAnnotation {
+                    TraceDetailView(isPresented: $presentSheet, trace: selectedAnnotation)
+                } else {
+                    Text("no details found")
+                        .onTapGesture {
+                            presentSheet.toggle()
+                        }
+                }
+            })
     }
 }
     
@@ -52,17 +65,23 @@ struct InteractiveMapViewConverter: UIViewControllerRepresentable {
 
     @EnvironmentObject var theme: ThemeController
     @EnvironmentObject var locator: LocationController
-    @EnvironmentObject var supabase: SupabaseController
+    @EnvironmentObject var feed: FeedController
+    @EnvironmentObject var sheet: SheetController
+    
+    @Binding var selectedAnnotation: Trace?
+    @Binding var presentSheet: Bool
     
     func makeUIViewController(context: Context) -> InteractiveMapViewController {
         locator.snapshotLocation()
-        print(locator.userLocation)
-        return InteractiveMapViewController(center: locator.lastLocation, style: theme.mapStyle, annotations: supabase.traces)
+        let view = InteractiveMapViewController(center: locator.lastLocation, style: theme.mapStyle, annotations: feed.traces)
+        view.selectedAnnotation = $selectedAnnotation
+        view.presentSheet = $presentSheet
+        return view
     }
     
     func updateUIViewController(_ uiViewController: InteractiveMapViewController, context: Context) {
         uiViewController.centerOnPosition(locator.userLocation)
-        uiViewController.updateAnnotations(supabase.traces)
+        uiViewController.updateAnnotations(feed.traces)
         uiViewController.updateStyle(theme.mapStyle)
     }
 }
@@ -73,6 +92,8 @@ class InteractiveMapViewController: UIViewController {
     let style: StyleURI
     let zoom: Double
     var annotations: [Trace]
+    var selectedAnnotation: Binding<Trace?>!
+    var presentSheet: Binding<Bool>!
     
     internal var mapView: MapView!
     
@@ -96,6 +117,7 @@ class InteractiveMapViewController: UIViewController {
         self.style = style
         self.zoom = zoom
         self.annotations = annotations
+        self.selectedAnnotation = nil
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -132,8 +154,9 @@ class InteractiveMapViewController: UIViewController {
         super.viewDidLayoutSubviews()
     }
     
-    func updateAnnotations(_ annotations: [Trace]) {
-        for annotation in annotations {
+    func updateAnnotations(_ newAnnotations: [Trace]) {
+        self.annotations = newAnnotations
+        for annotation in newAnnotations {
             let annotationSize = 42
             let customAnnotation = AnnotationView(frame: CGRect(x: 0, y: 0, width: annotationSize, height: annotationSize), trace: annotation)
             
@@ -153,10 +176,13 @@ class InteractiveMapViewController: UIViewController {
         guard let annotationView = gesture.view as? AnnotationView else {
             return
         }
-        
-        if let selectedAnnotation = annotations.first(where: { $0.id == annotationView.trace?.id }) {
-            let popup = TraceDetailPopup(trace: selectedAnnotation)
-            popup.showAndStack()
+
+        if let selectedAnnotation = annotations.first(where: { $0 == annotationView.trace }) {
+            print(selectedAnnotation.id)
+            self.selectedAnnotation.wrappedValue = selectedAnnotation
+            self.presentSheet.wrappedValue = true
+        } else {
+            print("no annotation found")
         }
     }
     
