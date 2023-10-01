@@ -14,6 +14,7 @@ class LocationController: NSObject, CLLocationManagerDelegate, ObservableObject 
     private let locationManager = CLLocationManager()
     var lastLocation: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.789467, longitude: -122.416772)
     @Published var userLocation: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.789467, longitude: -122.416772)
+    @Published var shouldRecenter: Bool = true
     
     @Published var authorizationStatus: CLAuthorizationStatus?
     
@@ -61,5 +62,10 @@ class LocationController: NSObject, CLLocationManagerDelegate, ObservableObject 
     func snapshotLocation() {
         locationManager.requestLocation()
         lastLocation = userLocation
+        shouldRecenter = true
+    }
+    
+    func toggleRecenter() {
+        shouldRecenter.toggle()
     }
 }

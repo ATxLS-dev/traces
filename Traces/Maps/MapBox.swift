@@ -18,6 +18,7 @@ struct MapBox: View {
     @State var presentSheet: Bool = false
 
     @EnvironmentObject var supabase: SupabaseController
+    @EnvironmentObject var feed: FeedController
     @EnvironmentObject var locator: LocationController
     @EnvironmentObject var theme: ThemeController
     @EnvironmentObject var sheet: SheetController
@@ -48,16 +49,11 @@ struct MapBox: View {
             .onAppear {
                 annotations = supabase.traces
             }
-            .fullScreenCover(isPresented: $presentSheet, content: {
-                if let selectedAnnotation = selectedAnnotation {
-                    TraceDetailView(isPresented: $presentSheet, trace: selectedAnnotation)
-                } else {
-                    Text("no details found")
-                        .onTapGesture {
-                            presentSheet.toggle()
-                        }
-                }
-            })
+            .fullScreenCover(isPresented: $presentSheet) {
+                TraceDetailView(isPresented: $presentSheet, trace: selectedAnnotation ?? feed.traces.first!)
+                    .onTapGesture { presentSheet.toggle() }
+                    .presentationBackground(.ultraThinMaterial.opacity(0.5))
+            }
     }
 }
     
@@ -80,7 +76,10 @@ struct InteractiveMapViewConverter: UIViewControllerRepresentable {
     }
     
     func updateUIViewController(_ uiViewController: InteractiveMapViewController, context: Context) {
-        uiViewController.centerOnPosition(locator.userLocation)
+        if locator.shouldRecenter {
+            uiViewController.centerOnPosition(locator.userLocation)
+            locator.toggleRecenter()
+        }
         uiViewController.updateAnnotations(feed.traces)
         uiViewController.updateStyle(theme.mapStyle)
     }

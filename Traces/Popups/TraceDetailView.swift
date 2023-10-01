@@ -55,6 +55,7 @@ struct TraceDetailView: View {
             }
             .padding()
         }
+        .padding(16)
         .frame(height: 480)
     }
 

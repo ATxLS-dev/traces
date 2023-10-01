@@ -108,18 +108,8 @@ extension CustomTabBarView {
             }
         }
         .fullScreenCover(isPresented: $sheet.newTrace) {
-            ZStack {
-                Rectangle()
-                    .fill(.ultraThinMaterial)
-                NewTraceView(isPresented: $sheet.newTrace)
-            }
-            .ignoresSafeArea()
-        }
-        .fullScreenCover(isPresented: $sheet.showDetail) {
-            Text("Showing Detail")
-//            if let trace = sheet.detail {
-//                TraceDetailView(isPresented: $sheet.showDetail, trace: trace)
-//            }
+            NewTraceView(isPresented: $sheet.newTrace)
+                .presentationBackground(.ultraThinMaterial.opacity(0.5))
         }
         .padding(12)
     }
