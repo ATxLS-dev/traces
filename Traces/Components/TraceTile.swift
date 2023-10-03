@@ -54,7 +54,7 @@ struct TraceTile: View {
             ZStack {
                 Rectangle()
                     .fill(.ultraThinMaterial)
-                ProfileSheetView(userID: trace.userID, isPresented: $shouldPresentProfileSheet)
+                ProfileSheetView(userID: trace.userID)
             }
             .ignoresSafeArea()
         }

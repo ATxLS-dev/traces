@@ -19,7 +19,7 @@ struct NewTraceView: View {
     @State var showNoteEditor: Bool = false
     @State var tags: Set<String> = []
     
-    @Binding var isPresented: Bool
+    @Environment(\.dismiss) var dismiss
     
     @EnvironmentObject var theme: ThemeController
     @EnvironmentObject var notifications: NotificationController
@@ -31,6 +31,7 @@ struct NewTraceView: View {
         ZStack {
             if auth.authChangeEvent != .signedIn {
                 createNotLoggedInView()
+                    .padding(16)
             } else {
                 createBody()
             }
@@ -97,7 +98,8 @@ struct NewTraceView: View {
         .padding()
         .background(BorderedRectangle(cornerRadius: 24))
         .onTapGesture {
-            isPresented.toggle()
+//            isPresented.toggle()
+            dismiss()
         }
     }
 
@@ -274,7 +276,7 @@ struct NewTraceView: View {
                 content: content,
                 categories: Array(tags),
                 location: locator.userLocation)
-            isPresented.toggle()
+            dismiss()
             notifications.sendNotification(.traceCreated)
         }) {
             BorderedHalfButton(icon: "checkmark.circle")
@@ -282,7 +284,7 @@ struct NewTraceView: View {
     }
     func cancelButton() -> some View {
         Button(action: {
-            isPresented.toggle()
+            dismiss()
         }) {
             BorderedHalfButton(icon: "xmark.circle", noBorderColor: true, noBackgroundColor: true)
                 .rotationEffect(.degrees(180))

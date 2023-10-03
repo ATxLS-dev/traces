@@ -15,7 +15,7 @@ struct AuthView: View {
     @State var error: Error?
     @State var errorMessage: String?
     @State var loginInProgress: Bool = false
-    @Binding var isPresented: Bool
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var supabase: SupabaseController
     @EnvironmentObject var auth: AuthController
     @EnvironmentObject var theme: ThemeController
@@ -35,7 +35,7 @@ extension AuthView {
             VStack (spacing: 16){
                 HStack {
                     Spacer()
-                    Button(action: {isPresented = false} ) {
+                    Button(action: {dismiss()} ) {
                         Image(systemName: "xmark")
                             .foregroundColor(theme.text)
                             .padding()
@@ -115,7 +115,7 @@ extension AuthView {
                         do {
                             try await auth.createNewUser(email: email, password: password)
                             try await auth.login(email: email, password: password)
-                            self.isPresented = false
+                            dismiss()
                         } catch CreateUserError.signUpFailed(let errorMessage) {
                             self.errorMessage = errorMessage
                         } catch {
@@ -128,7 +128,7 @@ extension AuthView {
                     Task {
                         do {
                             try await auth.login(email: email, password: password)
-                            self.isPresented = false
+                            dismiss()
                         } catch {
                             self.errorMessage = "Invalid Login Credentials"
                         }

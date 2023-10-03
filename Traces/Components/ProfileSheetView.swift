@@ -10,7 +10,7 @@ import SwiftUI
 struct ProfileSheetView: View {
     
     var userID: UUID
-    @Binding var isPresented: Bool
+    @Environment(\.dismiss) private var dismiss
     
     @EnvironmentObject var supabase: SupabaseController
     @EnvironmentObject var notifications: NotificationController
@@ -103,7 +103,7 @@ struct ProfileSheetView: View {
     }
     
     var exitButton: some View {
-        Button(action: { isPresented.toggle() }) {
+        Button(action: { dismiss() }) {
             ZStack {
                 BorderedCapsule()
                     .frame(width: 48, height: 48)
@@ -113,13 +113,3 @@ struct ProfileSheetView: View {
         }
     }
 }
-
-//#Preview {
-//    ProfileSheetView(userID: UUID(uuidString: "7dd199fd-aead-48d9-8246-bc0a86eed806")!, isPresented: .constant(true))
-//        .environmentObject(ThemeController())
-//        .environmentObject(NotificationController())
-//        .environmentObject(AuthController())
-//        .environmentObject(LocationController())
-//        .environmentObject(SupabaseController())
-//        .environmentObject(FeedController())
-//}

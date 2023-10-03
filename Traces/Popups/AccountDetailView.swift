@@ -14,7 +14,7 @@ struct AccountDetailView: View {
     @State var confirmed: Bool = false
     @State var newUsername: String = ""
     @State var username: String = ""
-    @Binding var isPresented: Bool
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var supabase: SupabaseController
     @EnvironmentObject var auth: AuthController
     @EnvironmentObject var theme: ThemeController
@@ -99,7 +99,7 @@ struct AccountDetailView: View {
                     auth.setUsername(newUsername)
                     username = newUsername
                     inEditMode.toggle()
-                    isPresented.toggle()
+                    dismiss()
                 }
             }) {
                 Text(inEditMode ? "Save" : "Edit Account Info")
@@ -121,7 +121,7 @@ struct AccountDetailView: View {
             Button(action: {
                 if confirmed {
                     auth.deleteAccount()
-                    isPresented.toggle()
+                    dismiss()
                 } else {
                     confirmed.toggle()
                 }

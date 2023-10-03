@@ -6,8 +6,10 @@ import PopupView
 
 struct TraceDetailView: View {
     
-    @Binding var isPresented: Bool
     var trace: Trace
+    
+    
+    @Environment(\.dismiss) var dismiss
     @State var username: String = ""
     
     @EnvironmentObject var theme: ThemeController
@@ -131,8 +133,7 @@ struct TraceDetailView: View {
     func shareButton() -> some View {
         Button(action: {
             notifications.sendNotification(.linkCopied)
-            isPresented.toggle()
-            
+            dismiss()
         }) {
             BorderedHalfButton(icon: "square.and.arrow.up.circle")
         }
@@ -140,7 +141,7 @@ struct TraceDetailView: View {
     
     func cancelButton() -> some View {
         Button(action: {
-            isPresented.toggle()
+            dismiss()
         }) {
             BorderedHalfButton(icon: "xmark.circle", noBorderColor: true, noBackgroundColor: true)
                 .rotationEffect(.degrees(180))

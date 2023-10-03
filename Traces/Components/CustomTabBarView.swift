@@ -108,7 +108,7 @@ extension CustomTabBarView {
             }
         }
         .fullScreenCover(isPresented: $sheet.newTrace) {
-            NewTraceView(isPresented: $sheet.newTrace)
+            NewTraceView()
                 .presentationBackground(.ultraThinMaterial.opacity(0.5))
         }
         .padding(12)

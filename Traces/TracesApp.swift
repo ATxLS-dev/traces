@@ -12,8 +12,6 @@ import GoTrue
 
 @main
 struct TracesApp: App {
-    
-    
 
     var body: some Scene {
         WindowGroup {
@@ -24,7 +22,6 @@ struct TracesApp: App {
     @ViewBuilder
     var main: some View {
         ContentView()
-            .implementPopupView()
     }
 }
 

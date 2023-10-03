@@ -19,8 +19,6 @@ struct SettingsView: View {
     @State var shouldPresentAccountSheet: Bool = false
     @State var shouldPresentFAQSheet: Bool = false
     
-
-    
     var body: some View {
         ZStack {
             VStack(spacing: 16) {
@@ -34,12 +32,12 @@ struct SettingsView: View {
                         }
                     }
                     .sheet(isPresented: $shouldPresentAccountSheet) {
-                        AccountDetailView(isPresented: $shouldPresentAccountSheet)
+                        AccountDetailView()
                     }
                 buildListItem(item: buildLabel(title: "FAQ", systemImage: "questionmark"))
                     .onTapGesture { shouldPresentFAQSheet.toggle() }
                     .sheet(isPresented: $shouldPresentFAQSheet) {
-                        FAQSheet(isPresented: $shouldPresentFAQSheet)
+                        FAQSheet()
                     }
                 buildListItem(item: theme.isDarkMode ?
                               buildLabel(title: "Dark Mode", systemImage: "moon")
@@ -56,7 +54,7 @@ struct SettingsView: View {
                         }
                     }
                     .sheet(isPresented: $shouldPresentAuthSheet) {
-                        AuthView(isPresented: $shouldPresentAuthSheet)
+                        AuthView()
                     }
                 Spacer()
                 

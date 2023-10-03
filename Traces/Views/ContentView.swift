@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  GeoTag
+//  Traces
 //
 //  Created by Bryce on 5/10/23.
 //

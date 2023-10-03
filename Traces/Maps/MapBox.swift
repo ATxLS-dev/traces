@@ -50,7 +50,7 @@ struct MapBox: View {
                 annotations = supabase.traces
             }
             .fullScreenCover(isPresented: $presentSheet) {
-                TraceDetailView(isPresented: $presentSheet, trace: selectedAnnotation ?? feed.traces.first!)
+                TraceDetailView(trace: selectedAnnotation ?? feed.traces.first!)
                     .onTapGesture { presentSheet.toggle() }
                     .presentationBackground(.ultraThinMaterial.opacity(0.5))
             }

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct FAQSheet: View {
     
-    @Binding var isPresented: Bool
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var theme: ThemeController
 
     var body: some View {
@@ -19,9 +19,7 @@ struct FAQSheet: View {
             buildQuestion(q: "What is this app?", a: "This is a tool for marking locations, whether for your own future reference or to share with friends!")
             Spacer()
         }
-        .onTapGesture {
-            isPresented = false
-        }
+        .onTapGesture { dismiss() }
         .padding()
         .background(theme.background)
     }
