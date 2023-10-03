@@ -151,7 +151,7 @@ struct Onboarding: View {
             }
         }
         .sheet(isPresented: $shouldPresentAuth) {
-            AuthView(isPresented: $shouldPresentAuth)
+            AuthView()
         }
         .padding(.top, 80)
         .padding(.bottom, 40)

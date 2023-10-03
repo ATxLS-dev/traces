@@ -69,7 +69,7 @@ struct ProfileView: View {
                 .padding()
                 .background( BorderedCapsule() )
                 .sheet(isPresented: $shouldPresentSheet) {
-                    AuthView(isPresented: $shouldPresentSheet)
+                    AuthView()
                 }
         }
     }

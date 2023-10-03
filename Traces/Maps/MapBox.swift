@@ -21,7 +21,6 @@ struct MapBox: View {
     @EnvironmentObject var feed: FeedController
     @EnvironmentObject var locator: LocationController
     @EnvironmentObject var theme: ThemeController
-    @EnvironmentObject var sheet: SheetController
 
     var body: some View {
         if isInteractive {
@@ -62,7 +61,6 @@ struct InteractiveMapViewConverter: UIViewControllerRepresentable {
     @EnvironmentObject var theme: ThemeController
     @EnvironmentObject var locator: LocationController
     @EnvironmentObject var feed: FeedController
-    @EnvironmentObject var sheet: SheetController
     
     @Binding var selectedAnnotation: Trace?
     @Binding var presentSheet: Bool

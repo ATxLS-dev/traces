@@ -19,7 +19,6 @@ struct ContentView: View {
     @StateObject var locator = LocationController()
     @StateObject var supabase = SupabaseController()
     @StateObject var feed = FeedController()
-    @StateObject var sheet = SheetController()
     
     @AppStorage("selectedTab") private var selectedTab: Tab = Tab.home
     
@@ -45,7 +44,6 @@ struct ContentView: View {
             .environmentObject(locator)
             .environmentObject(supabase)
             .environmentObject(feed)
-            .environmentObject(sheet)
         
     }
 
@@ -81,7 +79,6 @@ struct ContentView_Previews: PreviewProvider {
                 .environmentObject(LocationController())
                 .environmentObject(SupabaseController())
                 .environmentObject(FeedController())
-                .environmentObject(SheetController())
         }
     }
 }

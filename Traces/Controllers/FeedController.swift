@@ -75,6 +75,7 @@ class FeedController: ObservableObject {
     }
     
     func syncCountedCategories() {
+        countedCategories = []
         for category in categories {
             countedCategories.append(countCategoryOccurences(category))
         }
