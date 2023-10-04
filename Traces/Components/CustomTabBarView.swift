@@ -33,7 +33,6 @@ struct BackgroundHelper: UIViewRepresentable {
         }
         return view
     }
-
     func updateUIView(_ uiView: UIView, context: Context) {}
 }
 
@@ -59,7 +58,7 @@ struct CustomTabBarView: View {
                     currentTab = .map
                 }
 
-            buildNewTraceButton()
+            newTraceButton
             
             TabBarButton(imageName: Tab.profile.rawValue)
                 .frame(width: buttonDimen, height: buttonDimen)
@@ -75,35 +74,22 @@ struct CustomTabBarView: View {
             
         }
         .padding(.horizontal, 12)
-        .background( BorderedCapsule() )
-        .overlay {
-            SelectedTabCircleView(currentTab: $currentTab)
-        }
+        .background { BorderedCapsule() }
+        .overlay { SelectedTabCircleView(currentTab: $currentTab) }
         .shadow(color: theme.shadow, radius: 6, x: 4, y: 4)
         .animation(
-            .interactiveSpring(
-                response: 0.34, dampingFraction: 0.69, blendDuration: 0.69),
+            .interactiveSpring(response: 0.34, dampingFraction: 0.69, blendDuration: 0.69),
             value: currentTab)
-        
     }
-}
 
-extension CustomTabBarView {
-    func buildNewTraceButton() -> some View {
+    var newTraceButton: some View {
         ZStack(alignment: .bottom) {
             Button(action: {shouldPresentTraceCreator.toggle()}) {
                 Image(systemName: "plus")
                     .scaleEffect(1.4)
                     .frame(width: 48, height: 48)
                     .foregroundColor(theme.text)
-                    .background(
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 18)
-                                .fill(theme.buttonBackground.opacity(0.6))
-                            RoundedRectangle(cornerRadius: 18)
-                                .stroke(theme.buttonBorder, lineWidth: 2)
-                        }
-                    )
+                    .background { BorderedRectangle(cornerRadius: 16) }
             }
         }
         .fullScreenCover(isPresented: $shouldPresentTraceCreator) {
@@ -159,5 +145,4 @@ struct SelectedTabCircleView: View {
         }
         .offset(x: horizontalOffset)
     }
-    
 }

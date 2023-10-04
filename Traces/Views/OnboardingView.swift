@@ -35,10 +35,10 @@ extension UserDefaults {
     
 }
 
-struct Onboarding: View {
+struct OnboardingView: View {
     
     @EnvironmentObject var theme: ThemeController
-    @Binding var isPresented: Bool
+    @Environment(\.dismiss) private var dismiss
     @State var shouldPresentAuth: Bool = false
     @State var selectedTab: Int = 1
     
@@ -48,8 +48,8 @@ struct Onboarding: View {
                 HStack {
                     Spacer()
                     Button(action: {
-                        isPresented = false
                         UserDefaults.hasOnboarded = true
+                        dismiss()
                     }) {
                         HStack {
                             Text("Skip intro")

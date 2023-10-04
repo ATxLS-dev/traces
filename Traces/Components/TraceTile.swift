@@ -94,7 +94,7 @@ struct TraceTile: View {
             }
         }
         .task {
-            username = await supabase.getFromID(trace.userID, column: "username")
+            username = await supabase.getFromUserID(trace.userID, column: "username")
             await syncReactions()
         }
         .padding(.horizontal, 16)

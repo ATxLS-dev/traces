@@ -128,10 +128,6 @@ class FeedController: ObservableObject {
         }
     }
     
-    func setFeedMaxDistance(miles: Double) {
-        self.feedMaxDistanceInMiles = miles
-    }
-    
     func syncFeedOrderedByProximity(maxDistanceInMiles: Int) {
         let lastUserLocation = locator.userLocation
         let maxDistanceInMeters = Double(maxDistanceInMiles) * 1609.34

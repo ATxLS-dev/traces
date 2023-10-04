@@ -194,8 +194,8 @@ class InteractiveMapViewController: UIViewController {
     
     private let ornamentOptions = {
         let scaleBarOptions = ScaleBarViewOptions(visibility: .hidden)
-        let logoOptions = LogoViewOptions(position: .topRight, margins: CGPoint(x: 40, y: 40))
-        let attributionOptions = AttributionButtonOptions(position: .topRight, margins: CGPoint(x: 0, y: 20))
+        let logoOptions = LogoViewOptions(position: .topRight, margins: CGPoint(x: 40, y: 61))
+        let attributionOptions = AttributionButtonOptions(position: .topRight, margins: CGPoint(x: 0, y: 40))
         return OrnamentOptions(scaleBar: scaleBarOptions, logo: logoOptions, attributionButton: attributionOptions)
     }
 }
@@ -267,7 +267,6 @@ class MiniMapViewController: UIViewController {
         
         snapshotView = UIImageView()
         snapshotView.translatesAutoresizingMaskIntoConstraints = false
-        
 
         stackView.addSubview(snapshotView)
         stackView.removeArrangedSubview(mapView)

@@ -55,7 +55,7 @@
 		02BD99212AA518CE00E3C504 /* ReactionCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BD99202AA518CE00E3C504 /* ReactionCounter.swift */; };
 		02EE1B182A6CABA000DCB69D /* BorderedHalfButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EE1B172A6CABA000DCB69D /* BorderedHalfButton.swift */; };
 		02EE1B1A2A71909E00DCB69D /* BorderedRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EE1B192A71909E00DCB69D /* BorderedRectangle.swift */; };
-		02F310EB2A9A9FCE004D8120 /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F310EA2A9A9FCE004D8120 /* Onboarding.swift */; };
+		02F310EB2A9A9FCE004D8120 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F310EA2A9A9FCE004D8120 /* OnboardingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -124,7 +124,7 @@
 		02BD99202AA518CE00E3C504 /* ReactionCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionCounter.swift; sourceTree = "<group>"; };
 		02EE1B172A6CABA000DCB69D /* BorderedHalfButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedHalfButton.swift; sourceTree = "<group>"; };
 		02EE1B192A71909E00DCB69D /* BorderedRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedRectangle.swift; sourceTree = "<group>"; };
-		02F310EA2A9A9FCE004D8120 /* Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboarding.swift; sourceTree = "<group>"; };
+		02F310EA2A9A9FCE004D8120 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -261,7 +261,7 @@
 				0243FC732A328E9B007D097D /* ProfileView.swift */,
 				028634FF2A18533700BCDF35 /* SettingsView.swift */,
 				02956F2A2A4B56AB00E8537C /* AuthView.swift */,
-				02F310EA2A9A9FCE004D8120 /* Onboarding.swift */,
+				02F310EA2A9A9FCE004D8120 /* OnboardingView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -462,7 +462,7 @@
 				028BA3402A3791FF000BD0C0 /* FilterDropdown.swift in Sources */,
 				028635102A18566600BCDF35 /* HomeView.swift in Sources */,
 				02439F7C2A749771009F70D1 /* NotificationController.swift in Sources */,
-				02F310EB2A9A9FCE004D8120 /* Onboarding.swift in Sources */,
+				02F310EB2A9A9FCE004D8120 /* OnboardingView.swift in Sources */,
 				028635082A18544800BCDF35 /* MapPageView.swift in Sources */,
 				0287BE122A350484006B9CCD /* CircularProgressView.swift in Sources */,
 				0214A98E2A5635E300A3AF7E /* AnnotationView.swift in Sources */,

@@ -1,10 +1,8 @@
-
 //
 //  Supabaseinator.swift
 //  Traces
 //
 //  Created by Bryce on 6/8/23.
-
 
 import Foundation
 import Supabase
@@ -20,7 +18,6 @@ class SupabaseController: ObservableObject {
     
     let supabase: SupabaseClient = SupabaseClient(supabaseURL: Secrets.supabaseURL, supabaseKey: Secrets.supabaseAnonKey)
     let auth = AuthController.shared
-    let locator = LocationController()
     
     @Published private(set) var traces: [Trace] = []
     @Published private(set) var categories: [Category] = []
@@ -89,23 +86,20 @@ class SupabaseController: ObservableObject {
         }
     }
     
-    func getFromID(_ id: UUID, column data: String) async -> String {
+    func getFromUserID(_ id: UUID, column data: String) async -> String {
         
         let query = supabase.database
             .from("users")
             .select(columns: data)
             .eq(column: "id", value: id)
-        
         var result: String = ""
-        
         do {
             result = try await query.execute().value
         } catch {
             print(error)
         }
         
-        return result.parseData(data)
-        
+        return result.parseDataFromJSON(data)
     }
     
     func createNewTrace(locationName: String, content: String, categories: [String], location: CLLocationCoordinate2D) {

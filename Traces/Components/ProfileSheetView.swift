@@ -43,7 +43,7 @@ struct ProfileSheetView: View {
         Task {
             await supabase.loadTracesFromUser(userID)
             userTraces = supabase.userTraceHistory
-            bio = await supabase.getFromID(userID, column: "bio")
+            bio = await supabase.getFromUserID(userID, column: "bio")
         }
     }
     
@@ -97,7 +97,7 @@ struct ProfileSheetView: View {
         }
         .padding(24)
         .task {
-            username = await supabase.getFromID(userID, column: "username")
+            username = await supabase.getFromUserID(userID, column: "username")
         }
         .edgesIgnoringSafeArea(.top)
     }

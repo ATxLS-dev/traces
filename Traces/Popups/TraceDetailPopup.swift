@@ -35,7 +35,7 @@ struct TraceDetailPopup: CentrePopup {
     
     func getUsername(_ id: UUID) {
         Task {
-            self.username = await supabase.getFromID(id, column: "username")
+            self.username = await supabase.getFromUserID(id, column: "username")
         }
     }
     
@@ -141,7 +141,7 @@ extension TraceDetailPopup {
             .font(.caption)
             .foregroundColor(theme.text)
             .task {
-                username = await supabase.getFromID(trace.userID, column: "username")
+                username = await supabase.getFromUserID(trace.userID, column: "username")
             }
     }
     

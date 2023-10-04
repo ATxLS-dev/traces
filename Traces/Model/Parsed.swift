@@ -8,7 +8,7 @@
 import Foundation
 
 extension String {
-    func parseData(_ column: String) -> String {
+    func parseDataFromJSON(_ column: String) -> String {
         guard let jsonData = self.data(using: .utf8) else { return "Invalid JSON string" }
         do {
             if let jsonArray = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [[String: Any]],

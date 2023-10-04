@@ -21,7 +21,6 @@ struct ContentView: View {
     @StateObject var feed = FeedController()
     
     @AppStorage("selectedTab") private var selectedTab: Tab = Tab.home
-    
     @State var shouldPresentOnboardingSheet: Bool = false
     
     init() {
@@ -29,9 +28,9 @@ struct ContentView: View {
     }
     
     var body: some View {
-        buildNavigation()
+        navigationBar
             .fullScreenCover(isPresented: $shouldPresentOnboardingSheet) {
-                Onboarding(isPresented: $shouldPresentOnboardingSheet)
+                OnboardingView()
             }
             .onAppear {
                 Task {
@@ -44,10 +43,9 @@ struct ContentView: View {
             .environmentObject(locator)
             .environmentObject(supabase)
             .environmentObject(feed)
-        
     }
 
-    func buildNavigation() -> some View {
+    var navigationBar: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
                 HomeView()

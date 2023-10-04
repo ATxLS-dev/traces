@@ -32,7 +32,7 @@ struct AccountDetailView: View {
                     guard let userId = auth.session?.user.id else {
                         throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey : "Session is nil"])
                     }
-                    username = await supabase.getFromID(userId, column: "username")
+                    username = await supabase.getFromUserID(userId, column: "username")
                 } catch {
                     print(error)
                 }

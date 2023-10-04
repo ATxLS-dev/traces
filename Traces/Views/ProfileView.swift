@@ -56,7 +56,7 @@ struct ProfileView: View {
         Task {
             await supabase.loadTracesFromUser(auth.session?.user.id)
             userTraces = supabase.userTraceHistory
-            bio = await supabase.getFromID(auth.session!.user.id, column: "bio")
+            bio = await supabase.getFromUserID(auth.session!.user.id, column: "bio")
         }
     }
 

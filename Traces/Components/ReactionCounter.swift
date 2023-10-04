@@ -24,12 +24,11 @@ struct ReactionCounter: View {
         ZStack {
             HStack {
                 Text("\(reaction.occurences)")
-                    .foregroundStyle(theme.text)
+                    .foregroundStyle(theme.text.opacity(reaction.occurences == 0 ? 0.4 : 1))
                 Image(systemName: reaction.value)
-                    .foregroundStyle(theme.text)
+                    .foregroundStyle(theme.text.opacity(reaction.occurences == 0 ? 0.4 : 1))
             }
             .scaleEffect(0.8)
-//            .padding(.vertical, 4)
         }
     }
 
