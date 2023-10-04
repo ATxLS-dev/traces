@@ -20,28 +20,28 @@ class SupabaseController: ObservableObject {
     let auth = AuthController.shared
     
     @Published private(set) var traces: [Trace] = []
-    @Published private(set) var categories: [Category] = []
+//    @Published private(set) var categories: [Category] = []
     @Published private(set) var reactionTypes: [ReactionType] = []
     @Published private(set) var userTraceHistory: [Trace] = []
     
     private var feedMaxDistanceInMiles: Int = 15
     
     init() {
-        syncCategories()
+//        syncCategories()
         syncReactionTypes()
     }
     
-    private func syncCategories() {
-        let query = supabase.database.from("categories").select()
-        Task {
-            do {
-                categories = try await query.execute().value
-                categories = Array(Set(categories))
-            } catch {
-                print(error)
-            }
-        }
-    }
+//    private func syncCategories() {
+//        let query = supabase.database.from("categories").select()
+//        Task {
+//            do {
+//                categories = try await query.execute().value
+//                categories = Array(Set(categories))
+//            } catch {
+//                print(error)
+//            }
+//        }
+//    }
     
     private func syncReactionTypes() {
         let query = supabase.database.from("reaction_types").select()
@@ -54,14 +54,14 @@ class SupabaseController: ObservableObject {
         }
     }
     
-    func countCategoryOccurences(_ category: Category) -> Int {
-        let occurrences = traces
-            .flatMap { $0.categories }
-            .filter { $0 == category.name }
-            .count
-        return occurrences
-    }
-    
+//    func countCategoryOccurences(_ category: Category) -> Int {
+//        let occurrences = traces
+//            .flatMap { $0.categories }
+//            .filter { $0 == category.name }
+//            .count
+//        return occurrences
+//    }
+//    
     func reloadTraces() async {
         let query = supabase.database.from("traces").select()
         do {

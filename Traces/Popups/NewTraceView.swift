@@ -26,6 +26,7 @@ struct NewTraceView: View {
     @EnvironmentObject var auth: AuthController
     @EnvironmentObject var supabase: SupabaseController
     @EnvironmentObject var locator: LocationController
+    @EnvironmentObject var feed: FeedController
     
     var body: some View {
         ZStack {
@@ -207,7 +208,7 @@ struct NewTraceView: View {
         ZStack {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
-                    ForEach(supabase.categories) { tag in
+                    ForEach(feed.categories) { tag in
                         Button(action: {
                             withAnimation { () -> () in
                                 tags.insert(tag.name)

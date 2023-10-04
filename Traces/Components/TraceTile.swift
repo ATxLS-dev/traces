@@ -12,6 +12,7 @@ struct TraceTile: View {
     @EnvironmentObject var theme: ThemeController
     @EnvironmentObject var notifications: NotificationController
     @EnvironmentObject var supabase: SupabaseController
+    @EnvironmentObject var feed: FeedController
 
     @State var username: String = ""
     @State var shouldShowDetails: Bool = false
@@ -22,6 +23,7 @@ struct TraceTile: View {
     @State var deleteConfirmed: Bool = false
     @State var userReaction: Reaction?
     @State var countedReactions: [CountedReaction] = []
+    @State var associatedReaction: AssociatedReaction?
     
     let trace: Trace
     
@@ -95,7 +97,7 @@ struct TraceTile: View {
         }
         .task {
             username = await supabase.getFromUserID(trace.userID, column: "username")
-            await syncReactions()
+            syncReactions()
         }
         .padding(.horizontal, 16)
         .frame(height: 160)
@@ -116,22 +118,12 @@ struct TraceTile: View {
         }
     }
     
-    private func syncReactions() async {
-        
-        let reactions = await supabase.getReactions(to: trace.id).map({ $0.0 })
-        
-        let reactionTypes = supabase.reactionTypes.map { $0 }
-        var reactionDict: [String: Int] = [:]
-        
-        for reaction in reactionTypes {
-            reactionDict[reaction.value] = 0
-        }
-        
-        for reaction in reactions {
-            reactionDict[reaction]! += 1
-        }
-        
-        countedReactions = reactionDict.map { CountedReaction(value: $0, occurences: $1 ) }.sorted(by: {$0.value > $1.value})
+    private func syncReactions() {
+        associatedReaction = feed.getReactionsToTrace(trace.id)
+        countedReactions = [
+            CountedReaction(value: "arrow.up", occurences: associatedReaction?.upvotes ?? 0),
+            CountedReaction(value: "arrow.down", occurences: associatedReaction?.downvotes ?? 0),
+        ]
     }
     
     var reactions: some View {
@@ -139,10 +131,10 @@ struct TraceTile: View {
             Spacer()
             ForEach(countedReactions, id: \.self) { reaction in
                 Button(action: {
+                    syncReactions()
                     Task.detached {
                         do {
                             try await supabase.createReaction(to: trace.id, reactionType: reaction.value)
-                            await syncReactions()
                         } catch {
                             print("Error creating reaction: \(error)")
                         }

@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		020D9C422A4E3A3200958A6D /* AccountDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020D9C412A4E3A3200958A6D /* AccountDetailView.swift */; };
 		0214A98E2A5635E300A3AF7E /* AnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0214A98D2A5635E300A3AF7E /* AnnotationView.swift */; };
-		0219261D2A2FD7BC00B1B314 /* TraceDetailPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0219261C2A2FD7BC00B1B314 /* TraceDetailPopup.swift */; };
 		0219261F2A2FD90100B1B314 /* Trace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0219261E2A2FD90100B1B314 /* Trace.swift */; };
 		022A30CE2A759F5500F3674F /* TraceEditPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022A30CD2A759F5500F3674F /* TraceEditPopup.swift */; };
 		02376E0D2A3E0B7200257B5D /* LocationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02376E0C2A3E0B7200257B5D /* LocationController.swift */; };
@@ -45,7 +44,6 @@
 		028FF0C72A184F090058EB57 /* TracesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028FF0C62A184F090058EB57 /* TracesUITests.swift */; };
 		028FF0C92A184F090058EB57 /* TracesUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028FF0C82A184F090058EB57 /* TracesUITestsLaunchTests.swift */; };
 		02952D722A1E85C900793283 /* PopupView in Frameworks */ = {isa = PBXBuildFile; productRef = 02952D712A1E85C900793283 /* PopupView */; };
-		02952D742A1E88D100793283 /* NewTracePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02952D732A1E88D100793283 /* NewTracePopup.swift */; };
 		02956F292A4B50BE00E8537C /* MapboxStatic in Frameworks */ = {isa = PBXBuildFile; productRef = 02956F282A4B50BE00E8537C /* MapboxStatic */; };
 		02956F2B2A4B56AB00E8537C /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02956F2A2A4B56AB00E8537C /* AuthView.swift */; };
 		029A00872A72C68200D78D32 /* AuthController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029A00862A72C68200D78D32 /* AuthController.swift */; };
@@ -78,7 +76,6 @@
 /* Begin PBXFileReference section */
 		020D9C412A4E3A3200958A6D /* AccountDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDetailView.swift; sourceTree = "<group>"; };
 		0214A98D2A5635E300A3AF7E /* AnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationView.swift; sourceTree = "<group>"; };
-		0219261C2A2FD7BC00B1B314 /* TraceDetailPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraceDetailPopup.swift; sourceTree = "<group>"; };
 		0219261E2A2FD90100B1B314 /* Trace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trace.swift; sourceTree = "<group>"; };
 		022A30CD2A759F5500F3674F /* TraceEditPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraceEditPopup.swift; sourceTree = "<group>"; };
 		02376E0C2A3E0B7200257B5D /* LocationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationController.swift; sourceTree = "<group>"; };
@@ -115,7 +112,6 @@
 		028FF0C22A184F090058EB57 /* TracesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TracesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		028FF0C62A184F090058EB57 /* TracesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracesUITests.swift; sourceTree = "<group>"; };
 		028FF0C82A184F090058EB57 /* TracesUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracesUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		02952D732A1E88D100793283 /* NewTracePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTracePopup.swift; sourceTree = "<group>"; };
 		02956F2A2A4B56AB00E8537C /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
 		029A00862A72C68200D78D32 /* AuthController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthController.swift; sourceTree = "<group>"; };
 		02B4D9122AC23417000D9996 /* TraceDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraceDetailView.swift; sourceTree = "<group>"; };
@@ -289,10 +285,8 @@
 			isa = PBXGroup;
 			children = (
 				02712F572A5BA22B009B4722 /* FAQSheet.swift */,
-				02952D732A1E88D100793283 /* NewTracePopup.swift */,
 				02597FD32A9BE0C200EBB614 /* NewTraceView.swift */,
 				02B4D9122AC23417000D9996 /* TraceDetailView.swift */,
-				0219261C2A2FD7BC00B1B314 /* TraceDetailPopup.swift */,
 				022A30CD2A759F5500F3674F /* TraceEditPopup.swift */,
 				020D9C412A4E3A3200958A6D /* AccountDetailView.swift */,
 			);
@@ -452,7 +446,6 @@
 				02BD99172AA2AAD200E3C504 /* FeedController.swift in Sources */,
 				0243FC682A327463007D097D /* _Secrets.swift in Sources */,
 				020D9C422A4E3A3200958A6D /* AccountDetailView.swift in Sources */,
-				0219261D2A2FD7BC00B1B314 /* TraceDetailPopup.swift in Sources */,
 				022A30CE2A759F5500F3674F /* TraceEditPopup.swift in Sources */,
 				02597FD42A9BE0C200EBB614 /* NewTraceView.swift in Sources */,
 				02BD99212AA518CE00E3C504 /* ReactionCounter.swift in Sources */,
@@ -477,7 +470,6 @@
 				028FF0A92A184F080058EB57 /* ContentView.swift in Sources */,
 				02712F582A5BA22B009B4722 /* FAQSheet.swift in Sources */,
 				0256E4BD2A6C857D000EA684 /* BorderedCapsule.swift in Sources */,
-				02952D742A1E88D100793283 /* NewTracePopup.swift in Sources */,
 				02956F2B2A4B56AB00E8537C /* AuthView.swift in Sources */,
 				028FF0A72A184F080058EB57 /* TracesApp.swift in Sources */,
 				02439F7A2A74856F009F70D1 /* NotificationView.swift in Sources */,

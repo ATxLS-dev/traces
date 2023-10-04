@@ -27,6 +27,7 @@ struct TraceEditPopup: CentrePopup {
     @EnvironmentObject var auth: AuthController
     @EnvironmentObject var supabase: SupabaseController
     @EnvironmentObject var locator: LocationController
+    @EnvironmentObject var feed: FeedController
     
     func createContent() -> some View {
         ZStack {
@@ -36,7 +37,6 @@ struct TraceEditPopup: CentrePopup {
                 createBody()
             }
         }
-        
     }
     
     func createBody() -> some View {
@@ -201,7 +201,7 @@ private extension TraceEditPopup {
         ZStack {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
-                    ForEach(supabase.categories) { tag in
+                    ForEach(feed.categories) { tag in
                         Button(action: {
                             withAnimation { () -> () in
                                 trace.categories.append(tag.name)

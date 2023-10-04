@@ -28,6 +28,11 @@ struct HomeView: View {
             }
         }
         .background(theme.background)
+        .onAppear {
+            Task {
+                await feed.syncReactionsToFeed()
+            }
+        }
     }
 
     var filterBar: some View {

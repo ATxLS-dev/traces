@@ -16,6 +16,22 @@ enum FeedOption: String, CaseIterable {
     case mostPopular = "Most Popular"
 }
 
+struct AssociatedReaction: Codable, Identifiable, Equatable {
+
+    let id: UUID
+    let upvotes: Int
+    let downvotes: Int
+    
+    enum CodingKeys: String, CodingKey {
+        case id = "trace_id"
+        case upvotes = "like_count"
+        case downvotes = "dislike_count"
+        var stringValue: String {
+            return rawValue
+        }
+    }
+}
+
 @MainActor
 class FeedController: ObservableObject {
     
@@ -26,6 +42,7 @@ class FeedController: ObservableObject {
     
     private var rawFeed: [Trace] = []
     private var activeFilters: [String] = []
+    private var associatedReactions: [AssociatedReaction] = []
     public var filterMode: FeedOption = .mostRecent
     
     @Published var traces: [Trace] = []
@@ -38,6 +55,7 @@ class FeedController: ObservableObject {
         self.syncUnsortedFeed()
         self.syncTracesWithin(miles: feedMaxDistanceInMiles)
         self.syncCountedCategories()
+        self.syncReactionsToFeed()
     }
     
     private func syncCategories() {
@@ -106,10 +124,30 @@ class FeedController: ObservableObject {
             do {
                 rawFeed = try await query.execute().value
                 traces = rawFeed
+                syncReactionsToFeed()
             } catch {
                 print(error)
             }
         }
+    }
+    
+    func syncReactionsToFeed() {
+        let traceIDs: [UUID] = rawFeed.map(\.id)
+        let query = supabase.database
+            .rpc(fn: "get_reaction_summary_from", params: ["trace_ids": traceIDs])
+        Task {
+            do {
+                associatedReactions = try await query.execute().value
+                print(associatedReactions)
+            } catch {
+                print(error)
+            }
+        }
+    }
+    
+    func getReactionsToTrace(_ traceID: UUID) -> AssociatedReaction? {
+        let reactions = associatedReactions.filter { $0.id == traceID }.first
+        return reactions
     }
     
     func toggleFilter(category: String) {
